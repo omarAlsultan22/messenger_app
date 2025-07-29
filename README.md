@@ -1,5 +1,3 @@
-# messenger_app
-
 # Messenger App (Flutter & Firebase)  
 
 A high-performance, encrypted chat application built with Flutter and Firebase, offering real-time messaging with enhanced privacy and speed.  
