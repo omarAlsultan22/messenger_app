@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import '../../layouts/conversation_layout.dart';
 import '../../main.dart';
-import '../main_screen/cubit.dart';
+import '../messenger_screen/cubit.dart';
 import '../online_status_service/online_status_service.dart';
 
 class NotificationService {

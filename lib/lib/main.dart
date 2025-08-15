@@ -5,11 +5,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:test_app/lib/layouts/messenger_screen.dart';
-import 'package:test_app/lib/modules/main_screen/cubit.dart';
 import 'package:test_app/lib/modules/online_status_service/online_status_service.dart';
 import 'package:test_app/lib/shared/components/constants.dart';
 import 'package:test_app/lib/shared/local/shared_preferences.dart';
 import 'package:test_app/lib/shared/remote/firebase_options.dart';
+import 'modules/messenger_screen/cubit.dart';
 import 'modules/notification_service/notification_service.dart';
 import 'modules/sign_in/sign_in.dart';
 
@@ -44,7 +44,6 @@ void main() async {
       sound: true,
     );
 
-// أضف هذا لمعالجة تحديثات التوكن
     FirebaseMessaging.instance.onTokenRefresh.listen((newToken) {
       print('Refreshed FCM token: $newToken');
     });

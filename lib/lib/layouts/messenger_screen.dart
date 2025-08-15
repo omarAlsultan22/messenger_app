@@ -3,11 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:test_app/lib/layouts/conversation_layout.dart';
-import 'package:test_app/lib/modules/main_screen/cubit.dart';
 import 'package:test_app/lib/shared/components/components.dart';
 import '../main.dart';
 import '../models/last_message_model.dart';
 import '../modules/edit_personal_account/edit_personal_account.dart';
+import '../modules/messenger_screen/cubit.dart';
 import '../modules/notification_service/notification_service.dart';
 import '../modules/online_status_service/online_status_service.dart';
 import '../shared/components/constants.dart';
@@ -104,7 +104,12 @@ class _MessengerScreenState extends State<MessengerScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<MainScreenCubit, CubitStates>(
-      listener: (context, state) {},
+      listener: (context, state) {
+        if (state is ErrorState && state.key == 'getFriends') {
+          ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(state.error!)));
+        }
+      },
       builder: (context, state) {
         final cubit = MainScreenCubit.get(context);
         final friendList = cubit.friendsList;
@@ -159,7 +164,7 @@ class _MessengerScreenState extends State<MessengerScreen> {
   }
 
   Widget _buildBody(CubitStates state, List<LastMessageModel> friendList) {
-    if (state is! SuccessState) {
+    if (state is! SuccessState && state.key == 'getFriends') {
       return const Center(child: CircularProgressIndicator());
     }
 

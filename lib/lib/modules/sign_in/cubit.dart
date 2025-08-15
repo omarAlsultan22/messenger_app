@@ -9,7 +9,6 @@ class SignInCubit extends Cubit<CubitStates> {
 
   static SignInCubit get(context) => BlocProvider.of(context);
 
-
   Future<void> signInWithPhoneNumber({
     required String phone,
   }) async {
@@ -22,7 +21,7 @@ class SignInCubit extends Cubit<CubitStates> {
           .get();
 
       if (!doc.exists) {
-        emit(ErrorState("User not found"));
+        emit(ErrorState(error: "User not found"));
         return;
       }
 
@@ -34,10 +33,10 @@ class SignInCubit extends Cubit<CubitStates> {
         CacheHelper.serStringValue(key: 'isSigned', value: userPhone);
         emit(SuccessState());
       } else {
-        emit(ErrorState("Phone number does not match"));
+        emit(ErrorState(error: "Phone number does not match"));
       }
     } catch (error) {
-      emit(ErrorState(error.toString()));
+      emit(ErrorState(error: error.toString()));
     }
   }
 }

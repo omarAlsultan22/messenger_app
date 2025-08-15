@@ -57,14 +57,6 @@ class _SignInState extends State<SignIn> {
           if (state is SuccessState) {
             navigateToMessengerScreen();
           }
-          if (state is ErrorState) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.error),
-                backgroundColor: Colors.red.shade700,
-              ),
-            );
-          }
           if (state is SuccessState) {
             showToast(
               message: 'Password reset link sent to your email',
@@ -73,7 +65,7 @@ class _SignInState extends State<SignIn> {
           }
           if (state is ErrorState) {
             showToast(
-              message: state.error,
+              message: state.error!,
               state: ToastStates.ERROR,
             );
           }
