@@ -545,7 +545,7 @@ class _ConversationLayoutState extends State<ConversationLayout> {
     return BlocProvider(
       create: (context) =>
       ConversationsCubit()
-        ..getConversations(docId: widget.lastMessageModel.docId)
+        ..getConversation(docId: widget.lastMessageModel.docId)
         ..getUserOnlineStatus(
             widget.onlineStatusService, widget.lastMessageModel.userId!)
         ..getUserLastSeen(

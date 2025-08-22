@@ -39,16 +39,16 @@ class ConversationsCubit extends Cubit<CubitStates> {
     final colorValue = _prefs?.getString('bg_color_$docId');
     bgImage = _prefs?.getString('bg_image_$docId');
     bgColor = Color(int.parse(colorValue!));
-    emit(SuccessState(key: 'getSavedBackgroundColorAndImage'));
+    emit(SuccessState(stateKey: StatesKeys.backgroundColorAndImage));
   }
 
   void clearConversationsList() {
     conversationsList.clear();
-    emit(SuccessState(key: 'clearConversationsList'));
+    emit(SuccessState(stateKey: StatesKeys.clearConversations));
   }
 
   Future<void> updateUnreadMessages(String docId) async {
-    emit(LoadingState(key: 'updateUnreadMessages'));
+    emit(LoadingState(stateKey: StatesKeys.updateUnreadMessages));
     try {
       final firestore = FirebaseFirestore.instance;
       final unreadMessages = await firestore
@@ -66,15 +66,15 @@ class ConversationsCubit extends Cubit<CubitStates> {
                 {'unreadMessage': false});
           })
       );
-      emit(SuccessState(key: 'updateUnreadMessages'));
+      emit(SuccessState(stateKey: StatesKeys.updateUnreadMessages));
     }
     catch (error) {
-      emit(ErrorState(error: error.toString(), key: 'updateUnreadMessages'));
+      emit(ErrorState(error: error.toString(), stateKey: StatesKeys.updateUnreadMessages));
     }
   }
 
-  Future<void> getConversations({required String docId}) async {
-    emit(LoadingState(key: 'getConversations'));
+  Future<void> getConversation({required String docId}) async {
+    emit(LoadingState(stateKey: StatesKeys.getConversation));
     _conversationsSubscription?.cancel();
 
     _conversationsSubscription = getNewMessages(
@@ -90,9 +90,9 @@ class ConversationsCubit extends Cubit<CubitStates> {
           conversationsList.add(group);
         }
       }
-      emit(SuccessState(key: 'getConversations'));
+      emit(SuccessState(stateKey: StatesKeys.getConversation));
     }, onError: (error) {
-      emit(ErrorState(error: error.toString(), key: 'getConversations'));
+      emit(ErrorState(error: error.toString(), stateKey: StatesKeys.getConversation));
     });
   }
 
@@ -143,15 +143,15 @@ class ConversationsCubit extends Cubit<CubitStates> {
   Future<void> deleteConversation({
     required String docId
   }) async {
-    emit(LoadingState(key: 'deleteConversation'));
+    emit(LoadingState(stateKey: StatesKeys.deleteConversation));
     try {
       conversationsList.clear();
       await FirebaseFirestore.instance.collection('messages')
           .doc(docId).delete();
-      emit(SuccessState(key: 'deleteConversation'));
+      emit(SuccessState(stateKey: StatesKeys.deleteConversation));
     }
     catch (error) {
-      emit(ErrorState(error: error.toString(), key: 'deleteConversation'));
+      emit(ErrorState(error: error.toString(), stateKey: StatesKeys.deleteConversation));
     }
   }
 
@@ -159,15 +159,15 @@ class ConversationsCubit extends Cubit<CubitStates> {
     required List<String> messagesIds,
     required String docId,
   }) async {
-    emit(LoadingState(key: 'deleteMessage'));
+    emit(LoadingState(stateKey: StatesKeys.deleteMessage));
     try {
       for (var group in conversationsList) {
         group.messages.removeWhere((e) => messagesIds.contains(e.messageId));
       }
       conversationsList.removeWhere((group) => group.messages.isEmpty);
-      emit(SuccessState(key: 'deleteMessage'));
+      emit(SuccessState(stateKey: StatesKeys.deleteMessage));
     } catch (error) {
-      emit(ErrorState(error: 'Error deleting message: $error', key: 'deleteMessage'));
+      emit(ErrorState(error: 'Error deleting message: $error', stateKey: StatesKeys.deleteMessage));
     }
   }
 
@@ -185,9 +185,9 @@ class ConversationsCubit extends Cubit<CubitStates> {
       conversation.messageId = doc.id;
       await doc.set(conversation.toMap());
       _organizeMessagesByDate([conversation]);
-      emit(SuccessState(key: 'sendMessage'));
+      emit(SuccessState(stateKey: StatesKeys.sendMessage));
     } catch (error) {
-      emit(ErrorState(error: error.toString(), key: 'sendMessage'));
+      emit(ErrorState(error: error.toString(), stateKey: StatesKeys.sendMessage));
       rethrow;
     }
   }
@@ -220,7 +220,7 @@ class ConversationsCubit extends Cubit<CubitStates> {
 
   Future<void> getOldMessages({required String docId}) async {
     try {
-      emit(LoadingState(key: 'getOldMessages'));
+      emit(LoadingState(stateKey: StatesKeys.getOldMessages));
       var query = FirebaseFirestore.instance
           .collection('messages')
           .doc(docId)
@@ -260,9 +260,9 @@ class ConversationsCubit extends Cubit<CubitStates> {
         }
       });
 
-      emit(SuccessState(key: 'getOldMessages'));
+      emit(SuccessState(stateKey: StatesKeys.getOldMessages));
     } catch (e) {
-      emit(ErrorState(error: e.toString(), key: 'getOldMessages'));
+      emit(ErrorState(error: e.toString(), stateKey: StatesKeys.getOldMessages));
     }
   }
 

@@ -25,7 +25,7 @@ class MainScreenCubit extends Cubit<CubitStates> {
   Future<void> getProfileImage({
     required String userId
 })async {
-    emit(LoadingState(key: 'getProfileImage'));
+    emit(LoadingState(stateKey: StatesKeys.getProfile));
     try {
       final getData = await FirebaseFirestore.instance.collection('accounts')
           .doc(userId)
@@ -44,10 +44,10 @@ class MainScreenCubit extends Cubit<CubitStates> {
         }
         profileImage = userImage;
       }
-      emit(SuccessState(key: 'getProfileImage'));
+      emit(SuccessState(stateKey: StatesKeys.getProfile));
     }
     catch (error) {
-      emit(ErrorState(error: error.toString(), key: 'getProfileImage'));
+      emit(ErrorState(error: error.toString(), stateKey: StatesKeys.getProfile));
       print('Error in getAccount: ${error.toString()}');
       return;
     }
@@ -162,16 +162,16 @@ class MainScreenCubit extends Cubit<CubitStates> {
 
 
   Future<void> getFriends({required String userId}) async {
-    emit(LoadingState(key: 'getFriends'));
+    emit(LoadingState(stateKey: StatesKeys.getFriends));
     _friendsSubscription?.cancel();
     _friendsSubscription = getFriendsStream(userId: userId).listen(
           (updatedFriendsList) {
         friendsList = updatedFriendsList;
         isMessage = true;
-        emit(SuccessState(key: 'getFriends'));
+        emit(SuccessState(stateKey: StatesKeys.getFriends));
       },
       onError: (error) {
-        emit(ErrorState(error: error.toString(), key: 'getFriends'));
+        emit(ErrorState(error: error.toString(), stateKey: StatesKeys.getFriends));
       },
     );
   }

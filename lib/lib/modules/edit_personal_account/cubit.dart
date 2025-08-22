@@ -14,7 +14,7 @@ class GetAccountDataCubit extends Cubit<CubitStates> {
   Future<void> getAccountData({
     required String userId
   }) async {
-    emit(LoadingState(key: 'getAccountData'));
+    emit(LoadingState(stateKey: StatesKeys.getAccount));
     try {
       final firestore = FirebaseFirestore.instance;
       final result = await Future.wait([
@@ -27,10 +27,10 @@ class GetAccountDataCubit extends Cubit<CubitStates> {
           userAccount: getData.data() as Map<String, dynamic>);
       accountData['userState'] = getInfo['userState'] as String;
       print(accountData);
-      emit(SuccessState(key: 'getAccountData'));
+      emit(SuccessState(stateKey: StatesKeys.getAccount));
     }
     catch (error) {
-      emit(ErrorState(error: error.toString(), key: 'getAccountData'));
+      emit(ErrorState(error: error.toString(), stateKey: StatesKeys.getAccount));
     }
   }
 
@@ -41,7 +41,7 @@ class GetAccountDataCubit extends Cubit<CubitStates> {
     required String userState,
     required String userPhone,
   }) async {
-    emit(LoadingState(key: 'updateAccountData'));
+    emit(LoadingState(stateKey: StatesKeys.updateAccount));
     try {
       final firestore = FirebaseFirestore.instance;
       final docRef = firestore.collection('posts').doc();
@@ -70,10 +70,10 @@ class GetAccountDataCubit extends Cubit<CubitStates> {
       ]);
 
       getAccountData(userId: userId);
-      emit(SuccessState(key: 'updateAccountData'));
+      emit(SuccessState(stateKey: StatesKeys.updateAccount));
     }
     catch (error) {
-      emit(ErrorState(error: error.toString(), key: 'updateAccountData'));
+      emit(ErrorState(error: error.toString(), stateKey: StatesKeys.updateAccount));
     }
   }
 }

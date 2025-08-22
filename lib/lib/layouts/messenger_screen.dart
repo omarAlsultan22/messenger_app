@@ -105,7 +105,7 @@ class _MessengerScreenState extends State<MessengerScreen> {
   Widget build(BuildContext context) {
     return BlocConsumer<MainScreenCubit, CubitStates>(
       listener: (context, state) {
-        if (state is ErrorState && state.key == 'getFriends') {
+        if (state is ErrorState && state.stateKey == StatesKeys.getFriends) {
           ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text(state.error!)));
         }
@@ -164,7 +164,7 @@ class _MessengerScreenState extends State<MessengerScreen> {
   }
 
   Widget _buildBody(CubitStates state, List<LastMessageModel> friendList) {
-    if (state is! SuccessState && state.key == 'getFriends') {
+    if (state is! SuccessState && state.stateKey == StatesKeys.getFriends) {
       return const Center(child: CircularProgressIndicator());
     }
 
