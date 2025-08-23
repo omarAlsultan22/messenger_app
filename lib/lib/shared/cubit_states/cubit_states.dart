@@ -19,18 +19,26 @@ abstract class CubitStates<T>{
   final String? error;
   CubitStates({this.message, this.stateKey, this.error});
 }
-class InitialState extends CubitStates{}
-class LoadingState extends CubitStates{
+class InitialState<T> extends CubitStates<T>{
+  InitialState() : super();
+}
+class LoadingState<T> extends CubitStates<T>{
   LoadingState({super.stateKey});
 }
-class SuccessState extends CubitStates{
+class SuccessState<T> extends CubitStates<T>{
   SuccessState({super.message, super.stateKey});
 }
-class ErrorState extends CubitStates{
+class ErrorState<T> extends CubitStates<T>{
   ErrorState({super.error, super.stateKey});
 }
 
-class UnreadCountUpdatedState extends CubitStates{}
-class UserStatusUpdatedState extends CubitStates{}
-class PhoneCodeSentState extends CubitStates {}
+class UnreadCountUpdatedState<T> extends CubitStates<T>{
+  UnreadCountUpdatedState() : super();
+}
+class UserStatusUpdatedState<T> extends CubitStates<T>{
+  UserStatusUpdatedState() : super();
+}
+class PhoneCodeSentState<T> extends CubitStates<T>{
+  PhoneCodeSentState() : super();
+}
 
