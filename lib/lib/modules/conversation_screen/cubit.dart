@@ -1,15 +1,16 @@
-import 'dart:async';
 import 'dart:ui';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:async';
+import '../../models/message_model.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import '../../shared/components/constants.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import '../../shared/cubit_states/cubit_states.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:test_app/lib/models/conversation_model.dart';
-import '../../models/message_model.dart';
-import '../../shared/components/constants.dart';
-import '../../shared/cubit_states/cubit_states.dart';
 import '../online_status_service/online_status_service.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+
 
 class ConversationsCubit extends Cubit<CubitStates> {
   ConversationsCubit() : super(InitialState());
@@ -35,6 +36,7 @@ class ConversationsCubit extends Cubit<CubitStates> {
   Color? bgColor;
   String? bgImage;
 
+
   Future<void> getSavedBackgroundColorAndImage(String docId) async {
     final colorValue = _prefs?.getString('bg_color_$docId');
     bgImage = _prefs?.getString('bg_image_$docId');
@@ -46,6 +48,7 @@ class ConversationsCubit extends Cubit<CubitStates> {
     conversationsList.clear();
     emit(SuccessState(stateKey: StatesKeys.clearConversations));
   }
+
 
   Future<void> updateUnreadMessages(String docId) async {
     emit(LoadingState(stateKey: StatesKeys.updateUnreadMessages));
@@ -69,9 +72,11 @@ class ConversationsCubit extends Cubit<CubitStates> {
       emit(SuccessState(stateKey: StatesKeys.updateUnreadMessages));
     }
     catch (error) {
-      emit(ErrorState(error: error.toString(), stateKey: StatesKeys.updateUnreadMessages));
+      emit(ErrorState(
+          error: error.toString(), stateKey: StatesKeys.updateUnreadMessages));
     }
   }
+
 
   Future<void> getConversation({required String docId}) async {
     emit(LoadingState(stateKey: StatesKeys.getConversation));
@@ -92,9 +97,11 @@ class ConversationsCubit extends Cubit<CubitStates> {
       }
       emit(SuccessState(stateKey: StatesKeys.getConversation));
     }, onError: (error) {
-      emit(ErrorState(error: error.toString(), stateKey: StatesKeys.getConversation));
+      emit(ErrorState(
+          error: error.toString(), stateKey: StatesKeys.getConversation));
     });
   }
+
 
   Future<void> updateTyping(bool isTyping) async {
     if (_auth.currentUser == null) return;
@@ -105,6 +112,7 @@ class ConversationsCubit extends Cubit<CubitStates> {
     });
   }
 
+
   void getUserOnlineStatus(OnlineStatusService onlineStatusService,
       String userId) {
     _onlineSubscription =
@@ -113,6 +121,7 @@ class ConversationsCubit extends Cubit<CubitStates> {
           emit(UserStatusUpdatedState());
         });
   }
+
 
   void getUserTypingStatus(OnlineStatusService onlineStatusService,
       String userId) {
@@ -123,6 +132,7 @@ class ConversationsCubit extends Cubit<CubitStates> {
         });
   }
 
+
   void getUserLastSeen(OnlineStatusService onlineStatusService, String userId) {
     _lastSeenSubscription =
         onlineStatusService.getUserLastSeen(userId).listen((value) {
@@ -130,6 +140,7 @@ class ConversationsCubit extends Cubit<CubitStates> {
           emit(UserStatusUpdatedState());
         });
   }
+
 
   @override
   Future<void> close() async {
@@ -139,6 +150,7 @@ class ConversationsCubit extends Cubit<CubitStates> {
     await _interactionsSubscription?.cancel();
     return super.close();
   }
+
 
   Future<void> deleteConversation({
     required String docId
@@ -151,9 +163,11 @@ class ConversationsCubit extends Cubit<CubitStates> {
       emit(SuccessState(stateKey: StatesKeys.deleteConversation));
     }
     catch (error) {
-      emit(ErrorState(error: error.toString(), stateKey: StatesKeys.deleteConversation));
+      emit(ErrorState(
+          error: error.toString(), stateKey: StatesKeys.deleteConversation));
     }
   }
+
 
   Future<void> deleteMessage({
     required List<String> messagesIds,
@@ -167,9 +181,11 @@ class ConversationsCubit extends Cubit<CubitStates> {
       conversationsList.removeWhere((group) => group.messages.isEmpty);
       emit(SuccessState(stateKey: StatesKeys.deleteMessage));
     } catch (error) {
-      emit(ErrorState(error: 'Error deleting message: $error', stateKey: StatesKeys.deleteMessage));
+      emit(ErrorState(error: 'Error deleting message: $error',
+          stateKey: StatesKeys.deleteMessage));
     }
   }
+
 
   Future<void> sendMessage({
     required String docId,
@@ -187,10 +203,12 @@ class ConversationsCubit extends Cubit<CubitStates> {
       _organizeMessagesByDate([conversation]);
       emit(SuccessState(stateKey: StatesKeys.sendMessage));
     } catch (error) {
-      emit(ErrorState(error: error.toString(), stateKey: StatesKeys.sendMessage));
+      emit(ErrorState(
+          error: error.toString(), stateKey: StatesKeys.sendMessage));
       rethrow;
     }
   }
+
 
   void _organizeMessagesByDate(List<ConversationModel> messages) {
     if (messages.isEmpty || messages.last.dateTime == null) return;
@@ -217,6 +235,7 @@ class ConversationsCubit extends Cubit<CubitStates> {
       ));
     }
   }
+
 
   Future<void> getOldMessages({required String docId}) async {
     try {
@@ -262,9 +281,11 @@ class ConversationsCubit extends Cubit<CubitStates> {
 
       emit(SuccessState(stateKey: StatesKeys.getOldMessages));
     } catch (e) {
-      emit(ErrorState(error: e.toString(), stateKey: StatesKeys.getOldMessages));
+      emit(
+          ErrorState(error: e.toString(), stateKey: StatesKeys.getOldMessages));
     }
   }
+
 
   Stream<List<MessageGroup>> getNewMessages({
     required String docId,
@@ -311,6 +332,7 @@ class ConversationsCubit extends Cubit<CubitStates> {
       return groupMessagesByDate(conversations.cast<ConversationModel>());
     });
   }
+
 
   List<MessageGroup> groupMessagesByDate(List<ConversationModel> messages) {
     if (messages.isEmpty) return [];

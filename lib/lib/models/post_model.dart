@@ -1,6 +1,7 @@
 import 'package:test_app/lib/models/user_model.dart';
 
-class PostModel extends UserModel {
+
+class PostModel extends UserModel immplements MapModel{
   late String? userText;
   late String? userState;
   late String? docId;

@@ -1,9 +1,10 @@
 import 'dart:io';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter_sound/public/flutter_sound_player.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:video_player/video_player.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_sound/public/flutter_sound_player.dart';
+
 
 class AudioPlayerState {
   final bool playing;
@@ -22,7 +23,7 @@ enum ProcessingState {
 
 enum MediaType { image, video, file, text, audio }
 
-class ConversationModel {
+class ConversationModel immplements MapModel{
   final MediaType? type;
   final String? text;
   late String? senderId;
@@ -75,6 +76,7 @@ class ConversationModel {
     );
   }
 
+  @override
   Map<String, dynamic> toMap() {
     return {
       'senderId': senderId,

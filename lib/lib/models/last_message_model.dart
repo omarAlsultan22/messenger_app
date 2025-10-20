@@ -1,6 +1,7 @@
 import 'package:test_app/lib/models/user_model.dart';
 
-class LastMessageModel extends UserModel{
+
+class LastMessageModel extends UserModel immplements MapModel{
   final String docId;
   final List<String> participants;
   final String lastMessage;

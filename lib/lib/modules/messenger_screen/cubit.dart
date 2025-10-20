@@ -1,13 +1,14 @@
 import 'dart:async';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:test_app/lib/models/last_message_model.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:test_app/lib/models/user_model.dart';
-import 'package:test_app/lib/modules/notification_service/notification_service.dart';
-import 'package:test_app/lib/shared/components/components.dart';
 import '../../shared/cubit_states/cubit_states.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:test_app/lib/models/last_message_model.dart';
+import 'package:test_app/lib/shared/components/components.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:test_app/lib/modules/notification_service/notification_service.dart';
+
 
 class MainScreenCubit extends Cubit<CubitStates> {
   MainScreenCubit() : super((InitialState()));
@@ -53,6 +54,7 @@ class MainScreenCubit extends Cubit<CubitStates> {
     }
   }
 
+
   Stream<List<LastMessageModel>> getFriendsStream({required String userId}) {
     final firestore = FirebaseFirestore.instance;
 
@@ -73,6 +75,7 @@ class MainScreenCubit extends Cubit<CubitStates> {
       return Rx.combineLatestList(streams);
     });
   }
+
 
   Stream<LastMessageModel> _getFriendLastMessageStream(
       FirebaseFirestore firestore,
@@ -96,7 +99,6 @@ class MainScreenCubit extends Cubit<CubitStates> {
       if (docId == null) {
         return Stream.value(LastMessageModel.createEmptyLastMessage(friendId));
       }
-
 
       final unreadMessagesStream = firestore
           .collection('messages')
@@ -150,7 +152,6 @@ class MainScreenCubit extends Cubit<CubitStates> {
           lastMessage['isOnline'] = userModel.isOnline;
           lastMessage['lastSeen'] = userModel.lastSeen;
 
-
           return LastMessageModel.fromJson(lastMessage);
         },
       );
@@ -175,6 +176,7 @@ class MainScreenCubit extends Cubit<CubitStates> {
       },
     );
   }
+
 
   @override
   Future<void> close(){

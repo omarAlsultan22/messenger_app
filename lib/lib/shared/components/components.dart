@@ -1,12 +1,13 @@
-import 'dart:io';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:path/path.dart' as path;
-import '../../models/user_model.dart';
 import 'components.dart' as Fluttertoast;
+import 'package:path/path.dart' as path;
+import 'package:flutter/material.dart';
+import '../../models/user_model.dart';
+import 'dart:io';
+
 
 Future<String?> pickImageOrVideo() async {
   try {
@@ -23,6 +24,7 @@ Future<String?> pickImageOrVideo() async {
     return null;
   }
 }
+
 
 Future<String?> checkFile(File file) async {
   try {
@@ -62,6 +64,7 @@ Future<String?> checkFile(File file) async {
   }
 }
 
+
 Future <String?> uploadFile(File file, String folderName) async {
   try {
     String fileName = path.basename(file.path);
@@ -84,6 +87,7 @@ Future <String?> uploadFile(File file, String folderName) async {
     return null;
   }
 }
+
 
 void showToast({
   required String msg,
@@ -128,6 +132,7 @@ Future<Map<String, dynamic>> getUserAccount({
   }
 }
 
+
 Future<Map<String, dynamic>> getAccountMap({
   required DocumentSnapshot userDoc,
 }) async {
@@ -140,6 +145,7 @@ Future<Map<String, dynamic>> getAccountMap({
     return {};
   }
 }
+
 
 Future<UserModel> getUserModelData({
   required String id,
@@ -156,6 +162,7 @@ Future<UserModel> getUserModelData({
   }
   return userModel;
 }
+
 
 Future navigator({
   required BuildContext context,

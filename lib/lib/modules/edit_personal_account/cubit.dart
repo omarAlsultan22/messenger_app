@@ -1,9 +1,10 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:test_app/lib/models/post_model.dart';
 import 'package:test_app/lib/models/user_model.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:test_app/lib/shared/components/components.dart';
 import 'package:test_app/lib/shared/cubit_states/cubit_states.dart';
+
 
 class GetAccountDataCubit extends Cubit<CubitStates> {
   GetAccountDataCubit() : super(InitialState());
@@ -33,6 +34,7 @@ class GetAccountDataCubit extends Cubit<CubitStates> {
       emit(ErrorState(error: error.toString(), stateKey: StatesKeys.getAccount));
     }
   }
+
 
   Future<void> updateAccountData({
     required String userId,

@@ -1,5 +1,6 @@
 import 'conversation_model.dart';
 
+
 class MessageGroup {
   final String title;
   final List<ConversationModel> messages;

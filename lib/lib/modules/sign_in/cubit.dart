@@ -1,8 +1,9 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:test_app/lib/shared/cubit_states/cubit_states.dart';
 import 'package:test_app/lib/shared/local/shared_preferences.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../shared/components/constants.dart';
+
 
 class SignInCubit extends Cubit<CubitStates> {
   SignInCubit() : super(InitialState());

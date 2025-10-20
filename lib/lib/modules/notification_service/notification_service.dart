@@ -1,14 +1,15 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import '../../layouts/conversation_layout.dart';
 import '../../main.dart';
+import 'package:flutter/material.dart';
 import '../messenger_screen/cubit.dart';
+import '../../layouts/conversation_layout.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import '../online_status_service/online_status_service.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+
 
 class NotificationService {
   static final NotificationService _instance = NotificationService._internal();
@@ -29,6 +30,7 @@ class NotificationService {
     //_setupInteractionsListener();
   }
 
+
   Future<void> _setupFirebase() async {
     await _firebaseMessaging.requestPermission(
       alert: true,
@@ -48,6 +50,7 @@ class NotificationService {
     });
   }
 
+
   Future<void> _setupLocalNotifications() async {
     const AndroidInitializationSettings initializationSettingsAndroid =
     AndroidInitializationSettings('@mipmap/ic_launcher');
@@ -66,6 +69,7 @@ class NotificationService {
       },
     );
   }
+
 
   void handleMessage(Map<String, dynamic> data) {
     try{
@@ -94,6 +98,7 @@ class NotificationService {
       }
   }
 
+
   void _setupInteractedMessage() {
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       debugPrint('Got a message whilst in the foreground!');
@@ -111,31 +116,11 @@ class NotificationService {
     });
   }
 
+
   Future<void> _setupBackgroundMessageHandler() async {
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   }
 
-
-  /*
-  // المرحلة 6: متابعة تفاعلات المستخدم من Firestore
-  Future<void> _setupInteractionsListener() async {
-    _messagesSubscription?.cancel();
-    _messagesSubscription = FirebaseFirestore.instance
-        .collection('notifications')
-        .where('userId', isEqualTo: UserDetails.userId)
-        .where('isRead', isEqualTo: false)
-        .snapshots()
-        .listen((snapshot) {
-      for (var change in snapshot.docChanges) {
-        if (change.type == DocumentChangeType.added) {
-          final data = change.doc.data()!;
-          _sendInteractionNotification(data);
-        }
-      }
-    });
-  }
-
-   */
 
   Future<void> _showNotification(RemoteMessage message) async {
     try {
@@ -173,6 +158,7 @@ class NotificationService {
     }
   }
 
+
   Future<void> sendMessage(Map<String, dynamic> data) async {
     try {
       final senderName = data['userName'];
@@ -194,17 +180,21 @@ class NotificationService {
     }
   }
 
+
   Future<void> subscribeToTopic(String topic) async {
     await _firebaseMessaging.subscribeToTopic(topic);
   }
+
 
   Future<void> unsubscribeFromTopic(String topic) async {
     await _firebaseMessaging.unsubscribeFromTopic(topic);
   }
 
+
   Future<void> dispose() async {
     await _messagesSubscription?.cancel();
   }
+
 
   Future<void> _showLocalNotification({
     required String title,
@@ -249,6 +239,7 @@ class NotificationService {
     }
   }
 
+
   Map<String, dynamic> _processPayload(Map<String, dynamic> payload) {
     final processed = <String, dynamic>{};
 
@@ -284,12 +275,14 @@ class NotificationService {
     await handleBackgroundNotification(message);
   }
 
+
   static Future<void> handleBackgroundNotification(RemoteMessage message) async {
     await setupBackgroundIsolate();
     final notificationService = NotificationService();
     await notificationService.initialize();
     notificationService.handleMessage(message.data);
   }
+
 
   static Future<void> setupBackgroundIsolate() async {
     WidgetsFlutterBinding.ensureInitialized();

@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class UserModel {
+
+class UserModel immplements MapModel{
   final String? userId;
   final String? userName;
   final String? userImage;
@@ -30,6 +31,7 @@ class UserModel {
     );
   }
 
+  @override
   Map<String, dynamic> toMap() {
     return {
       'userImage': userImage,

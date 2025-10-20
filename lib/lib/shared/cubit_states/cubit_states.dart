@@ -13,6 +13,7 @@ enum StatesKeys{
   getFriends,
 }
 
+
 abstract class CubitStates<T>{
   final T? message;
   final StatesKeys? stateKey;

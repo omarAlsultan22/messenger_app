@@ -11,7 +11,7 @@ import 'package:test_app/lib/shared/local/shared_preferences.dart';
 import 'package:test_app/lib/shared/remote/firebase_options.dart';
 import 'modules/messenger_screen/cubit.dart';
 import 'modules/notification_service/notification_service.dart';
-import 'modules/sign_in/sign_in.dart';
+import 'modules/sign_in/sign_in_screen.dart';
 
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
