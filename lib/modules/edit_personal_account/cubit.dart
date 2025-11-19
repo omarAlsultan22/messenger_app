@@ -1,0 +1,81 @@
+import '../../models/post_model.dart';
+import '../../models/user_model.dart';
+import '../../shared/constants/state_keys.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../shared/components/components.dart';
+import '../../shared/cubit_states/cubit_states.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+
+class GetAccountDataCubit extends Cubit<CubitStates> {
+  GetAccountDataCubit() : super(InitialState());
+  Map<String, dynamic> accountData = {};
+
+  static GetAccountDataCubit get(context) => BlocProvider.of(context);
+
+  Future<void> getAccountData({
+    required String userId
+  }) async {
+    emit(LoadingState(stateKey: StatesKeys.getAccount));
+    try {
+      final firestore = FirebaseFirestore.instance;
+      final result = await Future.wait([
+        firestore.collection('accounts').doc(userId).get(),
+        firestore.collection('info').doc(userId).get()
+      ]);
+      final getData = result[0] as DocumentSnapshot;
+      final getInfo = result[1] as DocumentSnapshot;
+      accountData = await getUserAccount(
+          userAccount: getData.data() as Map<String, dynamic>);
+      accountData['userState'] = getInfo['userState'] as String;
+      emit(SuccessState(stateKey: StatesKeys.getAccount));
+    }
+    catch (error) {
+      emit(ErrorState(error: error.toString(), stateKey: StatesKeys.getAccount));
+    }
+  }
+
+
+  Future<void> updateAccountData({
+    required String userId,
+    required String userImage,
+    required String userName,
+    required String userState,
+    required String userPhone,
+  }) async {
+    emit(LoadingState(stateKey: StatesKeys.updateAccount));
+    try {
+      final firestore = FirebaseFirestore.instance;
+      final docRef = firestore.collection('posts').doc();
+
+      PostModel postModel = PostModel(
+        userId: userId,
+        docId: docRef.id,
+        postType: 'profileImage',
+        userText: '',
+        userPost: userImage,
+        dateTime: DateTime.now(),
+        userState: 'public',
+      );
+
+
+      UserModel userModel = UserModel(
+        userName: userName,
+        userImage: docRef.path,
+        userPhone: userPhone,
+      );
+
+      await Future.wait([
+        firestore.collection('posts').add(postModel.toMap()),
+        firestore.collection('accounts').doc(userId).update(userModel.toMap()),
+        firestore.collection('Info').doc(userId).update({'userState': userState}),
+      ]);
+
+      getAccountData(userId: userId);
+      emit(SuccessState(stateKey: StatesKeys.updateAccount));
+    }
+    catch (error) {
+      emit(ErrorState(error: error.toString(), stateKey: StatesKeys.updateAccount));
+    }
+  }
+}
