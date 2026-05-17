@@ -110,8 +110,8 @@ class HiveAppExceptions extends CacheAppException implements ExceptionHandler {
 
   @override
   AppException handle() {
-    final errorStr = error.toString().toLowerCase();
     if (canHandle()) {
+      final errorStr = error.toString().toLowerCase();
       return _errorFactories[errorStr]!(errorStr);
     }
     return HiveOperationException(

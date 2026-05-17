@@ -105,15 +105,10 @@ class ExceptionMapper {
   }
 
   AppException? mapByTypePattern() {
-    final exception = _stringPatterns[error];
-    if (exception != null) {
-      return exception;
-    }
-    return null;
+    return _typePatterns[error]!(error);
   }
 
   AppException? mapByStringPattern() {
-    final exception = _typePatterns[error]!(error);
-    return exception;
+    return _stringPatterns[error.toString().toLowerCase()];
   }
 }
