@@ -2,13 +2,14 @@ import 'base/json_model.dart';
 import 'package:test_app/core/data/models/user_model.dart';
 
 
-class LastMessageModel extends UserModel implements JsonModel{
+class LastMessageModel extends UserModel implements JsonModel {
   final String docId;
-  final List<String> participants;
+  final bool isFriend;
   final String lastMessage;
-  final DateTime lastMessageDateTime;
-  final String lastMessageSender;
   final int unreadMessagesCount;
+  final String lastMessageSender;
+  final List<String> participants;
+  final DateTime lastMessageDateTime;
 
   LastMessageModel({
     super.userId,
@@ -17,27 +18,62 @@ class LastMessageModel extends UserModel implements JsonModel{
     super.isOnline,
     super.isTyping,
     super.lastSeen,
+    this.isFriend = true,
     required this.docId,
-    required this.participants,
     required this.lastMessage,
-    required this.lastMessageDateTime,
+    required this.participants,
     required this.lastMessageSender,
+    required this.lastMessageDateTime,
     required this.unreadMessagesCount,
   });
 
+  bool get isEmpty => docId.isEmpty;
+
+  LastMessageModel copyWith({
+    String? docId,
+    String? userId,
+    bool? isOnline,
+    bool? isTyping,
+    bool? isFriend,
+    String? userName,
+    String? userImage,
+    DateTime? lastSeen,
+    String? lastMessage,
+    int? unreadMessagesCount,
+    String? lastMessageSender,
+    List<String>? participants,
+    DateTime? lastMessageDateTime,
+  }) {
+    return LastMessageModel(
+        docId: docId ?? this.docId,
+        userId: userId ?? this.userId,
+        isTyping: isTyping ?? isTyping,
+        lastSeen: lastSeen ?? this.lastSeen,
+        isOnline: isOnline ?? this.isOnline,
+        userName: userName ?? this.userName,
+        userImage: userImage ?? this.userImage,
+        lastMessage: lastMessage ?? this.lastMessage,
+        participants: participants ?? this.participants,
+        lastMessageSender: lastMessageSender ?? this.lastMessageSender,
+        lastMessageDateTime: lastMessageDateTime ?? this.lastMessageDateTime,
+        unreadMessagesCount: unreadMessagesCount ?? this.unreadMessagesCount
+    );
+  }
+
   factory LastMessageModel.fromJson(Map<String, dynamic> json){
     return LastMessageModel(
-      userId: json['userId'] ?? '',
-      userName: json['userName'] ?? '',
-      userImage: json['userImage'] ?? '',
-      docId: json['docId'] ?? '',
-      participants: json['participants'] ?? '',
-      lastMessage: json['lastMessage'] ?? '',
-      lastMessageDateTime: json['lastMessageDateTime'] ?? '',
-      lastMessageSender: json['lastMessageSender'] ?? '',
-      isOnline: json['isOnline'] ?? false, isTyping: json['isTyping'] ?? false,
-      lastSeen: json['lastSeen'] ?? DateTime.now(),
-      unreadMessagesCount: json['unreadMessagesCount'] ?? 0
+        docId: json['docId'] ?? '',
+        userId: json['userId'] ?? '',
+        userName: json['userName'] ?? '',
+        userImage: json['userImage'] ?? '',
+        participants: json['participants'] ?? '',
+        lastMessage: json['lastMessage'] ?? '',
+        isOnline: json['isOnline'] ?? false,
+        isTyping: json['isTyping'] ?? false,
+        lastSeen: json['lastSeen'] ?? DateTime.now(),
+        lastMessageSender: json['lastMessageSender'] ?? '',
+        lastMessageDateTime: json['lastMessageDateTime'] ?? '',
+        unreadMessagesCount: json['unreadMessagesCount'] ?? 0
     );
   }
 
@@ -46,7 +82,6 @@ class LastMessageModel extends UserModel implements JsonModel{
       docId: '',
       participants: [],
       lastMessage: '',
-      lastMessageDateTime: DateTime.now(),
       lastMessageSender: '',
       userId: friendId,
       userName: '',
@@ -54,23 +89,19 @@ class LastMessageModel extends UserModel implements JsonModel{
       isOnline: false,
       lastSeen: DateTime.now(),
       unreadMessagesCount: 0,
+      lastMessageDateTime: DateTime.now(),
     );
   }
 
   @override
-  Map<String, dynamic> toJson(){
+  Map<String, dynamic> toJson() {
     return {
       'docId': docId,
-      'participants': participants,
       'lastMessage': lastMessage,
-      'lastMessageDateTime': lastMessageDateTime,
+      'participants': participants,
       'lastMessageSender': lastMessageSender,
+      'lastMessageDateTime': lastMessageDateTime,
       'unreadMessagesCount': unreadMessagesCount
     };
   }
-}
-String formatTime(DateTime timestamp) {
-  final period = timestamp.hour < 12 ? 'AM' : 'PM';
-  final hour = timestamp.hour > 12 ? timestamp.hour - 12 : timestamp.hour;
-  return '${hour.bitLength}:${timestamp.minute.toString().padLeft(2, '0')} $period';
 }

@@ -1,3 +1,4 @@
+import '../../../../core/data/data_sources/remote/firebase_auth_service.dart';
 import '../../domain/repositories/auth_repository.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 

@@ -1,11 +1,8 @@
 import 'dart:async';
-import '../../../../audio_recorder/presentation/screens/audio_screen.dart';
-import '../../../audio_recorder/audio_screen.dart';
-import '../../../../models/conversation_model.dart';
+import '../../../data/services/audio_recorder.dart';
+import '../../../data/models/conversation_model.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_sound/public/flutter_sound_player.dart';
-
-import '../../../data/models/conversation_model.dart';
 
 
 class ConversationAudioManager {
@@ -18,6 +15,8 @@ class ConversationAudioManager {
   bool _isRecording = false;
   String? _audioPath;
   Duration _recordingDuration = Duration.zero;
+
+  static const _timeDuration = Duration(milliseconds: 100);
 
   Future<void> initialize() async {
     await _audioRecorder.init();
@@ -32,7 +31,7 @@ class ConversationAudioManager {
     await _audioPlayer.closePlayer();
   }
 
-  Future<void> toggleRecording({.
+  Future<void> toggleRecording({
     required Function(String?, Duration) onRecordingStopped,
     required Function(bool, bool, Duration) onRecordingStateChanged,
   }) async {
@@ -55,8 +54,8 @@ class ConversationAudioManager {
       }
       await _audioRecorder.startRecording();
 
-      _recordingTimer = Timer.periodic(const Duration(milliseconds: 100), (timer) {
-        _recordingDuration += const Duration(milliseconds: 100);
+      _recordingTimer = Timer.periodic(_timeDuration, (timer) {
+        _recordingDuration += _timeDuration;
         onRecordingStateChanged(true, true, _recordingDuration);
       });
 
@@ -124,7 +123,7 @@ class ConversationAudioManager {
     message.positionNotifier.value = position.inMilliseconds.toDouble();
   }
 
-  String formatDuration(Duration duration) {.
+  String formatDuration(Duration duration) {
     String twoDigits(int n) => n.toString().padLeft(2, '0');
     final minutes = twoDigits(duration.inMinutes.remainder(60));
     final seconds = twoDigits(duration.inSeconds.remainder(60));

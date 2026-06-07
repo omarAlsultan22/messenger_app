@@ -1,28 +1,18 @@
-import 'main_app_sub_state.dart';
 import 'main_loaded_state.dart';
-import '../../../errors/exceptions/app_exception.dart';
+import 'main_app_sub_state.dart';
+import '../../../errors/exceptions/base/app_exception.dart';
 
 
-abstract class MainAppSupState<T, U> extends LoadedState<T, U>{
-  final bool isConnected;
+abstract class MainAppSupState{
   final MainAppSubState? subState;
 
   MainAppSupState({
     this.subState,
-    super.firstModel,
-    super.secondModel,
-    this.isConnected = true
   });
 
-  MainAppSupState updateState({
-    T? firstModel,
-    U? secondModel,
-    bool? isConnected,
-    MainAppSubState? subState
-  });
+  LoadedState get dataModels;
 
   R when<R>({
-    R Function()? onConnection,
     required R Function() onInitial,
     required R Function() onLoading,
     required R Function(LoadedState) onLoaded,

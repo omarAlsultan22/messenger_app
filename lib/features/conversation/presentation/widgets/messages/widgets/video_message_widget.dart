@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
-import '../../../../../models/conversation_model.dart';
+import 'package:test_app/core/constants/app_spaces.dart';
+import '../../../../data/models/conversation_model.dart';
+import 'package:test_app/core/constants/app_colors.dart';
+import 'package:test_app/core/constants/app_borders.dart';
+import 'package:test_app/features/conversation/utils/format_time.dart';
+import 'package:test_app/features/conversation/constants/conversation_spaces.dart';
+import 'package:test_app/features/conversation/constants/conversation_borders.dart';
 
 
 class VideoMessageWidget extends StatelessWidget {
@@ -22,7 +28,7 @@ class VideoMessageWidget extends StatelessWidget {
       return Container(
         width: double.infinity,
         height: 200,
-        color: Colors.grey.shade200,
+        color: AppColors.grey_200,
         child: const Center(child: CircularProgressIndicator()),
       );
     }
@@ -34,11 +40,11 @@ class VideoMessageWidget extends StatelessWidget {
         children: [
           Container(
             decoration: BoxDecoration(
-              color: isMe ? Colors.blue.shade700 : Colors.grey.shade300,
-              borderRadius: BorderRadius.circular(12),
+              color: isMe ? AppColors.blue700 : AppColors.grey_300,
+              borderRadius: AppBorders.borderRadius_12,
             ),
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: ConversationBorders.borderRadius_8,
               child: AspectRatio(
                 aspectRatio: message.videoController!.value.aspectRatio,
                 child: VideoPlayer(message.videoController!),
@@ -55,27 +61,27 @@ class VideoMessageWidget extends StatelessWidget {
               child: const Icon(
                 Icons.play_arrow,
                 size: 50,
-                color: Colors.white,
+                color: AppColors.white,
               ),
             ),
 
           Positioned(
-            bottom: 8,
-            right: 8,
+            bottom: AppSpaces.xs,
+            right: AppSpaces.xs,
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
               decoration: BoxDecoration(
                 color: Colors.black.withOpacity(0.6),
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: ConversationBorders.borderRadius_8,
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    _formatTime(message.dateTime ?? DateTime.now()),
+                    FormatTime.getTime(message.dateTime ?? DateTime.now()),
                     style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 10,
+                      color: AppColors.white,
+                      fontSize: ConversationSpaces.fontSize_10,
                     ),
                   ),
                   if (isMe) ...[
@@ -90,18 +96,18 @@ class VideoMessageWidget extends StatelessWidget {
           if (message.text!.isNotEmpty)
             Positioned(
               bottom: 40,
-              left: 8,
-              right: 8,
+              left: AppSpaces.xs,
+              right: AppSpaces.xs,
               child: Text(
                 message.text!,
                 style: const TextStyle(
-                  color: Colors.white,
+                  color: AppColors.white,
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
                   shadows: [
                     Shadow(
                       blurRadius: 4,
-                      color: Colors.black,
+                      color: AppColors.black,
                     ),
                   ],
                 ),
@@ -112,9 +118,5 @@ class VideoMessageWidget extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  String _formatTime(DateTime dateTime) {
-    return '${dateTime.hour}:${dateTime.minute.toString().padLeft(2, '0')}';
   }
 }

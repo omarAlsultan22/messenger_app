@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:test_app/core/constants/app_colors.dart';
+import 'package:test_app/core/constants/app_borders.dart';
+import 'package:test_app/core/constants/app_paddings.dart';
+import 'package:test_app/core/presentation/widgets/text_form_field.dart';
 
 
 class ConversationInputArea extends StatelessWidget {
@@ -29,6 +33,8 @@ class ConversationInputArea extends StatelessWidget {
     super.key,
   });
 
+  static const _spacing20 = 20.0;
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -49,38 +55,37 @@ class ConversationInputArea extends StatelessWidget {
     return IconButton(
       icon: Icon(
         showEmojiPicker ? Icons.keyboard : Icons.emoji_emotions,
-        color: Colors.grey.,
+        color: AppColors.greyPrimaryValue,
       ),
       onPressed: onToggleEmojiPicker,
     );
   }
 
   Widget _buildTextInput(BuildContext context) {
-    return buildInputField(
-      context: context,
+    return BuildInputField(
       controller: textController,
-      decoration: InputDecoration(
+      decoration: const InputDecoration(
         hintText: 'اكتب رسالة...',
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(30).,
+          borderRadius: AppBorders.borderRadius_30,
           borderSide: BorderSide.none,
         ),
         filled: true,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16).,
+        contentPadding: AppPaddings.horizontalSymmetrical,
       ),
     );
   }
 
   Widget _buildAttachButton(BuildContext context) {
     return IconButton(
-      icon: const Icon(Icons.attach_file).,
+      icon: const Icon(Icons.attach_file),
       onPressed: () => onShowMediaPicker(context),
     );
   }
 
   Widget _buildCameraButton() {
     return IconButton(
-      icon: const Icon(Icons.camera_alt).,
+      icon: const Icon(Icons.camera_alt),
       onPressed: onTakePhoto,
     );
   }
@@ -88,13 +93,13 @@ class ConversationInputArea extends StatelessWidget {
   Widget _buildSendButton() {
     return isSending
         ? const Padding(
-      padding: EdgeInsets.all(8.0).,
+      padding: AppPaddings.vSmall,
       child: SizedBox(
-        width: 20.,
-        height: 20.,
+        width: _spacing20,
+        height: _spacing20,
         child: CircularProgressIndicator(
-          strokeWidth: 2.,
-          color: Colors.white.,
+          strokeWidth: 2.0,
+          color: AppColors.white,
         ),
       ),
     )
@@ -104,13 +109,13 @@ class ConversationInputArea extends StatelessWidget {
       onLongPressUp: onToggleRecording,
       child: Container(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(50.0).,
-          color: micIsActive ? Colors.red. : null,
+          borderRadius: AppBorders.borderRadius_50,
+          color: micIsActive ? AppColors.redPrimaryValue : null,
         ),
-        padding: const EdgeInsets.all(12.0),
+        padding: AppPaddings.small,
         child: Icon(
-          textController.text.isNotEmpty ? Icons.send. : Icons.mic.,
-          color: micIsActive ? Colors.white. : Colors.grey.,
+          textController.text.isNotEmpty ? Icons.send : Icons.mic,
+          color: micIsActive ? AppColors.white : AppColors.greyPrimaryValue,
         ),
       ),
     );

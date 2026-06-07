@@ -1,7 +1,6 @@
-class ConversationTexts {
-  static const zero = '0';
-  static const empty = '';
-  static const clear = 'clear';
-  static const bgColor = 'bg_color_';
-  static const bgImage = 'bg_image_';
+mixin class ConversationTexts {
+  static const String empty = '';
+  static const String clear = 'clear';
+  static const String bgColor = 'bg_color_';
+  static const String bgImage = 'bg_image_';
 }

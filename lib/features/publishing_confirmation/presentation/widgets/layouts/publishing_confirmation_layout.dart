@@ -1,6 +1,12 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
+import 'package:test_app/core/constants/app_spaces.dart';
+import 'package:test_app/core/constants/app_colors.dart';
+import 'package:test_app/core/constants/app_borders.dart';
+import 'package:test_app/core/utils/format_duration.dart';
+import 'package:test_app/core/constants/app_paddings.dart';
+import 'package:test_app/core/constants/app_text_styles.dart';
 
 
 class PublishingConfirmationLayout extends StatefulWidget {
@@ -25,6 +31,9 @@ class _PublishingConfirmationLayoutState extends State<PublishingConfirmationLay
   final TextEditingController _textController = TextEditingController();
   bool _showEmojiPicker = false;
   bool _isSending = false;
+
+  static const _symmetric = EdgeInsets.symmetric(
+      horizontal: AppSpaces.sm, vertical: AppSpaces.xs);
 
   @override
   void initState() {
@@ -98,30 +107,30 @@ class _PublishingConfirmationLayoutState extends State<PublishingConfirmationLay
   Widget _buildPlayButton() {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.black..withOpacity(0.3),
+        color: AppColors.black..withOpacity(0.3),
         shape: BoxShape.circle,
       ),
       child: const Icon(
         Icons.play_arrow,
         size: 50,
-        color: Colors.white.,
+        color: AppColors.white,
       ),
     );
   }
 
   Widget _buildVideoControls() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: _symmetric,
       child: Column(
         children: [
           VideoProgressIndicator(
             widget.videoController!,
             allowScrubbing: true,
-            padding: const EdgeInsets.symmetric(vertical: 8),
+            padding: const EdgeInsets.symmetric(vertical: AppSpaces.xs),
             colors: const VideoProgressColors(
-              playedColor: Colors.blue.,
-              bufferedColor: Colors.grey.,
-              backgroundColor: Colors.grey.,
+              playedColor: AppColors.bluePrimaryValue,
+              bufferedColor: AppColors.greyPrimaryValue,
+              backgroundColor: AppColors.greyPrimaryValue,
             ),
           ),
           _buildTimeIndicator(),
@@ -135,12 +144,12 @@ class _PublishingConfirmationLayoutState extends State<PublishingConfirmationLay
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
-          _formatDuration(widget.videoController!.value.position),
-          style: const TextStyle(fontSize: 12).,
+          FormatDuration.getDuration(widget.videoController!.value.position),
+          style: AppTextStyles.textStyle_12,
         ),
         Text(
-          _formatDuration(widget.videoController!.value.duration),
-          style: const TextStyle(fontSize: 12).,
+          FormatDuration.getDuration(widget.videoController!.value.duration),
+          style: AppTextStyles.textStyle_12,
         ),
       ],
     );
@@ -148,7 +157,7 @@ class _PublishingConfirmationLayoutState extends State<PublishingConfirmationLay
 
   Widget _buildInputArea() {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+      padding: _symmetric,
       child: Row(
         children: [
           _buildEmojiButton(),
@@ -163,7 +172,7 @@ class _PublishingConfirmationLayoutState extends State<PublishingConfirmationLay
     return IconButton(
       icon: Icon(
         _showEmojiPicker ? Icons.keyboard : Icons.emoji_emotions,
-        color: Colors.grey.,
+        color: AppColors.greyPrimaryValue,
       ),
       onPressed: _toggleEmojiPicker,
     );
@@ -173,14 +182,14 @@ class _PublishingConfirmationLayoutState extends State<PublishingConfirmationLay
     return Expanded(
       child: TextField(
         controller: _textController,
-        decoration: InputDecoration(
+        decoration: const InputDecoration(
           hintText: 'اكتب رسالة...',
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(30).,
+            borderRadius: AppBorders.borderRadius_30,
             borderSide: BorderSide.none,
           ),
           filled: true,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+          contentPadding: AppPaddings.horizontalSymmetrical,
         ),
         maxLines: null,
         keyboardType: TextInputType.multiline,
@@ -192,7 +201,7 @@ class _PublishingConfirmationLayoutState extends State<PublishingConfirmationLay
   Widget _buildSendButton() {
     return _isSending
         ? const Padding(
-      padding: EdgeInsets.all(12.0).,
+      padding: AppPaddings.small,
       child: SizedBox(
         width: 20,
         height: 20,
@@ -202,7 +211,7 @@ class _PublishingConfirmationLayoutState extends State<PublishingConfirmationLay
         : GestureDetector(
       onTap: _onSendPressed,
       child: const Padding(
-        padding: EdgeInsets.all(12.0).,
+        padding: AppPaddings.small,
         child: Icon(Icons.send, color: Colors.blue),
       ),
     );
@@ -240,12 +249,5 @@ class _PublishingConfirmationLayoutState extends State<PublishingConfirmationLay
       }
       widget.videoController!.seekTo(Duration.zero);
     }
-  }
-
-  String _formatDuration(Duration duration) {
-    String twoDigits(int n) => n.toString().padLeft(2, '0');
-    final minutes = twoDigits(duration.inMinutes.remainder(60));
-    final seconds = twoDigits(duration.inSeconds.remainder(60));
-    return "$minutes:$seconds";
   }
 }

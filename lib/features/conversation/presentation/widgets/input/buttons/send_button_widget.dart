@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:test_app/core/constants/app_colors.dart';
+import '../../../../../../core/constants/app_spaces.dart';
 
 
 class SendButtonWidget extends StatelessWidget {
@@ -17,8 +19,6 @@ class SendButtonWidget extends StatelessWidget {
     super.key,
   });
 
-  static const _spacing = 40.0;
-
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -26,19 +26,19 @@ class SendButtonWidget extends StatelessWidget {
       onLongPressStart: (_) => onRecordingStart(),
       onLongPressEnd: (_) => onRecordingStop(),
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200.),
-        width: _spacing,
-        height: _spacing,
+        duration: const Duration(milliseconds: 200),
+        width: AppSpaces.xxl,
+        height: AppSpaces.xxl,
         decoration: BoxDecoration(
           color: isRecording
-              ? Colors.red.
-              : (isEnabled ? Colors.blue. : Colors.grey.shade300.),
+              ? AppColors.redPrimaryValue
+              : (isEnabled ? AppColors.bluePrimaryValue : AppColors.grey_300),
           shape: BoxShape.circle,
         ),
         child: Icon(
-          isRecording ? Icons.mic. : Icons.send.,
-          color: Colors.white.,
-          size: 20.,
+          isRecording ? Icons.mic : Icons.send,
+          color: AppColors.white,
+          size: 20,
         ),
       ),
     );

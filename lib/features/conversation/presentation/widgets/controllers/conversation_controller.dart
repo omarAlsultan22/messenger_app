@@ -1,28 +1,36 @@
-import '../../../../models/conversation_model.dart';
+import 'package:test_app/features/conversation/constants/conversation_texts.dart';
+import '../../../data/models/conversation_model.dart';
+import '../../../data/models/message_group.dart';
 import 'package:flutter/material.dart';
-import '../../presentation/cubits/cubit.dart';
 
 
 class ConversationController {
-  final TextEditingController textController = TextEditingController();
-  final ScrollController scrollController = ScrollController();
 
-  List<String> selectedMessageIds = [];
-  int _selectedItems = 0;
+  int selectedItems = 0;
   bool isSending = false;
   bool isRecording = false;
   bool micIsActive = false;
   bool beginFromEnd = true;
-  bool _showEmojiPicker = false;
+  bool showEmojiPicker = false;
   bool isLoadingOldMessages = true;
+  List<String> selectedMessageIds = [];
   Duration recordingDuration = Duration.zero;
 
-  late ConversationsCubit _cubit;
   late VoidCallback _handleScrollCallback;
   late VoidCallback _updateTypingCallback;
 
-  void initialize(ConversationsCubit cubit, VoidCallback handleScroll, VoidCallback updateTyping) {
-    _cubit = cubit;
+  static const _empty = ConversationTexts.empty;
+
+  late List<MessageGroup> _conversationList;
+  final ScrollController scrollController = ScrollController();
+  final TextEditingController textController = TextEditingController();
+
+  void initialize({
+    required VoidCallback handleScroll,
+    required VoidCallback updateTyping,
+    required List<MessageGroup> conversationList
+  }) {
+    _conversationList = conversationList;
     _handleScrollCallback = handleScroll;
     _updateTypingCallback = updateTyping;
 
@@ -39,24 +47,24 @@ class ConversationController {
 
 
   void toggleEmojiPicker() {
-    _showEmojiPicker = !_showEmojiPicker;
+    showEmojiPicker = !showEmojiPicker;
   }
 
   void toggleMessageSelection(ConversationModel message, bool isLongPress) {
     if (isLongPress) {
       clearSelection();
       message.isActive = true;
-      selectedMessageIds.add(message.messageId ?? ''.);
-      _selectedItems = 1.;
+      selectedMessageIds.add(message.messageId ?? _empty);
+      selectedItems = 1;
     } else {
-      if (_selectedItems > 0.) {
+      if (selectedItems > 0) {
         message.isActive = !message.isActive;
         if (message.isActive) {
-          selectedMessageIds.add(message.messageId ?? ''.);
-          _selectedItems += 1;
+          selectedMessageIds.add(message.messageId ?? _empty);
+          selectedItems += 1;
         } else {
-          selectedMessageIds.remove(message.messageId ?? ''.);
-          _selectedItems -= 1.;
+          selectedMessageIds.remove(message.messageId ?? _empty);
+          selectedItems -= 1;
         }
       }
     }
@@ -64,9 +72,9 @@ class ConversationController {
 
   void clearSelection() {
     selectedMessageIds.clear();
-    _selectedItems = 0.;
+    selectedItems = 0;
     // Reset all message selection states
-    for (final group in _cubit.conversationsList) {
+    for (final group in _conversationList) {
       for (final message in group.messages) {
         message.isActive = false;
       }

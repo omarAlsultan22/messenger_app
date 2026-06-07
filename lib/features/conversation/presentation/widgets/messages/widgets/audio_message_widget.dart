@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
-import '../../../../../models/conversation_model.dart';
+import '../../../../data/models/conversation_model.dart';
+import 'package:test_app/core/utils/format_duration.dart';
+import 'package:test_app/core/constants/app_borders.dart';
+import 'package:test_app/core/constants/app_paddings.dart';
+import 'package:test_app/features/conversation/utils/format_time.dart';
+import 'package:test_app/features/conversation/constants/conversation_colors.dart';
+import 'package:test_app/features/conversation/constants/conversation_spaces.dart';
 
 
 class AudioMessageWidget extends StatelessWidget {
@@ -18,14 +24,18 @@ class AudioMessageWidget extends StatelessWidget {
     super.key,
   });
 
+  static const _white70 = ConversationColors.white70;
+  static const _black54 = ConversationColors.black54;
+  static const _fontSize = ConversationSpaces.fontSize_10;
+
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
         color: isMe ? Colors.blue.shade700 : Colors.grey.shade300,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: AppBorders.borderRadius_12,
       ),
-      padding: const EdgeInsets.all(12),
+      padding: AppPaddings.small,
       child: Column(
         children: [
           Row(
@@ -45,7 +55,7 @@ class AudioMessageWidget extends StatelessWidget {
                   }
                 },
               ),
-              const SizedBox(width: 8),
+               const SizedBox(width: ConversationSpaces.small),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -53,8 +63,10 @@ class AudioMessageWidget extends StatelessWidget {
                     ValueListenableBuilder<double>(
                       valueListenable: message.positionNotifier,
                       builder: (context, position, child) {
-                        final maxDuration = (message.playbackDuration?.inMilliseconds ?? 0).toDouble();
-                        final currentPosition = position.toDouble().clamp(0.0, maxDuration);
+                        final maxDuration = (message.playbackDuration
+                            ?.inMilliseconds ?? 0).toDouble();
+                        final currentPosition = position.toDouble().clamp(
+                            0.0, maxDuration);
 
                         return Column(
                           children: [
@@ -66,30 +78,36 @@ class AudioMessageWidget extends StatelessWidget {
                                 message.positionNotifier.value = value;
                               },
                               onChangeEnd: (value) async {
-                                await onSeekAudio(message, Duration(milliseconds: value.toInt()));
+                                await onSeekAudio(message,
+                                    Duration(milliseconds: value.toInt()));
                               },
                               activeColor: isMe ? Colors.white : Colors.blue,
                               inactiveColor: Colors.grey[300],
                             ),
                             Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 4),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 4),
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment: MainAxisAlignment
+                                    .spaceBetween,
                                 children: [
                                   Text(
-                                    _formatDuration(Duration(
-                                        milliseconds: message.positionNotifier.value.toInt()
+                                    FormatDuration.getDuration(Duration(
+                                        milliseconds: message.positionNotifier
+                                            .value.toInt()
                                     )),
                                     style: TextStyle(
-                                      color: isMe ? Colors.white70 : Colors.black54,
-                                      fontSize: 10,
+                                      color: isMe ? _white70 : _black54,
+                                      fontSize: _fontSize,
                                     ),
                                   ),
                                   Text(
-                                    _formatDuration(message.playbackDuration ?? Duration.zero),
+                                    FormatDuration.getDuration(
+                                        message.playbackDuration ??
+                                            Duration.zero),
                                     style: TextStyle(
-                                      color: isMe ? Colors.white70 : Colors.black54,
-                                      fontSize: 10,
+                                      color: isMe ? _white70 : _black54,
+                                      fontSize: _fontSize,
                                     ),
                                   ),
                                 ],
@@ -109,31 +127,20 @@ class AudioMessageWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               Text(
-                _formatTime(message.dateTime ?? DateTime.now()),
+                FormatTime.getTime(message.dateTime ?? DateTime.now()),
                 style: TextStyle(
-                  color: isMe ? Colors.white70 : Colors.black54,
-                  fontSize: 10,
+                  color: isMe ? _white70 : _black54,
+                  fontSize: _fontSize,
                 ),
               ),
               if (isMe) ...[
                 const SizedBox(width: 4),
-                const Icon(Icons.done_all, size: 12, color: Colors.white70),
+                const Icon(Icons.done_all, size: 12, color: _white70),
               ],
             ],
           ),
         ],
       ),
     );
-  }
-
-  String _formatDuration(Duration duration) {
-    String twoDigits(int n) => n.toString().padLeft(2, '0');
-    final minutes = twoDigits(duration.inMinutes.remainder(60));
-    final seconds = twoDigits(duration.inSeconds.remainder(60));
-    return "$minutes:$seconds";
-  }
-
-  String _formatTime(DateTime dateTime) {
-    return '${dateTime.hour}:${dateTime.minute.toString().padLeft(2, '0')}';
   }
 }

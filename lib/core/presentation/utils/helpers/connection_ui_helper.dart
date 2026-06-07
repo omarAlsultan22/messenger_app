@@ -7,7 +7,7 @@ class ConnectionUIHelper {
   const ConnectionUIHelper._();
 
   static Color getStatusColor(bool isConnected) {
-    return isConnected ? AppColors.green_800 : AppColors.red_800;
+    return isConnected ? AppColors.successGreen : AppColors.errorRed;
   }
 
   static String getStatusMessage(bool isConnected) {

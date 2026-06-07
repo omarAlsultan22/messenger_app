@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
-import '../../../../../models/conversation_model.dart';
+import 'package:test_app/core/constants/app_sizes.dart';
+import '../../../../data/models/conversation_model.dart';
+import '../../../../../../core/constants/app_colors.dart';
+import 'package:test_app/core/constants/app_paddings.dart';
+import 'package:test_app/features/conversation/utils/format_time.dart';
+import 'package:test_app/features/conversation/constants/conversation_colors.dart';
 
 
 class TextMessageWidget extends StatelessWidget {
@@ -17,7 +22,7 @@ class TextMessageWidget extends StatelessWidget {
     return IntrinsicWidth(
       child: Container(
         decoration: BoxDecoration(
-          color: isMe ? Colors.blue.shade700 : Colors.grey.shade300,
+          color: isMe ? AppColors.blue700 : AppColors.grey_300,
           borderRadius: BorderRadius.only(
             topLeft: const Radius.circular(12),
             topRight: const Radius.circular(12),
@@ -25,7 +30,7 @@ class TextMessageWidget extends StatelessWidget {
             bottomRight: isMe ? Radius.zero : const Radius.circular(12),
           ),
         ),
-        padding: const EdgeInsets.all(12.0),
+        padding: AppPaddings.small,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           mainAxisSize: MainAxisSize.min,
@@ -33,24 +38,27 @@ class TextMessageWidget extends StatelessWidget {
             Text(
               message.text!,
               style: TextStyle(
-                color: isMe ? Colors.white : Colors.black,
-                fontSize: 16,
+                color: isMe ? AppColors.white : AppColors.black,
+                fontSize: AppSizes.sm,
               ),
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: 4.0),
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  _formatTime(message.dateTime ?? DateTime.now()),
+                  FormatTime.getTime(message.dateTime ?? DateTime.now()),
                   style: TextStyle(
-                    color: isMe ? Colors.white70 : Colors.black54,
-                    fontSize: 12,
+                    color: isMe
+                        ? ConversationColors.white70
+                        : ConversationColors.black54,
+                    fontSize: AppSizes.xs,
                   ),
                 ),
                 if (isMe) ...[
-                  const SizedBox(width: 4),
-                  const Icon(Icons.done_all, size: 14, color: Colors.white70),
+                  const SizedBox(width: 4.0),
+                  const Icon(Icons.done_all, size: 14,
+                      color: ConversationColors.white70),
                 ],
               ],
             ),
@@ -58,9 +66,5 @@ class TextMessageWidget extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  String _formatTime(DateTime dateTime) {
-    return '${dateTime.hour}:${dateTime.minute.toString().padLeft(2, '0')}';
   }
 }

@@ -1,17 +1,17 @@
-import '../../../../core/domain/services/connectivity_service/connectivity_service.dart';
-import 'package:cash_money/core/data/data_sources/local/shared_preferences.dart';
-import 'package:cash_money/features/auth/presentation/cubits/sign_in_cubit.dart';
-import 'package:cash_money/features/auth/domain/useCases/sign_in_useCase.dart';
-import '../../../../core/data/data_sources/remote/firebase_auth.dart';
+import '../../../../core/data/data_sources/remote/firebase_auth_service.dart';
+import '../../../../core/data/data_sources/local/shared_preferences.dart';
 import '../../data/repositories_impl/firebase_auth_repository.dart';
+import '../../../../core/data/network/connectivity_service.dart';
+import '../../domain/useCases/sign_in_useCase.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../widgets/layouts/sign_in_layout.dart';
 import 'package:flutter/material.dart';
+import '../cubits/sign_in_cubit.dart';
 import '../states/auth_states.dart';
 
 
 class SignInScreen extends StatelessWidget {
-  const SignInScreen({Key? key}) : super(key: key);
+  const SignInScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +23,7 @@ class SignInScreen extends StatelessWidget {
         authRepository: authRepository);
     final connectivityService = ConnectivityService();
     final cubit = SignInCubit(
-        useCase: useCase, _connectivityService: connectivityService);
+        useCase: useCase, connectivityService: connectivityService);
     return BlocBuilder<SignInCubit, AuthState>(
         builder: (context, state) {
           return SignInLayout(

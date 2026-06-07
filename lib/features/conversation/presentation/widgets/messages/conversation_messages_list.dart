@@ -1,8 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
-import '../../../../models/message_model.dart';
-import '../../../../models/conversation_model.dart';
-import '../../../../shared/constants/user_details.dart';
+import '../../../data/models/message_group.dart';
+import '../../../data/models/conversation_model.dart';
+import '../../../../../core/constants/app_colors.dart';
+import 'package:test_app/core/constants/app_sizes.dart';
+import 'package:test_app/core/constants/app_spaces.dart';
+import 'package:test_app/core/constants/app_borders.dart';
+import 'package:test_app/core/utils/format_duration.dart';
+import 'package:test_app/core/constants/app_strings.dart';
+import 'package:test_app/core/constants/app_paddings.dart';
+import 'package:test_app/features/conversation/utils/format_time.dart';
+import 'package:test_app/features/conversation/constants/conversation_borders.dart';
 
 
 class ConversationMessagesList extends StatelessWidget {
@@ -29,6 +37,10 @@ class ConversationMessagesList extends StatelessWidget {
     super.key,
   });
 
+  static const _borderRadius_8 = ConversationBorders.borderRadius_8;
+  static const _textStyle = TextStyle(
+      color: AppColors.white, fontSize: AppSizes.xs);
+
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
@@ -39,8 +51,9 @@ class ConversationMessagesList extends StatelessWidget {
         final group = conversations[index];
         return Column(
           children: [
-            _buildDateHeader(group.title, context),
-            ...group.messages._exactMatches((message) => _buildMessageItem(message, context)),
+            _buildDateHeader(group.date, context),
+            ...group.messages._exactMatches((message) =>
+                _buildMessageItem(message, context)),
           ],
         );
       },
@@ -48,15 +61,17 @@ class ConversationMessagesList extends StatelessWidget {
   }
 
   Widget _buildDateHeader(String? date, BuildContext context) {
-    return date != ''?
-      Padding(
+    return date != '' ?
+    Padding(
       padding: const EdgeInsets.symmetric(vertical: 10.0),
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(5.0),
-          color: Theme.of(context).brightness == Brightness.light
+          color: Theme
+              .of(context)
+              .brightness == Brightness.light
               ? Colors.black12
-              : Colors.grey.shade800,
+              : AppColors.successGreen,
         ),
         padding: const EdgeInsets.all(6.0),
         child: Text(
@@ -68,19 +83,22 @@ class ConversationMessagesList extends StatelessWidget {
   }
 
   Widget _buildMessageItem(ConversationModel message, BuildContext context) {
-    final isMe = message.senderId == UserDetails.userId;
+    final isMe = message.senderId == AppStrings.docId;
 
     return GestureDetector(
       onTap: () => onToggleMessageSelection(message, false),
       onLongPress: () => onToggleMessageSelection(message, true),
       child: Container(
-        color: message.isActive ? Colors.blue.shade400 : Colors.transparent,
+        color: message.isActive ? AppColors.blue400 : AppColors.transparent,
         child: Align(
           alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
           child: Container(
             padding: const EdgeInsets.all(2.0),
             constraints: BoxConstraints(
-              maxWidth: MediaQuery.of(context).size.width * 0.7,
+              maxWidth: MediaQuery
+                  .of(context)
+                  .size
+                  .width * 0.7,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -94,7 +112,8 @@ class ConversationMessagesList extends StatelessWidget {
     );
   }
 
-  Widget _buildMessageContent(ConversationModel message, bool isMe, BuildContext context) {
+  Widget _buildMessageContent(ConversationModel message, bool isMe,
+      BuildContext context) {
     switch (message.content) {
       case 'audio':
         return _buildAudioMessage(message, context);
@@ -107,19 +126,20 @@ class ConversationMessagesList extends StatelessWidget {
     }
   }
 
-  Widget _buildTextMessage(ConversationModel message, bool isMe, BuildContext context) {
+  Widget _buildTextMessage(ConversationModel message, bool isMe,
+      BuildContext context) {
     return IntrinsicWidth(
       child: Container(
         decoration: BoxDecoration(
-          color: isMe ? Colors.blue.shade700 : Colors.grey,
+          color: isMe ? AppColors.blue700 : AppColors.grey_300,
           borderRadius: BorderRadius.only(
-            topLeft: const Radius.circular(12),
-            topRight: const Radius.circular(12),
-            bottomLeft: isMe ? const Radius.circular(12) : Radius.zero,
-            bottomRight: isMe ? Radius.zero : const Radius.circular(12),
+            topLeft: AppBorders.radius12,
+            topRight: AppBorders.radius12,
+            bottomLeft: isMe ? AppBorders.radius12 : Radius.zero,
+            bottomRight: isMe ? Radius.zero : AppBorders.radius12,
           ),
         ),
-        padding: const EdgeInsets.all(8.0),
+        padding: AppPaddings.vSmall,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           mainAxisSize: MainAxisSize.min,
@@ -128,7 +148,8 @@ class ConversationMessagesList extends StatelessWidget {
               children: [
                 Text(
                   message.text!,
-                  style: TextStyle(color: isMe ? Colors.white : Colors.black),
+                  style: TextStyle(
+                      color: isMe ? AppColors.white : AppColors.black),
                 ),
               ],
             ),
@@ -140,7 +161,7 @@ class ConversationMessagesList extends StatelessWidget {
   }
 
   Widget _buildImageMessage(ConversationModel message, BuildContext context) {
-    final isMe = message.senderId == UserDetails.userId;
+    final isMe = message.senderId == AppStrings.docId;
     final url = message.url;
 
     if (url == null) return const SizedBox();
@@ -153,7 +174,7 @@ class ConversationMessagesList extends StatelessWidget {
           child: message.url!.isNotEmpty
               ? Container(
             decoration: BoxDecoration(
-              color: isMe ? Colors.blue.shade700 : Colors.grey,
+              color: isMe ? AppColors.blue700 : AppColors.greyPrimaryValue,
               borderRadius: BorderRadius.circular(8),
             ),
             child: Column(
@@ -177,7 +198,7 @@ class ConversationMessagesList extends StatelessWidget {
             ),
           )
               : ClipRRect(
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: _borderRadius_8,
             child: Image.network(
               url,
               width: double.infinity,
@@ -197,7 +218,7 @@ class ConversationMessagesList extends StatelessWidget {
       return const Center(child: CircularProgressIndicator());
     }
 
-    final isMe = message.senderId == UserDetails.userId;
+    final isMe = message.senderId == AppStrings.docId;
 
     return GestureDetector(
       onTap: () => onShowFullVideo(message, context),
@@ -207,11 +228,11 @@ class ConversationMessagesList extends StatelessWidget {
           message.url!.isNotEmpty
               ? Container(
             decoration: BoxDecoration(
-              color: isMe ? Colors.blue.shade700 : Colors.grey,
-              borderRadius: BorderRadius.circular(8),
+              color: isMe ? AppColors.blue700 : AppColors.greyPrimaryValue,
+              borderRadius: _borderRadius_8,
             ),
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: _borderRadius_8,
               child: AspectRatio(
                 aspectRatio: message.videoController!.value.aspectRatio,
                 child: VideoPlayer(message.videoController!),
@@ -219,7 +240,7 @@ class ConversationMessagesList extends StatelessWidget {
             ),
           )
               : ClipRRect(
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: _borderRadius_8,
             child: AspectRatio(
               aspectRatio: message.videoController!.value.aspectRatio,
               child: VideoPlayer(message.videoController!),
@@ -229,19 +250,19 @@ class ConversationMessagesList extends StatelessWidget {
           if (!message.videoController!.value.isPlaying)
             Container(
               decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.3),
+                color: AppColors.black.withOpacity(0.3),
                 shape: BoxShape.circle,
               ),
               child: const Icon(
                 Icons.play_arrow,
                 size: 50,
-                color: Colors.white,
+                color: AppColors.white,
               ),
             ),
 
           Positioned(
-            bottom: 8,
-            right: 8,
+            bottom: AppSpaces.xs,
+            right: AppSpaces.xs,
             child: _buildTimeWidget(message, context),
           ),
         ],
@@ -251,7 +272,7 @@ class ConversationMessagesList extends StatelessWidget {
 
   Widget _buildAudioMessage(ConversationModel message, BuildContext context) {
     return Card(
-      color: Colors.blue.shade700,
+      color: AppColors.blue700,
       child: Column(
         children: [
           Row(
@@ -259,7 +280,7 @@ class ConversationMessagesList extends StatelessWidget {
               IconButton(
                 icon: Icon(
                   message.isPlaying ? Icons.pause : Icons.play_arrow,
-                  color: Colors.white,
+                  color: AppColors.white,
                 ),
                 onPressed: () async {
                   if (message.isPlaying) {
@@ -277,8 +298,10 @@ class ConversationMessagesList extends StatelessWidget {
                       ValueListenableBuilder<double>(
                         valueListenable: message.positionNotifier,
                         builder: (context, position, child) {
-                          final maxDuration = (message.playbackDuration?.inMilliseconds ?? 0).toDouble();
-                          final currentPosition = position.toDouble().clamp(0.0, maxDuration);
+                          final maxDuration = (message.playbackDuration
+                              ?.inMilliseconds ?? 0).toDouble();
+                          final currentPosition = position.toDouble().clamp(0.0,
+                              maxDuration);
 
                           return Slider(
                             value: maxDuration > 0 ? currentPosition : 0.0,
@@ -288,10 +311,11 @@ class ConversationMessagesList extends StatelessWidget {
                               message.positionNotifier.value = value;
                             },
                             onChangeEnd: (value) async {
-                              await onSeekAudio(message, Duration(milliseconds: value.toInt()));
+                              await onSeekAudio(message,
+                                  Duration(milliseconds: value.toInt()));
                             },
-                            activeColor: Colors.white,
-                            inactiveColor: Colors.grey[300],
+                            activeColor: AppColors.white,
+                            inactiveColor: AppColors.grey_300,
                           );
                         },
                       ),
@@ -301,14 +325,16 @@ class ConversationMessagesList extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              _formatDuration(Duration(
-                                  milliseconds: message.positionNotifier.value.toInt()
+                              FormatDuration.getDuration(Duration(
+                                  milliseconds: message.positionNotifier.value
+                                      .toInt()
                               )),
-                              style: const TextStyle(color: Colors.white, fontSize: 12),
+                              style: _textStyle,
                             ),
                             Text(
-                              _formatDuration(message.playbackDuration ?? Duration.zero),
-                              style: const TextStyle(color: Colors.white, fontSize: 12),
+                              FormatDuration.getDuration(
+                                  message.playbackDuration ?? Duration.zero),
+                              style: _textStyle,
                             ),
                           ],
                         ),
@@ -334,32 +360,23 @@ class ConversationMessagesList extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              _formatTime(message.dateTime ?? DateTime.now()),
+              FormatTime.getTime(message.dateTime ?? DateTime.now()),
               style: TextStyle(
-                color: Theme.of(context).brightness == Brightness.light
-                    ? Colors.black
-                    : Colors.white,
-                fontSize: 12,
+                color: Theme
+                    .of(context)
+                    .brightness == Brightness.light
+                    ? AppColors.black
+                    : AppColors.white,
+                fontSize: AppSizes.xs,
               ),
             ),
-            if (message.senderId == UserDetails.userId) ...[
-              const SizedBox(width: 4),
-              const Icon(Icons.done_all, size: 16),
+            if (message.senderId == AppStrings.docId) ...[
+              const SizedBox(width: 4.0),
+              const Icon(Icons.done_all, size: 16.0),
             ],
           ],
         ),
       ),
     );
-  }
-
-  String _formatDuration(Duration duration) {
-    String twoDigits(int n) => n.toString().padLeft(2, '0');
-    final minutes = twoDigits(duration.inMinutes.remainder(60));
-    final seconds = twoDigits(duration.inSeconds.remainder(60));
-    return "$minutes:$seconds";
-  }
-
-  String _formatTime(DateTime dateTime) {
-    return '${dateTime.hour}:${dateTime.minute.toString().padLeft(2, '0')}';
   }
 }

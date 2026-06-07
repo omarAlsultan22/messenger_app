@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:test_app/core/constants/app_sizes.dart';
+import '../../../../../core/constants/app_borders.dart';
+import 'package:test_app/core/constants/app_colors.dart';
+import 'package:test_app/core/constants/app_paddings.dart';
 
 
 class DateHeaderWidget extends StatelessWidget {
@@ -12,40 +16,44 @@ class DateHeaderWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 16.0),
+      padding: AppPaddings.verticalSymmetric,
       child: Row(
         children: [
-          Expanded(
+          const Expanded(
             child: Divider(
-              color: Colors.grey.shade400,
+              color: AppColors.grey_400,
               thickness: 1,
             ),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            padding: AppPaddings.horizontalSymmetrical,
             child: Container(
               decoration: BoxDecoration(
-                color: Theme.of(context).brightness == Brightness.light
-                    ? Colors.grey.shade200
-                    : Colors.grey.shade800,
-                borderRadius: BorderRadius.circular(12),
+                color: Theme
+                    .of(context)
+                    .brightness == Brightness.light
+                    ? AppColors.grey_200
+                    : AppColors.successGreen,
+                borderRadius: AppBorders.borderRadius_12,
               ),
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               child: Text(
                 date,
                 style: TextStyle(
-                  fontSize: 12,
+                  fontSize: AppSizes.xs,
                   fontWeight: FontWeight.bold,
-                  color: Theme.of(context).brightness == Brightness.light
-                      ? Colors.grey.shade700
-                      : Colors.grey.shade300,
+                  color: Theme
+                      .of(context)
+                      .brightness == Brightness.light
+                      ? AppColors.grey_700
+                      : AppColors.grey_300,
                 ),
               ),
             ),
           ),
-          Expanded(
+          const Expanded(
             child: Divider(
-              color: Colors.grey.shade400,
+              color: AppColors.grey_400,
               thickness: 1,
             ),
           ),

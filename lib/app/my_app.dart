@@ -1,12 +1,9 @@
-import 'package:test_app/core/constants/app_colors.dart';
-import '../features/messenger_screen/presentation/cubits/cubit.dart';
-import '../features/sign_in/presentation/screens/sign_in_screen.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import '../core/services/theme_notifier.dart';
-import '../core/constants/user_details.dart';
-import 'package:provider/provider.dart';
-import 'package:flutter/material.dart'; 
 import '../main.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../core/theme/theme_notifier.dart';
+import 'package:test_app/core/constants/app_colors.dart';
+import '../features/auth/presentation/screens/sign_in_screen.dart';
 
 
 class MyApp extends StatelessWidget {
@@ -60,7 +57,7 @@ class MyApp extends StatelessWidget {
         // لون العناصر الرئيسية
         onPrimary: _white,
         // لون النص على العناصر الرئيسية
-        secondary: AppColors.blue,
+        secondary: AppColors.bluePrimaryValue,
         // لون العناصر الثانوية
         onSecondary: _white,
         // لون النص على العناصر الثانوية
@@ -89,29 +86,19 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-        providers: [
-          BlocProvider<MainScreenCubit>(
-            create: (context) =>
-            MainScreenCubit()
-              ..getProfileImage(userId: UserDetails.userId)
-              ..getFriends(userId: UserDetails.userId),
-          ),
-        ],
-        child: ChangeNotifierProvider(
-            create: (_) => ThemeNotifier(),
-            child: Consumer<ThemeNotifier>(
-                builder: (context, themeNotifier, child) {
-                  return MaterialApp(
-                    navigatorKey: navigatorKey,
-                    theme: _getLightTheme(),
-                    darkTheme: _getDarkTheme(),
-                    themeMode: themeNotifier.themeMode,
-                    debugShowCheckedModeBanner: false,
-                    home: const SignInScreen(),
-                  );
-                }
-            )
+    return ChangeNotifierProvider(
+        create: (_) => ThemeNotifier(),
+        child: Consumer<ThemeNotifier>(
+            builder: (context, themeNotifier, child) {
+              return MaterialApp(
+                navigatorKey: navigatorKey,
+                theme: _getLightTheme(),
+                darkTheme: _getDarkTheme(),
+                themeMode: themeNotifier.themeMode,
+                debugShowCheckedModeBanner: false,
+                home: const SignInScreen(),
+              );
+            }
         )
     );
   }

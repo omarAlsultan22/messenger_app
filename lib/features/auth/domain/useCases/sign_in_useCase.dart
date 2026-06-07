@@ -1,36 +1,29 @@
-import '../../../../core/networks/local/shared_preferences.dart';
-import '../../../sign_in/domain/repositories/data_repository.dart';
+import '../repositories/auth_repository.dart';
+import '../../../../core/data/data_sources/local/shared_preferences.dart';
 
 
 class SignInUseCase {
-  final DataRepository _authRepository;
+  final CacheHelper _cacheHelper;
+  final AuthRepository _authRepository;
 
   SignInUseCase({
-    required DataRepository authRepository,
+    required CacheHelper cacheHelper,
+    required AuthRepository authRepository
   })
       :
+        _cacheHelper = cacheHelper,
         _authRepository = authRepository;
 
   Future<void> signInExecute({
-    required String phone,
+    required String userEmail,
+    required String userPassword,
   }) async {
     try {
-      final doc = await _authRepository.signIn(
-        phone: phone,
+      final userCredential = await _authRepository.signIn(
+          userEmail: userEmail,
+          userPassword: userPassword
       );
-
-      if (!doc.exists) {
-        throw(Exception("User not found"));
-      }
-
-      final data = doc.data() as Map<String, dynamic>;
-      final userPhone = data['userPhone'] as String;
-      final userId = data['userId'] as String;
-
-      if (phone != userPhone) {
-        throw(Exception("Phone number does not match"));
-      }
-      CacheHelper.serStringValue(key: 'uId', value: userId);
+      _cacheHelper.setString(key: 'uId', value: userCredential.user!.uid);
     } catch (e) {
       rethrow;
     }

@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import '../widgets/layouts/publishing_confirmation_layout.dart';
 import 'package:video_player/video_player.dart';
+import '../widgets/layouts/publishing_confirmation_layout.dart';
 
 
 class PublishingConfirmationScreen extends StatelessWidget {

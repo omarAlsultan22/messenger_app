@@ -1,52 +1,47 @@
+import '../../../../core/data/models/message_result_model.dart';
+import '../../../../core/errors/exceptions/base/app_exception.dart';
+import 'package:test_app/core/presentation/states/app_sub_states.dart';
+import 'package:test_app/core/presentation/states/app_sup_states.dart';
+import '../../../../core/presentation/states/base/main_loaded_state.dart';
 import '../../../../core/presentation/states/base/main_app_sub_state.dart';
-import '../../../../core/presentation/states/base/main_app_sup_state.dart';
-import '../../../../core/presentation/states/loaded_states.dart';
+import 'package:test_app/features/edit_personal_account/data/models/account_model.dart';
 
 
-class SettingsState extends MainAppSupState<UserModel, MessageResult> {
-  SettingsState({
+class EditPersonalAccountState extends DoubleModelAppState<AccountModel, MessageResult> {
+  EditPersonalAccountState({
     super.subState,
     super.firstModel,
     super.secondModel,
-    super.isConnected
   });
 
-  UserModel? get userModel => firstModel;
-
-  LoadedState get dataModels =>
-      MultiModelSuccessState<UserModel, MessageResult>(
-          firstModel: firstModel,
-          secondModel: secondModel
-      );
+  factory EditPersonalAccountState.initial(){
+    return EditPersonalAccountState(
+        firstModel: null,
+        secondModel: MessageResult.initial(),
+        subState: InitialState()
+    );
+  }
 
   @override
-  SettingsState updateState({
-    UserModel? firstModel,
+  EditPersonalAccountState copyWith({
+    AccountModel? firstModel,
     MessageResult? secondModel,
-    bool? isConnected,
     MainAppSubState? subState
   }) {
-    return SettingsState(
+    return EditPersonalAccountState(
         subState: subState ?? this.subState,
         firstModel: firstModel ?? this.firstModel,
         secondModel: secondModel ?? this.secondModel,
-        isConnected: isConnected ?? this.isConnected
     );
   }
 
   @override
   R when<R>({
-    R Function()? onConnection,
     required R Function() onInitial,
     required R Function() onLoading,
     required R Function(LoadedState) onLoaded,
     required R Function(AppException) onError
   }) {
-    if (onConnection != null && !isConnected &&
-        firstModel == null
-    ) {
-      return onConnection();
-    }
     return subState!.when(
         onInitial: onInitial,
         onLoading: onLoading,

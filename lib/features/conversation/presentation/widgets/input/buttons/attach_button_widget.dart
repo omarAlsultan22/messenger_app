@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:test_app/core/constants/app_spaces.dart';
+import '../../../../../../core/constants/app_colors.dart';
 
 
 class AttachButtonWidget extends StatelessWidget {
@@ -9,22 +11,20 @@ class AttachButtonWidget extends StatelessWidget {
     super.key,
   });
 
-  static const _spacing = 40.0;
-
   @override
   Widget build(BuildContext context) {
     return IconButton(
       icon: Container(
-        width: _spacing,
-        height: _spacing,
-        decoration: BoxDecoration(
-          color: Colors.grey.shade200.,
+        width: AppSpaces.xxl,
+        height: AppSpaces.xxl,
+        decoration: const BoxDecoration(
+          color: AppColors.grey_200,
           shape: BoxShape.circle,
         ),
         child: const Icon(
           Icons.attach_file,
-          color: Colors.grey.,
-          size: 20.,
+          color: AppColors.greyPrimaryValue,
+          size: 20,
         ),
       ),
       onPressed: onPressed,

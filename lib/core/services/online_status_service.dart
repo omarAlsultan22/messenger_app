@@ -79,7 +79,7 @@ class OnlineStatusService {
 }
 
 
-class LifecycleEventHandler extends WidgetsBindingObserver {.
+class LifecycleEventHandler extends WidgetsBindingObserver {
   final Function resumeCallBack;
   final Function detachCallBack;
 

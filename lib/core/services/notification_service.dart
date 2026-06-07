@@ -5,14 +5,16 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import '../../features/messenger_screen/presentation/cubits/cubit.dart';
+import 'package:test_app/features/home/presentation/cubits/home_cubit.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import '../../features/conversation_screen/presentation/screens/conversation_screen.dart';
+import '../../features/conversation/presentation/screens/conversation_screen.dart';
 
 
 class NotificationService {
   static final NotificationService _instance = NotificationService._internal();
+
   factory NotificationService() => _instance;
+
   NotificationService._internal();
 
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
@@ -89,7 +91,7 @@ class NotificationService {
         initializationSettings,
         onDidReceiveNotificationResponse: (NotificationResponse details) {
           if (details.payload != null) {
-            _handleNotification(jsonDecode(details.payload!));
+            handleNotification(jsonDecode(details.payload!));
           }
         },
       );
@@ -100,22 +102,20 @@ class NotificationService {
   }
 
 
-  void _handleNotification(Map<String, dynamic> data) {
+  void handleNotification(Map<String, dynamic> data) {
     try {
-      final OnlineStatusService onlineStatusService = OnlineStatusService();
       final docId = data[_dataKey][_docIdKey];
 
       navigatorKey.currentState?.pushReplacement(
         MaterialPageRoute(
             builder: (context) {
-              final friendsList = MainScreenCubit
+              final friendsList = HomeCubit
                   .get(context)
                   .friendsList;
-              final matchingItem = friendsList.where((item) =>
+              final matchingItem = friendsList!.where((item) =>
               item.docId == docId);
               return ConversationScreen(
-                  lastMessageModel: matchingItem.first,
-                  onlineStatusService: onlineStatusService
+                lastMessageModel: matchingItem.first,
               );
             }
         ),
@@ -124,8 +124,10 @@ class NotificationService {
     catch (e) {
       navigatorKey.currentState?.push(
         MaterialPageRoute(
-          builder: (context) => const Scaffold(
-            body: Center(child: Text('An error occurred opening the conversation')),
+          builder: (context) =>
+          const Scaffold(
+            body: Center(
+                child: Text('An error occurred opening the conversation')),
           ),
         ),
       );
@@ -140,7 +142,8 @@ class NotificationService {
       debugPrint('Message data: ${message.data}');
 
       if (message.notification != null) {
-        debugPrint('Message also contained a notification: ${message.notification}');
+        debugPrint(
+            'Message also contained a notification: ${message.notification}');
         _showNotification(message);
       }
     });
@@ -148,7 +151,7 @@ class NotificationService {
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       debugPrint('Message opened from background: ${message.data}');
       print(message.data[_docIdKey]);
-      _handleNotification(message.data);
+      handleNotification(message.data);
     });
   }
 
@@ -196,7 +199,6 @@ class NotificationService {
 
 
   Future<void> sendMessage(Map<String, dynamic> data) async {
-
     try {
       final senderName = data['userName'];
       final title = senderName;
@@ -215,21 +217,18 @@ class NotificationService {
     }
   }
 
-
-  Future<void> _subscribeToTopic(String topic) async {
+  Future<void> subscribeToTopic(String topic) async {
     await _firebaseMessaging.subscribeToTopic(topic);
   }
 
 
-  Future<void> _unsubscribeFromTopic(String topic) async {
+  Future<void> unsubscribeFromTopic(String topic) async {
     await _firebaseMessaging.unsubscribeFromTopic(topic);
   }
 
-
-  Future<void> dispose() async {.
+  Future<void> dispose() async {
     await _messagesSubscription?.cancel();
   }
-
 
   Future<void> _showLocalNotification({
     required String title,
@@ -262,7 +261,9 @@ class NotificationService {
       );
 
       await _flutterLocalNotificationsPlugin.show(
-        DateTime.now().millisecondsSinceEpoch ~/ 1000,
+        DateTime
+            .now()
+            .millisecondsSinceEpoch ~/ 1000,
         title,
         body,
         notificationDetails,
@@ -274,10 +275,8 @@ class NotificationService {
     }
   }
 
-
-  Map<String, dynamic> _processPayload(Map<String, dynamic> payload) {.
+  Map<String, dynamic> _processPayload(Map<String, dynamic> payload) {
     final processed = <String, dynamic>{};
-
     payload.forEach((key, value) {
       if (value is DateTime) {
         processed[key] = value.toIso8601String();
@@ -300,26 +299,27 @@ class NotificationService {
         processed[key] = value;
       }
     });
-
     return processed;
   }
 
 
-  static Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  static Future<void> _firebaseMessagingBackgroundHandler(
+      RemoteMessage message) async {
     debugPrint("Handling a background message: ${message.messageId}");
     await _handleBackgroundNotification(message);
   }
 
 
-  static Future<void> _handleBackgroundNotification(RemoteMessage message) async {
-    await _setupBackgroundIsolate();
+  static Future<void> _handleBackgroundNotification(
+      RemoteMessage message) async {
+    await setupBackgroundIsolate();
     final notificationService = NotificationService();
     await notificationService.initialize();
-    notificationService._handleNotification(message.data);
+    notificationService.handleNotification(message.data);
   }
 
 
-  static Future<void> _setupBackgroundIsolate() async {
+  static Future<void> setupBackgroundIsolate() async {
     WidgetsFlutterBinding.ensureInitialized();
     await Firebase.initializeApp();
 

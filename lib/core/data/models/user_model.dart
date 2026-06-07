@@ -6,7 +6,6 @@ class UserModel implements JsonModel {
   final String? userId;
   final String? userName;
   final String? userImage;
-  final String? userPhone;
   late bool? isOnline;
   late bool? isTyping;
   late DateTime? lastSeen;
@@ -15,7 +14,6 @@ class UserModel implements JsonModel {
     this.userId,
     this.userName,
     this.userImage,
-    this.userPhone,
     this.isOnline,
     this.isTyping,
     this.lastSeen
@@ -37,7 +35,6 @@ class UserModel implements JsonModel {
     return {
       'userImage': userImage,
       'userName': userName,
-      'userPhone': userPhone,
     };
   }
 }

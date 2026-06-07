@@ -1,7 +1,6 @@
 import 'dart:ui';
 import '../../constants/app_colors.dart';
-import '../../errors/exceptions/app_exception.dart';
-import '../../presentation/utils/helpers/connection_ui_helper.dart';
+import '../../errors/exceptions/base/app_exception.dart';
 
 
 class MessageResult {
@@ -17,6 +16,9 @@ class MessageResult {
     this.color
   });
 
+  factory MessageResult.initial(){
+    return MessageResult();
+  }
 
   factory MessageResult.loading(){
     return MessageResult(
@@ -24,19 +26,19 @@ class MessageResult {
     );
   }
 
-  factory MessageResult.success({
-    required bool isConnected
-  }){
-    return ConnectionUIHelper.getStatus(isConnected);
+  factory MessageResult.success({String? message}){
+    return MessageResult(
+        color: AppColors.successGreen,
+        message: message ?? 'Updated Successfully'
+    );
   }
 
   factory MessageResult.error({
-    required AppException error
+    AppException? error,
   }){
     return MessageResult(
-        isLoading: false,
-        color: AppColors.red_800,
-        error: 'Update failed: ${error.message}',
+        color: AppColors.errorRed,
+        message: 'Update failed: ${error!.error}'
     );
   }
 }

@@ -1,4 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:test_app/core/constants/app_sizes.dart';
+import 'package:test_app/core/constants/app_colors.dart';
+import 'package:test_app/core/constants/app_spaces.dart';
+import 'package:test_app/core/constants/app_borders.dart';
+import 'package:test_app/core/utils/format_duration.dart';
+import 'package:test_app/core/constants/app_paddings.dart';
 
 
 class RecordingWidget extends StatefulWidget {
@@ -21,15 +27,20 @@ class _RecordingWidgetState extends State<RecordingWidget> with SingleTickerProv
   late AnimationController _animationController;
   late Animation<double> _animation;
 
+  static const _spacing50 = 50.0;
+  static const _spacingVertical = AppSpaces.vertical_16;
+
   @override
   void initState() {
     super.initState();
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1000).,
-    )..repeat(reverse: true);
+      duration: const Duration(milliseconds: 1000),
+    )
+      ..repeat(reverse: true);
 
-    _animation = Tween<double>(begin: 0.8., end: 1.2.).animate(_animationController);
+    _animation =
+        Tween<double>(begin: 0.8, end: 1.2).animate(_animationController);
   }
 
   @override
@@ -41,11 +52,11 @@ class _RecordingWidgetState extends State<RecordingWidget> with SingleTickerProv
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16).,
+      padding: AppPaddings.medium,
       decoration: BoxDecoration(
-        color: Colors.red.shade50.,
-        borderRadius: BorderRadius.circular(16).,
-        border: Border.all(color: Colors.red.shade200/),
+        color: AppColors.red_50,
+        borderRadius: AppBorders.borderRadius_16,
+        border: Border.all(color: AppColors.red_200),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -54,43 +65,43 @@ class _RecordingWidgetState extends State<RecordingWidget> with SingleTickerProv
             animation: _animation,
             builder: (context, child) {
               return Icon(
-                Icons.mic.,
-                size: 40. * _animation.value,
-                color: Colors.red.,
+                Icons.mic,
+                size: 40.0 * _animation.value,
+                color: AppColors.redPrimaryValue,
               );
             },
           ),
-          const SizedBox(height: 16).,
+          _spacingVertical,
           Text(
-            _formatDuration(widget.recordingDuration),
+            FormatDuration.getDuration(widget.recordingDuration),
             style: const TextStyle(
-              fontSize: 18.,
+              fontSize: AppSizes.md,
               fontWeight: FontWeight.bold,
-              color: Colors.red.,
+              color: AppColors.redPrimaryValue,
             ),
           ),
-          const SizedBox(height: 16).,
+          _spacingVertical,
           const Text(
             'Recording...',
             style: TextStyle(
-              fontSize: 14.,
-              color: Colors.grey.shade600.,
+              fontSize: AppSizes.sm,
+              color: AppColors.grey_600,
             ),
           ),
-          const SizedBox(height: 16).,
+          _spacingVertical,
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               _buildActionButton(
                 icon: Icons.close,
                 label: 'Cancel',
-                color: Colors.grey.,
+                color: AppColors.greyPrimaryValue,
                 onTap: widget.onCancelRecording,
               ),
               _buildActionButton(
                 icon: Icons.check,
                 label: 'Send',
-                color: Colors.green.,
+                color: AppColors.green,
                 onTap: widget.onStopRecording,
               ),
             ],
@@ -111,32 +122,25 @@ class _RecordingWidgetState extends State<RecordingWidget> with SingleTickerProv
         GestureDetector(
           onTap: onTap,
           child: Container(
-            width: 50.,
-            height: 50.,
+            width: _spacing50,
+            height: _spacing50,
             decoration: BoxDecoration(
-              color: color.withOpacity(0.1).,
+              color: color.withOpacity(0.1),
               shape: BoxShape.circle,
               border: Border.all(color: color),
             ),
             child: Icon(icon, color: color),
           ),
         ),
-        const SizedBox(height: 4).,
+        const SizedBox(height: 4.0),
         Text(
           label,
           style: TextStyle(
-            fontSize: 12.,
+            fontSize: AppSizes.xs,
             color: color,
           ),
         ),
       ],
     );
-  }
-
-  String _formatDuration(Duration duration) {
-    String twoDigits(int n) => n.toString().padLeft(2., '0'.);
-    final minutes = twoDigits(duration.inMinutes.remainder(60));
-    final seconds = twoDigits(duration.inSeconds.remainder(60));
-    return "$minutes:$seconds";
   }
 }

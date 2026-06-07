@@ -1,9 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 import 'base/app_exception.dart';
 import 'network_app_exception.dart';
+import '../../data/network/connectivity_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:test_app/core/errors/exceptions/base/exception_handler.dart';
-import '../../../features/conversation/domain/services/connectivity_service/connectivity_service.dart';
 
 
 class FirebaseAppException extends AppException implements ExceptionHandler {

@@ -1,12 +1,11 @@
 import '../states/auth_states.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../core/errors/error_handler.dart';
-import 'package:cash_money/core/constants/app_strings.dart';
-import 'package:cash_money/core/data/models/message_result.dart';
-import '../../../../core/errors/exceptions/network_exception.dart';
-import '../../../../core/errors/exceptions/base/app_exception.dart';
-import 'package:cash_money/core/domain/services/connectivity_service/connectivity_service.dart';
-import 'package:cash_money/features/auth/domain/useCases/change_email_and_password_useCase.dart';
+import '../../../../core/constants/app_strings.dart';
+import '../../../../core/errors/mappers/error_handler.dart';
+import '../../../../core/data/models/message_result_model.dart';
+import '../../../../core/data/network/connectivity_service.dart';
+import '../../domain/useCases/change_email_and_password_useCase.dart';
+import '../../../../core/errors/exceptions/network_app_exception.dart';
 
 
 class ChangeEmailAndPasswordCubit extends Cubit<AuthState> {
@@ -19,7 +18,7 @@ class ChangeEmailAndPasswordCubit extends Cubit<AuthState> {
   })
       : _useCase = useCase,
         _connectivityService = connectivityService,
-        super(const AuthState());
+        super(AuthState.initial());
 
   static ChangeEmailAndPasswordCubit get(context) => BlocProvider.of(context);
 
@@ -33,7 +32,8 @@ class ChangeEmailAndPasswordCubit extends Cubit<AuthState> {
       emit(
         AuthState(
           messageResult: MessageResult.error(
-              error: NetworkException(message: AppStrings.noInternetMessage)),
+              error: NetworkAppException(
+                  message: AppStrings.noInternetMessage)),
         ),
       );
       return;
@@ -47,8 +47,12 @@ class ChangeEmailAndPasswordCubit extends Cubit<AuthState> {
       );
       emit(
           AuthState(messageResult: MessageResult.success()));
-    } on AppException catch (e) {
-      final exception = ErrorHandler.handleException(e);
+    } catch (e, stackTrace) {
+      final errorHandler = ErrorHandler(
+          error: e,
+          stackTrace: stackTrace
+      );
+      final exception = errorHandler.handleException();
       emit(AuthState(messageResult: MessageResult.error(error: exception)));
     }
   }

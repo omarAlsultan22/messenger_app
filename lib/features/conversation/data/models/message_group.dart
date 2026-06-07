@@ -2,13 +2,32 @@ import 'conversation_model.dart';
 
 
 class MessageGroup {
-  final String title;
-  final List<ConversationModel> messages;
+  String? date;
   final DateTime sortDate;
+  final List<ConversationModel> messages;
 
-  const MessageGroup({
-    required this.title,
+  MessageGroup({
+    required this.date,
     required this.messages,
     required this.sortDate,
   });
+
+  MessageGroup copyWith({
+    String? date,
+    DateTime? sortDate,
+    List<ConversationModel>? messages,
+  }) {
+    return MessageGroup(
+      date: date ?? this.date,
+      sortDate: sortDate ?? this.sortDate,
+      messages: messages ?? this.messages,
+    );
+  }
+
+  void addNewMessages({
+    required List<ConversationModel> messages
+  }) => this.messages.addAll(messages);
+
+  void insertAllMessages(List<ConversationModel> messages) =>
+      this.messages.insertAll(0, messages);
 }

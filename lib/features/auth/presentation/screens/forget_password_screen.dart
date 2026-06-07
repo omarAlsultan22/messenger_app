@@ -1,15 +1,15 @@
-import 'package:cash_money/features/auth/presentation/widgets/layouts/forget_password_layout.dart';
-import 'package:cash_money/features/auth/presentation/cubits/forget_password_cubit.dart';
-import '../../../../core/domain/services/connectivity_service/connectivity_service.dart';
-import '../../../../core/data/data_sources/remote/firebase_auth.dart';
+import '../../../../core/data/data_sources/remote/firebase_auth_service.dart';
 import '../../data/repositories_impl/firebase_auth_repository.dart';
+import '../../../../core/data/network/connectivity_service.dart';
+import '../widgets/layouts/forget_password_layout.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../cubits/forget_password_cubit.dart';
 import 'package:flutter/material.dart';
 import '../states/auth_states.dart';
 
 
 class ForgetPasswordScreen extends StatelessWidget {
-  const ForgetPasswordScreen({Key? key}) : super(key: key);
+  const ForgetPasswordScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -17,8 +17,8 @@ class ForgetPasswordScreen extends StatelessWidget {
     final authRepository = FirebaseAuthRepository(auth: auth);
     final connectivityService = ConnectivityService();
     final cubit = ForgetPasswordCubit(
-        repository: authRepository,
-        _connectivityService: connectivityService
+      repository: authRepository,
+      connectivityService: connectivityService,
     );
     return BlocBuilder<ForgetPasswordCubit, AuthState>(
         builder: (context, state) {

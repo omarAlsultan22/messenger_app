@@ -1,7 +1,6 @@
-import 'package:cash_money/features/auth/constants/auth_lables_texts.dart';
 import '../../../../../core/presentation/widgets/build_snack_bar.dart';
-import 'package:cash_money/core/constants/app_paddings.dart';
-import '../../../../../core/data/models/message_result.dart';
+import 'package:test_app/features/auth/constants/auth_strings.dart';
+import '../../../../../core/data/models/message_result_model.dart';
 import '../../../../../core/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 
@@ -45,8 +44,10 @@ class _ForgotPasswordScreenState extends State<ForgetPasswordLayout> {
   }
 
   void _showMessageResult(MessageResult messageResult) {
-    ScaffoldMessenger.of(context).showSnackBar(
-        BuildSnackBar.build(messageResult.message!, messageResult.color!)
+    BuildSnackBar.show(
+        context: context,
+        message: messageResult.message!,
+        backgroundColor: messageResult.color!
     );
     Navigator.pop(context);
   }
@@ -59,30 +60,43 @@ class _ForgotPasswordScreenState extends State<ForgetPasswordLayout> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.brown_900,
-      appBar: AppBar(
-          title: const Text('Forget Password'),
-          backgroundColor: AppColors.transparent
-      ),
-      body: Padding(
-        padding: AppPaddings.medium,
-        child: Column(
-          children: [
-            TextField(
-              controller: _emailController,
-              decoration: const InputDecoration(
-                labelText: AuthLabelsTexts.emailLabelText,
-                border: OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _sendResetEmail,
-              child: const Text('Send reset link'),
-            ),
-          ],
+        appBar: AppBar(
+            title: const Text('Forget Password'),
+            backgroundColor: AppColors.transparent
         ),
+        body: Container(
+            width: double.infinity,
+            height: double.infinity,
+            decoration: _buildBackgroundDecoration(),
+            child: Center(
+              child: Column(
+                children: [
+                  TextField(
+                    controller: _emailController,
+                    decoration: const InputDecoration(
+                      labelText: AuthStrings.emailLabel,
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: _sendResetEmail,
+                    child: const Text('Send reset link'),
+                  ),
+                ],
+              ),
+            )
+        )
+    );
+  }
+
+  BoxDecoration _buildBackgroundDecoration() {
+    return const BoxDecoration(
+      image: DecorationImage(
+        image: NetworkImage(AuthStrings.backgroundCover),
+        fit: BoxFit.cover,
       ),
     );
   }
 }
+

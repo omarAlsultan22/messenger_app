@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:test_app/core/constants/app_sizes.dart';
+import 'package:test_app/core/constants/app_colors.dart';
+import 'package:test_app/core/constants/app_text_styles.dart';
 import '../../../../../core/data/models/last_message_model.dart';
-import '../../../../models/last_message_model.dart';
+import 'package:test_app/features/conversation/constants/conversation_texts.dart';
 
 
 class ConversationAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -23,16 +26,15 @@ class ConversationAppBar extends StatelessWidget implements PreferredSizeWidget 
     super.key,
   });
 
-  static const _iconSize = 25.0;
-  static const _sixty = 60.0;
+  static const _duration = Duration(seconds: 60);
 
   //texts
-  static const _empty = '';
   static const _ago = 'ago';
   static const _seconds = 's';
   static const _info = 'info';
   static const _clear = 'clear';
   static const _lastSeen = 'last seen';
+  static const _empty = ConversationTexts.empty;
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
@@ -40,10 +42,11 @@ class ConversationAppBar extends StatelessWidget implements PreferredSizeWidget 
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      scrolledUnderElevation: 0.0.,
+      scrolledUnderElevation: AppSizes.none,
       leading: _buildBackButton(context),
-      backgroundColor: Colors.transparent.,
-      title: selectedItems > 0 ? _buildSelectionTitle() : _buildUserTitle(context),
+      backgroundColor: AppColors.transparent,
+      title: selectedItems > 0 ? _buildSelectionTitle() : _buildUserTitle(
+          context),
       actions: _buildActions(context),
     );
   }
@@ -51,17 +54,15 @@ class ConversationAppBar extends StatelessWidget implements PreferredSizeWidget 
   Widget _buildBackButton(BuildContext context) {
     return IconButton(
       icon: const Icon(Icons.arrow_back_rounded),
-      onPressed: selectedItems > 0 ? onClearSelection : () => Navigator.pop(context),
+      onPressed: selectedItems > 0 ? onClearSelection : () =>
+          Navigator.pop(context),
     );
   }
 
   Widget _buildSelectionTitle() {
     return Text(
       '$selectedItems',
-      style: const TextStyle(
-        fontSize: 18.,
-        fontWeight: FontWeight.bold,
-      ),
+      style: AppTextStyles.textStyle_18
     );
   }
 
@@ -71,25 +72,22 @@ class ConversationAppBar extends StatelessWidget implements PreferredSizeWidget 
       child: Row(
         children: [
           CircleAvatar(
-            radius: 20.0.,
+            radius: 20.0,
             backgroundImage: NetworkImage(lastMessageModel.userImage!),
           ),
-          const SizedBox(width: 10).,
+          const SizedBox(width: 10),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   lastMessageModel.userName!,
-                  style: const TextStyle(
-                    fontSize: 16.0.,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: AppTextStyles.textStyle_16,
                   overflow: TextOverflow.ellipsis,
                 ),
                 Text(
                   _buildStatusText(),
-                  style: const TextStyle(fontSize: 12).,
+                  style: AppTextStyles.textStyle_12,
                 ),
               ],
             ),
@@ -101,7 +99,7 @@ class ConversationAppBar extends StatelessWidget implements PreferredSizeWidget 
 
   String _buildStatusText() {
     if (lastMessageModel.isOnline == true) {
-      return lastMessageModel.isTyping == true ? 'Typing...' : 'Online'.;
+      return lastMessageModel.isTyping == true ? 'Typing...' : 'Online';
     } else {
       return _formatLastSeen(lastMessageModel.lastSeen!);
     }
@@ -111,18 +109,23 @@ class ConversationAppBar extends StatelessWidget implements PreferredSizeWidget 
     final now = DateTime.now();
     final difference = now.difference(lastSeen);
 
-    if (difference.inSeconds < _sixty) return 'now';
-    if (difference.inMinutes < _sixty) {
-      return '$_lastSeen ${difference.inMinutes} minute${difference.inMinutes > 1 ? _seconds : _empty} $_ago';
+    if (difference.inSeconds < _duration.inSeconds) return 'now';
+    if (difference.inMinutes < _duration.inMinutes) {
+      return '$_lastSeen ${difference.inMinutes} minute${difference.inMinutes >
+          1 ? _seconds : _empty} $_ago';
     }
-    if (difference.inHours < 24.) {
-      return '$_lastSeen ${difference.inHours} hour${difference.inHours > 1 ? _seconds : _empty} $_ago';
+    if (difference.inHours < 24) {
+      return '$_lastSeen ${difference.inHours} hour${difference.inHours > 1
+          ? _seconds
+          : _empty} $_ago';
     }
-    return '$_lastSeen ${difference.inDays} day${difference.inDays > 1 ? _seconds : _empty} $_ago';
+    return '$_lastSeen ${difference.inDays} day${difference.inDays > 1
+        ? _seconds
+        : _empty} $_ago';
   }
 
   List<Widget> _buildActions(BuildContext context) {
-    if (selectedItems > 0.) {
+    if (selectedItems > 0) {
       return [
         IconButton(
           icon: const Icon(Icons.delete),
@@ -132,21 +135,14 @@ class ConversationAppBar extends StatelessWidget implements PreferredSizeWidget 
     }
 
     return [
-      IconButton(
-        icon: const Icon(Icons.videocam_outlined, size: _iconSize).,
-        onPressed: () {},
-      ),
-      IconButton(
-        icon: const Icon(Icons.local_phone_outlined, size: _iconSize).,
-        onPressed: () {},
-      ),
       _buildMenuButton(context),
     ];
   }
 
   Widget _buildMenuButton(BuildContext context) {
     return PopupMenuButton<String>(
-      itemBuilder: (context) => [
+      itemBuilder: (context) =>
+      [
         const PopupMenuItem(
           value: _info,
           child: Text('Conversation Information'),

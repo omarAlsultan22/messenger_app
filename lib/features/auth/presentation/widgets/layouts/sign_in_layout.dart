@@ -1,23 +1,25 @@
-import 'package:cash_money/features/auth/presentation/utils/validate/validate_email.dart';
-import '../../../../../core/data/data_sources/local/shared_preferences.dart';
-import 'package:cash_money/core/presentation/widgets/build_snack_bar.dart';
-import 'package:cash_money/core/presentation/widgets/text_form_field.dart';
-import 'package:cash_money/features/auth/constants/auth_hints_texts.dart';
-import 'package:cash_money/core/presentation/widgets/loading_widget.dart';
-import 'package:cash_money/core/constants/app_text_styles.dart';
-import '../../../../../core/data/models/message_result.dart';
-import 'package:cash_money/core/constants/app_paddings.dart';
-import 'package:cash_money/core/constants/app_colors.dart';
-import 'package:cash_money/core/constants/app_sizes.dart';
-import 'package:cash_money/core/constants/app_keys.dart';
+import 'package:test_app/core/constants/app_borders.dart';
+import 'package:test_app/core/constants/app_sizes.dart';
+import 'package:test_app/core/constants/app_strings.dart';
+import 'package:test_app/features/auth/constants/auth_colors.dart';
+import 'package:test_app/features/auth/constants/auth_strings.dart';
+import 'package:test_app/features/auth/presentation/widgets/build_app_icon.dart';
+import '../../../../../core/constants/app_colors.dart';
+import '../../../../../core/constants/app_paddings.dart';
 import '../../../../../core/constants/app_spaces.dart';
+import '../../../../../core/data/data_sources/local/shared_preferences.dart';
+import '../../../../../core/data/models/message_result_model.dart';
+import '../../../../../core/presentation/widgets/build_snack_bar.dart';
+import '../../../../../core/presentation/widgets/loading_widget.dart';
+import '../../../../../core/presentation/widgets/text_form_field.dart';
+import '../../../../home/presentation/screens/home_screen.dart';
 import '../../screens/forget_password_screen.dart';
 import '../../utils/validate/validate_password.dart';
-import '../../../constants/auth_lables_texts.dart';
-import '../../../../home/screens/home_screen.dart';
 import '../../screens/sign_up_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
+import '../navigator_with_delay.dart';
 
 
 class SignInLayout extends StatefulWidget {
@@ -65,13 +67,16 @@ class _SignInLayoutState extends State<SignInLayout> {
     super.didUpdateWidget(oldWidget);
     if (widget.messageResult.message != null) {
       _showMessageResult(widget.messageResult);
+      _navigateToHome();
     }
     setState(() {});
   }
 
   void _showMessageResult(MessageResult messageResult) {
-    ScaffoldMessenger.of(context).showSnackBar(
-        BuildSnackBar.build(messageResult.message!, messageResult.color!)
+    BuildSnackBar.show(
+        context: context,
+        message: messageResult.message!,
+        backgroundColor: messageResult.color!
     );
   }
 
@@ -82,29 +87,31 @@ class _SignInLayoutState extends State<SignInLayout> {
 
   Widget _buildMainContent() {
     return Scaffold(
-      backgroundColor: AppColors.brown_900,
+      backgroundColor: AuthColors.brown_900,
       body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            padding: AppPaddings.large,
-            child: RepaintBoundary(
-              child: Form(
-                key: _formKey,
-                child: AutofillGroup(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildHeader(context),
-                      AppSpaces.height_32,
-                      _buildEmailField(),
-                      AppSpaces.height_16,
-                      _buildPasswordField(),
-                      AppSpaces.height_24,
-                      _buildLoginButton(),
-                      AppSpaces.height_16,
-                      _buildRegisterLink(),
-                      _buildForgetPasswordLink()
-                    ],
+        child: Container(
+          width: double.infinity,
+          height: double.infinity,
+          decoration: _buildBackgroundDecoration(),
+          child: Center(
+            child: SingleChildScrollView(
+              padding: AppPaddings.xLarge,
+              child: RepaintBoundary(
+                child: Form(
+                  key: _formKey,
+                  child: AutofillGroup(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const BuildAppIcon(),
+                      AppSpaces.vertical_30,
+                        _buildWelcomeText(),
+                    AppSpaces.vertical_30,
+                      _buildInputFields(),
+                        AppSpaces.vertical_24,
+                       _buildButtons()
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -115,31 +122,55 @@ class _SignInLayoutState extends State<SignInLayout> {
     );
   }
 
-  Widget _buildHeader(BuildContext context) {
+  BoxDecoration _buildBackgroundDecoration() {
+    return const BoxDecoration(
+      image: DecorationImage(
+        image: NetworkImage(AuthStrings.backgroundCover),
+        fit: BoxFit.cover,
+      ),
+    );
+  }
+
+  Widget _buildInputFields() {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      children:[
+        _buildEmailField(),
+        AppSpaces.vertical_16,
+        _buildPasswordField(),
+      ],
+    );
+  }
+
+  Widget _buildButtons() {
+    return Column(
+        children:[
+          _buildLoginButton(),
+          AppSpaces.vertical_16,
+          _buildRegisterLink(),
+          _buildForgetPasswordLink()
+        ]
+    );
+  }
+
+  Widget _buildWelcomeText() {
+    return const Column(
       children: [
         Text(
-          'LOGIN',
-          style: Theme
-              .of(context)
-              .textTheme
-              .headlineLarge
-              ?.copyWith(
-            color: AppColors.amber_500,
+          "Welcome to Chat",
+          style: TextStyle(
+            fontSize: 24,
             fontWeight: FontWeight.bold,
+            color: Colors.white,
           ),
         ),
-        AppSpaces.height_8,
+        SizedBox(height: 10),
         Text(
-          'Login now to communicate with friends',
-          style: Theme
-              .of(context)
-              .textTheme
-              .bodyMedium
-              ?.copyWith(
-            color: AppColors.grey400,
+          "Connect with your Social Platform contacts",
+          style: TextStyle(
+            fontSize: 16,
+            color: Colors.white70,
           ),
+          textAlign: TextAlign.center,
         ),
       ],
     );
@@ -148,8 +179,8 @@ class _SignInLayoutState extends State<SignInLayout> {
   Widget _buildEmailField() {
     return BuildInputField(
       controller: _emailController,
-      labelText: AuthLabelsTexts.emailLabelText,
-      hintText: AuthHintsTexts.emailHintText,
+      labelText: AuthStrings.emailLabel,
+      hintText: AuthStrings.emailHint,
       prefixIcon: Icons.email,
       keyboardType: TextInputType.emailAddress,
       autofillHints: const [AutofillHints.email],
@@ -160,8 +191,8 @@ class _SignInLayoutState extends State<SignInLayout> {
   Widget _buildPasswordField() {
     return BuildInputField(
       controller: _passwordController,
-      labelText: AuthLabelsTexts.passwordLabelText,
-      hintText: AuthHintsTexts.passwordHintText,
+      labelText: AuthStrings.passwordLabel,
+      hintText: AuthStrings.passwordHint,
       prefixIcon: Icons.lock,
       obscureText: _isObscure,
       suffixIcon: _buildPasswordVisibilityToggle(),
@@ -174,7 +205,7 @@ class _SignInLayoutState extends State<SignInLayout> {
     return IconButton(
       icon: Icon(
         _isObscure ? Icons.visibility_off : Icons.visibility,
-        color: AppColors.amber_500,
+        color: AuthColors.amber_500,
       ),
       onPressed: _togglePasswordVisibility,
     );
@@ -195,8 +226,13 @@ class _SignInLayoutState extends State<SignInLayout> {
     return widget.messageResult.isLoading
         ? LoadingWidget.sizedBox
         : const Text(
-        "LOGIN",
-        style: AppTextStyles.textStyle
+        "SIGN IN",
+        style: TextStyle(
+          fontSize: AppSizes.sm,
+          letterSpacing: 1.2,
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+        )
     );
   }
 
@@ -209,13 +245,13 @@ class _SignInLayoutState extends State<SignInLayout> {
             text: 'Don\'t have an account? ',
             style: TextStyle(
               color: Color(0xFFBDBDBD),
-              fontSize: AppSizes.fontSize_16,
+              fontSize: AppSizes.sm,
             ),
             children: [
               TextSpan(
-                text: "Register Now",
+                text: "SIGN UP",
                 style: TextStyle(
-                  color: AppColors.amber_500,
+                  color: AuthColors.amber_500,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -250,7 +286,7 @@ class _SignInLayoutState extends State<SignInLayout> {
   }
 
   Future<void> _checkLoginStatus() async {
-    final value = await widget.cacheHelper.getValue(key: AppKeys.uId);
+    final value = await widget.cacheHelper.getString(key: 'uId');
     if (value?.isNotEmpty ?? false) {
       _navigateToHome();
     }
@@ -264,10 +300,7 @@ class _SignInLayoutState extends State<SignInLayout> {
   }
 
   void _navigateToRegister() {
-    Navigator.push(
-      context,
-      CupertinoPageRoute(builder: (context) => const SignUpScreen()),
-    );
+    NavigatorWithDelay.build(link: const SignUpScreen(), context: context);
   }
 
   void _navigateToHome() {
@@ -293,11 +326,11 @@ class _SignInLayoutState extends State<SignInLayout> {
 
   ButtonStyle _loginButtonStyle() {
     return ElevatedButton.styleFrom(
-      backgroundColor: AppColors.amber_500,
+      backgroundColor: AuthColors.amber_500,
       foregroundColor: AppColors.black,
-      padding: AppPaddings.symmetricVertical,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16.0),
+      padding: AppPaddings.verticalSymmetric,
+      shape: const RoundedRectangleBorder(
+        borderRadius: AppBorders.borderRadius_16,
       ),
       elevation: 2.0,
     );

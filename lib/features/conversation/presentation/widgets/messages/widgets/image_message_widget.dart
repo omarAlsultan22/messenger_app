@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
-
-import '../../../../../models/conversation_model.dart';
+import 'package:test_app/core/constants/app_spaces.dart';
+import '../../../../data/models/conversation_model.dart';
+import 'package:test_app/core/constants/app_colors.dart';
+import 'package:test_app/core/constants/app_borders.dart';
+import 'package:test_app/core/constants/app_paddings.dart';
+import 'package:test_app/features/conversation/utils/format_time.dart';
+import 'package:test_app/features/conversation/constants/conversation_spaces.dart';
+import 'package:test_app/features/conversation/constants/conversation_borders.dart';
 
 
 class ImageMessageWidget extends StatelessWidget {
@@ -15,6 +21,8 @@ class ImageMessageWidget extends StatelessWidget {
     super.key,
   });
 
+  static const _spacingVertical = 250.0;
+
   @override
   Widget build(BuildContext context) {
     final url = message.url;
@@ -28,29 +36,30 @@ class ImageMessageWidget extends StatelessWidget {
           onTap: () => onShowFullImage(url),
           child: Container(
             decoration: BoxDecoration(
-              color: isMe ? Colors.blue.shade700 : Colors.grey.shade300,
-              borderRadius: BorderRadius.circular(12),
+              color: isMe ? AppColors.blue700 : AppColors.grey_300,
+              borderRadius: AppBorders.borderRadius_12,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: ConversationBorders.borderRadius_8,
                   child: Image.network(
                     url,
                     width: double.infinity,
-                    height: 250,
+                    height: _spacingVertical,
                     fit: BoxFit.cover,
                     loadingBuilder: (context, child, loadingProgress) {
                       if (loadingProgress == null) return child;
                       return Container(
                         width: double.infinity,
-                        height: 250,
-                        color: Colors.grey.shade200,
+                        height: _spacingVertical,
+                        color: AppColors.grey_200,
                         child: Center(
                           child: CircularProgressIndicator(
                             value: loadingProgress.expectedTotalBytes != null
-                                ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+                                ? loadingProgress.cumulativeBytesLoaded /
+                                loadingProgress.expectedTotalBytes!
                                 : null,
                           ),
                         ),
@@ -59,20 +68,21 @@ class ImageMessageWidget extends StatelessWidget {
                     errorBuilder: (context, error, stackTrace) {
                       return Container(
                         width: double.infinity,
-                        height: 250,
-                        color: Colors.grey.shade200,
-                        child: const Icon(Icons.error, color: Colors.red),
+                        height: _spacingVertical,
+                        color: AppColors.grey_200,
+                        child: const Icon(
+                            Icons.error, color: AppColors.redPrimaryValue),
                       );
                     },
                   ),
                 ),
                 if (message.text!.isNotEmpty)
                   Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: AppPaddings.vSmall,
                     child: Text(
                       message.text!,
                       style: TextStyle(
-                        color: isMe ? Colors.white : Colors.black,
+                        color: isMe ? AppColors.white : AppColors.black,
                       ),
                     ),
                   ),
@@ -81,27 +91,27 @@ class ImageMessageWidget extends StatelessWidget {
           ),
         ),
         Positioned(
-          bottom: 8,
-          right: 8,
+          bottom: AppSpaces.xs,
+          right: AppSpaces.xs,
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
             decoration: BoxDecoration(
-              color: Colors.black.withOpacity(0.6),
-              borderRadius: BorderRadius.circular(8),
+              color: AppColors.black.withOpacity(0.6),
+              borderRadius: ConversationBorders.borderRadius_8,
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  _formatTime(message.dateTime ?? DateTime.now()),
+                  FormatTime.getTime(message.dateTime ?? DateTime.now()),
                   style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 10,
+                    color: AppColors.white,
+                    fontSize: ConversationSpaces.fontSize_10,
                   ),
                 ),
                 if (isMe) ...[
                   const SizedBox(width: 4),
-                  const Icon(Icons.done_all, size: 12, color: Colors.white),
+                  const Icon(Icons.done_all, size: 12, color: AppColors.white),
                 ],
               ],
             ),
@@ -109,9 +119,5 @@ class ImageMessageWidget extends StatelessWidget {
         ),
       ],
     );
-  }
-
-  String _formatTime(DateTime dateTime) {
-    return '${dateTime.hour}:${dateTime.minute.toString().padLeft(2, '0')}';
   }
 }

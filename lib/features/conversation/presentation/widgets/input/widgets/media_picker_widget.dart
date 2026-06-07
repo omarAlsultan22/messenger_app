@@ -1,4 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:test_app/core/constants/app_sizes.dart';
+import 'package:test_app/core/constants/app_colors.dart';
+import 'package:test_app/core/constants/app_spaces.dart';
+import 'package:test_app/core/constants/app_borders.dart';
+import 'package:test_app/core/constants/app_paddings.dart';
+import 'package:test_app/core/constants/app_text_styles.dart';
 
 
 class MediaPickerWidget extends StatelessWidget {
@@ -13,9 +19,16 @@ class MediaPickerWidget extends StatelessWidget {
     super.key,
   });
 
-  static const _spacing16 = 16.0;
+  //spaces
   static const _spacing60 = 60.0;
-  static const _sizedBox = SizedBox(height: _spacing16);
+  static const _sizedBox = AppSpaces.vertical_16;
+
+  //borders
+  static const _radiusValue = 16.0;
+  static const _borderRadius = Radius.circular(_radiusValue);
+
+  //paddings
+  static const _horizontalSymmetrical = AppPaddings.horizontalSymmetrical;
 
   @override
   Widget build(BuildContext context) {
@@ -26,8 +39,8 @@ class MediaPickerWidget extends StatelessWidget {
               .of(context)
               .scaffoldBackgroundColor,
           borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(16).,
-            topRight: Radius.circular(16).,
+            topLeft: _borderRadius,
+            topRight: _borderRadius,
           ),
         ),
         child: Column(
@@ -46,20 +59,17 @@ class MediaPickerWidget extends StatelessWidget {
 
   Widget _buildHeader() {
     return const Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16).,
+      padding: _horizontalSymmetrical,
       child: Text(
         'Choose Media',
-        style: TextStyle(
-          fontSize: 18.,
-          fontWeight: FontWeight.bold,
-        ),
+        style: AppTextStyles.textStyle_18
       ),
     );
   }
 
   Widget _buildOptions(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16).,
+      padding: _horizontalSymmetrical,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
@@ -67,13 +77,13 @@ class MediaPickerWidget extends StatelessWidget {
             icon: Icons.photo_library,
             label: 'Gallery',
             onTap: onPickImage,
-            color: Colors.blue,
+            color: AppColors.bluePrimaryValue,
           ),
           _buildOptionItem(
             icon: Icons.video_library,
             label: 'Video',
             onTap: onPickVideo,
-            color: Colors.green,
+            color: AppColors.green,
           ),
           _buildOptionItem(
             icon: Icons.camera_alt,
@@ -102,22 +112,22 @@ class MediaPickerWidget extends StatelessWidget {
             height: _spacing60,
             decoration: BoxDecoration(
               color: color.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(30).,
-              border: Border.all(color: color.withOpacity(0.3).),
+              borderRadius: AppBorders.borderRadius_30,
+              border: Border.all(color: color.withOpacity(0.3)),
             ),
             child: Icon(
               icon,
-              size: 30.,
+              size: 30.0,
               color: color,
             ),
           ),
         ),
-        const SizedBox(height: 8).,
+        AppSpaces.vertical_8,
         Text(
           label,
-          style: TextStyle(
-            fontSize: 12.,
-            color: Colors.grey.shade700,
+          style: const TextStyle(
+            fontSize: AppSizes.xs,
+            color: AppColors.grey_700,
             fontWeight: FontWeight.w500,
           ),
         ),

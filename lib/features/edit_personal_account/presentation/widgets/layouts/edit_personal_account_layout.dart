@@ -1,23 +1,40 @@
 import 'package:flutter/material.dart';
-import '../../../../../core/components/components.dart';
-import '../../../../../core/constants/user_details.dart';
-import '../../../../../shared/components/components.dart';
-import '../../../../../shared/constants/user_details.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../../shared/cubit_states/cubit_states.dart';
-import '../../../../../modules/edit_personal_account/cubit.dart';
-import 'package:test_app/features/edit_personal_account/presentation/widgets/layouts/view_image_layout.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-import '../../../../../modules/edit_personal_account/edit_personal_account_screen.dart';
+import '../../../../../core/constants/app_spaces.dart';
+import '../../../../../core/components/components.dart';
+import 'package:test_app/core/constants/app_sizes.dart';
 import '../../screens/edit_personal_account_screen.dart';
+import 'package:test_app/core/constants/app_colors.dart';
+import 'package:test_app/core/constants/app_borders.dart';
+import 'package:test_app/core/constants/app_strings.dart';
+import 'package:test_app/core/constants/app_paddings.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import '../../../../../core/data/models/message_result_model.dart';
+import 'package:test_app/core/presentation/widgets/build_snack_bar.dart';
+import 'package:test_app/core/presentation/widgets/text_form_field.dart';
+import 'package:test_app/core/presentation/widgets/navigation/navigator.dart';
+import '../../../../auth/presentation/screens/change_email_and_password_screen.dart';
+import 'package:test_app/features/edit_personal_account/data/models/account_model.dart';
+import 'package:test_app/features/edit_personal_account/presentation/widgets/layouts/view_image_layout.dart';
+import 'package:test_app/features/edit_personal_account/presentation/cubits/edit_personal_account_cubit.dart';
 
 
 class EditPersonalAccountLayout extends StatefulWidget {
-  final String userId;
-
+  final Future <void> Function({
+  required String userId,
+  required String userImage,
+  required String userName,
+  required String userState,
+  }) onUpdate;
+  final String docId;
+  final AccountModel accountModel;
+  final MessageResult messageResult;
   const EditPersonalAccountLayout({
-    required this.userId,
-    super.key
+    super.key,
+    required this.docId,
+    required this.onUpdate,
+    required this.accountModel,
+    required this.messageResult
   });
 
   @override
@@ -29,9 +46,11 @@ class _EditPersonalAccountLayoutState extends State<EditPersonalAccountLayout> {
   //controllers
   late final TextEditingController _nameController;
   late final TextEditingController _stateController;
-  late final TextEditingController _phoneController;
 
   static const double _avatarRadius = 100.0;
+  static const _sizedBox = SizedBox(height: 16.0);
+
+
   String _mediaUrl = '';
   String? _image;
 
@@ -40,101 +59,82 @@ class _EditPersonalAccountLayoutState extends State<EditPersonalAccountLayout> {
     super.initState();
     _nameController = TextEditingController();
     _stateController = TextEditingController();
-    _phoneController = TextEditingController();
   }
 
   @override
   void dispose() {
     _nameController.dispose();
     _stateController.dispose();
-    _phoneController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<GetAccountDataCubit, CubitStates>(
-      listener: _blocListener,
-      builder: (context, state) => _buildMainContent(context, state),
-    );
+    return _buildMainContent();
   }
 
-  Widget _buildMainContent(BuildContext context, CubitStates state) {
-    final cubit = GetAccountDataCubit.get(context);
-
-    if (state is LoadingState) {
-      return _buildLoadingState();
-    }
-
-    if (state is SuccessState) {
-      _initializeControllers(cubit);
-    }
-
+  Widget _buildMainContent() {
+    _initializeControllers();
     return Scaffold(
-      appBar: _buildAppBar(cubit),
-      body: _buildBody(cubit),
+      appBar: _buildAppBar(),
+      body: _buildBody(),
     );
   }
 
-  Widget _buildLoadingState() {
-    return const Scaffold(
-      body: Center(child: CircularProgressIndicator()),
-    );
-  }
-
-  AppBar _buildAppBar(GetAccountDataCubit cubit) {
+  AppBar _buildAppBar() {
     return AppBar(
-      scrolledUnderElevation: 0.0.,
+      scrolledUnderElevation: 0.0,
       title: _buildAppBarTitle(),
-      actions: [_buildSaveButton(cubit)],
+      actions: [_buildSaveButton()],
     );
   }
 
   Widget _buildAppBarTitle() {
-    return widget.userId == UserDetails.userId
+    return widget.docId == AppStrings.docId
         ? const Text('Edit Profile')
         : const Text('Friend Profile');
   }
 
-  Widget _buildSaveButton(GetAccountDataCubit cubit) {
-    if (widget.userId != UserDetails.userId) {
+  Widget _buildSaveButton() {
+    if (widget.docId != AppStrings.docId) {
       return const SizedBox();
     }
 
     return IconButton(
       icon: const Icon(Icons.save),
-      onPressed: () => _onSavePressed(cubit),
+      onPressed: () => _onSavePressed(),
     );
   }
 
-  Widget _buildBody(GetAccountDataCubit cubit) {
-    const sizedBox = SizedBox(height: 16.0,);
+  Widget _buildBody() {
     return SingleChildScrollView(
       child: Padding(
-        padding: const EdgeInsets.all(16.0).,
-        child: Column(
-          children: [
-            const SizedBox(height: 50.0).,
-            _buildAvatarSection(cubit),
-            sizedBox,
-            sizedBox,
-            _buildNameField(cubit),
-            sizedBox,
-            _buildStateField(cubit),
-            sizedBox,
-            _buildPhoneField(cubit),
+        padding: AppPaddings.medium,
+        child: Center(
+          child: Column(
+              children: [
+              const SizedBox(height: 50.0),
+          _buildAvatarSection(),
+          _sizedBox,
+          _sizedBox,
+          _buildNameField(),
+          _sizedBox,
+          _buildStateField(),
+          AppSpaces.vertical_24,
+          _buildChangePasswordButton(),
+          _sizedBox,
           ],
+                ),
         ),
-      ),
-    );
+    ),);
   }
 
-  Widget _buildAvatarSection(GetAccountDataCubit cubit) {
+  Widget _buildAvatarSection() {
     return Stack(
       alignment: AlignmentDirectional.bottomEnd,
       children: [
         _buildAvatar(),
-        _buildCameraButton(cubit),
+        _buildCameraButton(),
       ],
     );
   }
@@ -142,15 +142,15 @@ class _EditPersonalAccountLayoutState extends State<EditPersonalAccountLayout> {
   Widget _buildAvatar() {
     return CircleAvatar(
       radius: _avatarRadius,
-      backgroundImage: CachedNetworkImageProvider(UserDetails._image),
+      backgroundImage: CachedNetworkImageProvider(AppStrings._image),
       child: GestureDetector(
         onTap: () => _viewImage(context),
       ),
     );
   }
 
-  Widget _buildCameraButton(GetAccountDataCubit cubit) {
-    if (widget.userId != UserDetails.userId) {
+  Widget _buildCameraButton() {
+    if (widget.docId != AppStrings.docId) {
       return const SizedBox();
     }
 
@@ -166,67 +166,56 @@ class _EditPersonalAccountLayoutState extends State<EditPersonalAccountLayout> {
     );
   }
 
-  Widget _buildNameField(GetAccountDataCubit cubit) {
-    const name = 'Name';
-    return buildInputField(
-      label: name,
-      icon: const Icon(Icons.person),
+  Widget _buildNameField() {
+    return BuildInputField(
+      labelText: 'Name',
+      prefixIcon: const Icon(Icons.person),
       controller: _nameController,
-      hintText: name,
-      context: context,
-      enabled: _isFieldEnabled(cubit),
+      hintText: 'Name',
+      enabled: _isFieldEnabled(),
     );
   }
 
-  Widget _buildStateField(GetAccountDataCubit cubit) {
-    const state = 'State';
-    return buildInputField(
-      label: state,
-      icon: const Icon(Icons.info),
+  Widget _buildStateField() {
+    return BuildInputField(
+      labelText: 'State',
+      prefixIcon: const Icon(Icons.info),
       controller: _stateController,
-      hintText: state,
-      context: context,
-      enabled: _isFieldEnabled(cubit),
+      hintText: 'State',
+      enabled: _isFieldEnabled(),
     );
   }
 
-  Widget _buildPhoneField(GetAccountDataCubit cubit) {
-    const phone = 'Phone';
-    return buildInputField(
-      label: phone,
-      icon: const Icon(Icons.phone),
-      controller: _phoneController,
-      hintText: phone,
-      keyboardType: TextInputType.phone,
-      context: context,
-      enabled: _isFieldEnabled(cubit),
+  Widget _buildChangePasswordButton() {
+    return SizedBox(
+      width: double.infinity,
+      child: OutlinedButton(
+        style: _changePasswordButtonStyle(),
+        onPressed: _navigateToChangePassword,
+        child: const Text(
+          'Change email and password',
+          style: TextStyle(
+            fontSize: AppSizes.md,
+            color: AppColors.amber_600,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
     );
   }
 
-  void _blocListener(BuildContext context, CubitStates state) {
-    if (state is SuccessState) {
-      _showSuccessMessage();
-    }
+  void _initializeControllers() {
+      _image = widget.accountModel.userImage ?? '';
+      _nameController.text = widget.accountModel.userName ?? '';
+      _stateController.text = widget.accountModel.userState ?? '';
   }
 
-  void _initializeControllers(GetAccountDataCubit cubit) {
-    final accountData = cubit.accountData;
-
-    if (accountData.isNotEmpty) {
-      _image = accountData['userImage']. ?? '';
-      _nameController.text = accountData['fullName']. ?? '';
-      _stateController.text = accountData['userState']. ?? '';
-      _phoneController.text = accountData['userPhone']. ?? '';
-    }
-  }
-
-  Future<void> _onSavePressed(GetAccountDataCubit cubit) async {
-    await cubit.updateAccountData(
-      userId: widget.userId,
+  Future<void> _onSavePressed() async {
+    await widget.onUpdate(
+      userId: widget.docId,
       userImage: _mediaUrl,
       userName: _nameController.text,
       userState: _stateController.text,
-      userPhone: _phoneController.text,
     ).then((_) {
       _refreshPage();
     });
@@ -236,13 +225,13 @@ class _EditPersonalAccountLayoutState extends State<EditPersonalAccountLayout> {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-          builder: (context) => EditPersonalAccountScreen(userId: widget.userId)
+          builder: (context) => EditPersonalAccountScreen(docId: widget.docId)
       ),
     );
   }
 
   void _viewImage(BuildContext context) {
-    navigator(
+    BuildNavigator.build(
       context: context,
       link: ViewImageLayout(userImage: UserDetails._image),
     );
@@ -252,16 +241,34 @@ class _EditPersonalAccountLayoutState extends State<EditPersonalAccountLayout> {
     _mediaUrl = (await pickImage()) ?? '';
   }
 
-  bool _isFieldEnabled(GetAccountDataCubit cubit) {
-    return cubit.accountData['userId'] .== UserDetails.userId;
+  bool _isFieldEnabled() {
+    return widget.accountModel.userId == AppStrings.docId;
   }
 
-  void _showSuccessMessage() {.
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        backgroundColor: Colors.green.shade700.,
-        content: const Text('The account has been updated successfully'),
+  void _navigateToChangePassword() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const ChangeEmailAndPasswordScreen(),
       ),
+    );
+  }
+
+  ButtonStyle _changePasswordButtonStyle() {
+    return OutlinedButton.styleFrom(
+        padding: AppPaddings.verticalSymmetric,
+        side: const BorderSide(color: AppColors.amber_600),
+        shape: const RoundedRectangleBorder(
+            borderRadius: AppBorders.borderRadius_12
+        )
+    );
+  }
+
+  void _showSuccessMessage() {
+    BuildSnackBar.show(
+        context: context,
+        backgroundColor: AppColors.successGreen,
+        message: 'The account has been updated successfully'
     );
   }
 }

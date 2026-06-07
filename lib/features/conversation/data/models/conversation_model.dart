@@ -8,14 +8,6 @@ import '../../../../core/data/models/base/json_model.dart';
 import 'package:flutter_sound/public/flutter_sound_player.dart';
 
 
-class AudioPlayerState {
-  final bool playing;
-  final ProcessingState processingState;
-
-  AudioPlayerState(this.playing, this.processingState);
-}
-
-
 class ConversationModel implements JsonModel{
   final MediaType? type;
   final String? text;
@@ -104,4 +96,12 @@ class ConversationModel implements JsonModel{
       playbackDuration: playbackDuration ?? this.playbackDuration,
     );
   }
+}
+
+
+class AudioPlayerState {
+  final bool playing;
+  final ProcessingState processingState;
+
+  AudioPlayerState(this.playing, this.processingState);
 }

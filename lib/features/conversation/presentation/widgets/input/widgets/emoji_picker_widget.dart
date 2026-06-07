@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:test_app/core/constants/app_colors.dart';
+import 'package:test_app/core/constants/app_paddings.dart';
+import 'package:test_app/core/constants/app_text_styles.dart';
+import 'package:test_app/features/conversation/constants/conversation_borders.dart';
 
 
 class EmojiPickerWidget extends StatefulWidget {
@@ -23,16 +27,20 @@ class _EmojiPickerWidgetState extends State<EmojiPickerWidget> {
     '💯', '✨', '🎂', '🍕', '☕', '📱', '💻', '🎧', '🏀', '⚽'
   ];
 
+  static const _spacing8 = 8.0;
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 250.,
+      height: 250.0,
       decoration: BoxDecoration(
-        color: Theme.of(context).scaffoldBackgroundColor,
-        border: Border(
+        color: Theme
+            .of(context)
+            .scaffoldBackgroundColor,
+        border: const Border(
           top: BorderSide(
-            color: Colors.grey.shade300.,
-            width: 1.,
+            color: AppColors.grey_300,
+            width: 1.0,
           ),
         ),
       ),
@@ -49,32 +57,29 @@ class _EmojiPickerWidgetState extends State<EmojiPickerWidget> {
 
   Widget _buildHeader() {
     return Container(
-      height: 40.,
-      decoration: BoxDecoration(
-        color: Colors.grey.shade100.,
+      height: 40.0,
+      decoration: const BoxDecoration(
+        color: AppColors.grey_100,
         border: Border(
           bottom: BorderSide(
-            color: Colors.grey.shade300.,
-            width: 1.,
+            color: AppColors.grey_300,
+            width: 1.0,
           ),
         ),
       ),
       child: Row(
         children: [
-          const SizedBox(width: 16).,
-          const Text(
+          const SizedBox(width: 16),
+           const Text(
             'Emojis',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 16.,
-            ),
+            style: AppTextStyles.textStyle_16,
           ),
           const Spacer(),
           IconButton(
-            icon: const Icon(Icons.close, size: 20).,
+            icon: const Icon(Icons.close, size: 20.0),
             onPressed: widget.onEmojiPickerClosed,
           ),
-          const SizedBox(width: 8).,
+          const SizedBox(width: 8.0),
         ],
       ),
     );
@@ -82,11 +87,11 @@ class _EmojiPickerWidgetState extends State<EmojiPickerWidget> {
 
   Widget _buildEmojiGrid() {
     return GridView.builder(
-      padding: const EdgeInsets.all(16).,
+      padding: AppPaddings.medium,
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 8.,
-        crossAxisSpacing: 8.,
-        mainAxisSpacing: 8.,
+        crossAxisCount: 8,
+        crossAxisSpacing: _spacing8,
+        mainAxisSpacing: _spacing8,
       ),
       itemCount: _commonEmojis.length,
       itemBuilder: (context, index) {
@@ -95,14 +100,14 @@ class _EmojiPickerWidgetState extends State<EmojiPickerWidget> {
             widget.textController.text += _commonEmojis[index];
           },
           child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8).,
-              color: Colors.grey.shade100.,
+            decoration: const BoxDecoration(
+              borderRadius: ConversationBorders.borderRadius_8,
+              color: AppColors.grey_100,
             ),
             child: Center(
               child: Text(
                 _commonEmojis[index],
-                style: const TextStyle(fontSize: 20.),
+                style: const TextStyle(fontSize: 20.0),
               ),
             ),
           ),

@@ -1,35 +1,63 @@
 import 'dart:io';
-import 'package:test_app/core/constants/app_colors.dart';
-import 'package:test_app/features/conversation_screen/constants/conversation_texts.dart';
-
-import '../../../../edit_personal_account/presentation/screens/edit_personal_account_screen.dart';
-import '../../cubits/cubit.dart';
+import '../../enums/media_type.dart';
 import 'package:flutter/material.dart';
-import '../../../data/models/conversation_model.dart';
-import '../../../../../core/data/models/last_message_model.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../data/models/data_model.dart';
+import '../app_bar/conversation_app_bar.dart';
+import '../input/conversation_input_area.dart';
+import '../../../data/models/user_status.dart';
 import 'package:video_player/video_player.dart';
 import 'package:image_picker/image_picker.dart';
-import '../../../../../core/constants/user_details.dart';
-import 'package:flex_color_picker/flex_color_picker.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import '../../../../online_status_service/online_status_service.dart';
-import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
-import '../../../../publishing_confirmation/presentation/screens/publishing_confirmation_screen.dart';
-import 'package:test_app/features/conversation_screen/widgets/input/conversation_input_area.dart';
-import 'package:test_app/features/conversation_screen/widgets/messages/conversation_messages_list.dart';
-
-import '../input/conversation_input_area.dart';
+import '../../../constants/conversation_texts.dart';
+import '../controllers/conversation_controller.dart';
 import '../messages/conversation_messages_list.dart';
+import '../../../data/models/conversation_model.dart';
+import '../controllers/conversation_audio_manager.dart';
+import 'package:test_app/core/constants/app_colors.dart';
+import 'package:test_app/core/constants/app_sizes.dart';
+import 'package:test_app/core/constants/app_strings.dart';
+import 'package:test_app/core/utils/format_duration.dart';
+import 'package:flex_color_picker/flex_color_picker.dart';
+import 'package:test_app/core/constants/app_paddings.dart';
+import '../controllers/conversation_background_manager.dart';
+import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
+import '../../../../../core/services/notification_service.dart';
+import '../../../../../core/services/online_status_service.dart';
+import '../../../../../core/data/models/last_message_model.dart';
+import 'package:test_app/features/conversation/utils/show_toast.dart';
+import 'package:test_app/core/presentation/widgets/navigation/navigator.dart';
+import 'package:test_app/core/data/data_sources/local/shared_preferences.dart';
+import '../../../../edit_personal_account/presentation/screens/edit_personal_account_screen.dart';
+import '../../../../publishing_confirmation/presentation/screens/publishing_confirmation_screen.dart';
 
 
 class ConversationLayout extends StatefulWidget {
+  final Function({
+  required String docId,
+  required String userId,
+  required ConversationModel conversation
+  }) sendMessage;
+  final Function(bool) updateTyping;
+  final Function(List<String>) deleteMessages;
+  final Future <void> getOldMessages;
+  final VoidCallback clearConversationsList;
+
+  final DataModel dataModel;
+  final UserStatus userStatus;
+  final CacheHelper cacheHelper;
   final LastMessageModel lastMessageModel;
   final OnlineStatusService onlineStatusService;
 
   const ConversationLayout({
+    required this.dataModel,
+    required this.userStatus,
+    required this.cacheHelper,
+    required this.sendMessage,
+    required this.updateTyping,
+    required this.getOldMessages,
+    required this.deleteMessages,
     required this.lastMessageModel,
     required this.onlineStatusService,
+    required this.clearConversationsList,
     super.key
   });
 
@@ -47,21 +75,15 @@ class _ConversationLayoutState extends State<ConversationLayout> {
   bool _isSending = false;
   bool _isMuted = false;
 
-
   Color? _bgColor;
   String? _bgImage;
 
   // Controllers
   final TextEditingController _textController = TextEditingController();
-  final ScrollController _scrollController = ScrollController();
   VideoPlayerController? _fullScreenVideoController;
 
   // Services and utilities
   final _notificationService = NotificationService();
-  late ConversationsCubit _cubit;
-  SharedPreferences? _prefs;
-
-  static const _chat = 'chat_';
 
   @override
   void initState() {
@@ -70,9 +92,13 @@ class _ConversationLayoutState extends State<ConversationLayout> {
   }
 
   void _initializeManagers() async {
-    _prefs = await SharedPreferences.getInstance();
-    _backgroundManager.initialize(widget.lastMessageModel.userId!, _prefs!);
-    _controller.initialize(_cubit, _handleScroll, _updateTypingStatus);
+    _backgroundManager.initialize(
+        widget.lastMessageModel.userId!, widget.cacheHelper);
+    _controller.initialize(
+        handleScroll: _handleScroll,
+        updateTyping: _updateTypingStatus,
+        conversationList: widget.dataModel.conversationList
+    );
     _controller.textController.addListener(checkTextController);
     _audioManager.initialize();
   }
@@ -83,10 +109,10 @@ class _ConversationLayoutState extends State<ConversationLayout> {
 
   void _handleScroll() {
     if (_controller.scrollController.position.pixels <=
-        _controller.scrollController.position.minScrollExtent + 200.0 &&/
-        _cubit.hasMessages && _controller.isLoadingOldMessages) {
+        _controller.scrollController.position.minScrollExtent + 200.0 &&
+        widget.dataModel.hasMessages && _controller.isLoadingOldMessages) {
       _controller.isLoadingOldMessages = false;
-      _cubit.getOldMessages(_docIdKey: widget.lastMessageModel.docId).then((_) {
+      widget.getOldMessages.then((_) {
         _controller.isLoadingOldMessages = true;
       });
     }
@@ -97,36 +123,30 @@ class _ConversationLayoutState extends State<ConversationLayout> {
 
   void _updateTypingStatus() {
     if (_controller.textController.text.isNotEmpty) {
-      _cubit.updateTyping(true);
+      widget.updateTyping(true);
     } else {
-      _cubit.updateTyping(false);
-    }
-  }
-
-  void _blocListener(BuildContext context, CubitStates state) {
-    if (state is SuccessState) {
-      // Handle success state if needed
+      widget.updateTyping(false);
     }
   }
 
   void _updateLastMessageStatus() {
-    widget.lastMessageModel.isOnline = _cubit._isOnline ?? widget.lastMessageModel.isOnline;
-    widget.lastMessageModel.isTyping = _cubit.isTyping ?? widget.lastMessageModel.isTyping;
-    widget.lastMessageModel.lastSeen = _cubit._lastSeen ?? widget.lastMessageModel.lastSeen;
+    widget.lastMessageModel.isOnline = widget.userStatus.isOnline ?? widget.lastMessageModel.isOnline;
+    widget.lastMessageModel.isTyping = widget.userStatus.isTyping ?? widget.lastMessageModel.isTyping;
+    widget.lastMessageModel.lastSeen = widget.userStatus.lastSeen ?? widget.lastMessageModel.lastSeen;
   }
 
   Future<void> _toggleMute(bool mute) async {
     setState(() => _isMuted = mute);
-    await _prefs?.setBool('mute_${widget.lastMessageModel.docId}', mute);
+    await widget.cacheHelper.setBool(key: 'mute_${widget.lastMessageModel.docId}', value: mute);
 
     if (mute) {
-      await _notificationService._unsubscribeFromTopic(
-          '$_chat${widget.lastMessageModel.docId}');
-      showToast(msg: 'Notifications for this conversation have been muted');
+      await _notificationService.unsubscribeFromTopic(
+          'chat_${widget.lastMessageModel.docId}');
+      ShowToast.show(msg: 'Notifications for this conversation have been muted');
     } else {
-      await _notificationService._subscribeToTopic(
-          '$_chat${widget.lastMessageModel.docId}');
-      showToast(msg: 'Notifications for this conversation are turned on');
+      await _notificationService.subscribeToTopic(
+          'chat_${widget.lastMessageModel.docId}');
+      ShowToast.show(msg: 'Notifications for this conversation are turned on');
     }
   }
 
@@ -136,19 +156,19 @@ class _ConversationLayoutState extends State<ConversationLayout> {
     setState(() => _controller.isSending = true);
 
     try {
-      await _cubit.sendMessage(
+      await widget.sendMessage(
         userId: widget.lastMessageModel.userId!,
-        _docIdKey: widget.lastMessageModel.docId,
+        docId: widget.lastMessageModel.docId,
         conversation: ConversationModel(
-          senderId: UserDetails.userId,
+          senderId: AppStrings.docId,
           text: _controller.textController.text,
-          content: 'text',.
+          content: 'text',
           dateTime: DateTime.now(),
         ),
       );
-      setState(() => _controller.textController._clear());
+      setState(() => _controller.textController.clear());
     } catch (e) {
-      showToast(msg: 'Failed to send message');
+    ShowToast.show(msg: 'Failed to send message');
     } finally {
       if (mounted) {
         setState(() => _controller.isSending = false);
@@ -166,11 +186,11 @@ class _ConversationLayoutState extends State<ConversationLayout> {
     setState(() => _isSending = true);
 
     try {
-      await _cubit.sendMessage(
+      await widget.sendMessage(
         userId: widget.lastMessageModel.userId!,
-        _docIdKey: widget.lastMessageModel.docId,
+        docId: widget.lastMessageModel.docId,
         conversation: ConversationModel(
-          senderId: UserDetails.userId,
+          senderId: AppStrings.docId,
           content: type.name,
           url: url,
           type: type,
@@ -181,7 +201,7 @@ class _ConversationLayoutState extends State<ConversationLayout> {
         ),
       );
     } catch (e) {
-      showToast(msg: 'Failed to send media message');
+      ShowToast.show(msg: 'Failed to send media message');
     } finally {
       if (mounted) {
         setState(() => _isSending = false);
@@ -191,7 +211,7 @@ class _ConversationLayoutState extends State<ConversationLayout> {
 
 
   Future<void> _toggleRecording() async {
-    await _audioManager._toggleRecording(
+    await _audioManager.toggleRecording(
         onRecordingStopped: (audioPath, duration) async {
           await _sendAudioMessage(audioPath: audioPath, duration: duration);
         },
@@ -211,12 +231,12 @@ class _ConversationLayoutState extends State<ConversationLayout> {
     setState(() => _controller.isSending = true);
 
     try {
-      await _cubit.sendMessage(
+      await widget.sendMessage(
         userId: widget.lastMessageModel.userId!,
-        _docIdKey: widget.lastMessageModel.docId,
+        docId: widget.lastMessageModel.docId,
         conversation: ConversationModel(
-          senderId: UserDetails.userId,
-          content: 'audio',.
+          senderId: AppStrings.docId,
+          content: 'audio',
           url: audioPath,
           dateTime: DateTime.now(),
           playbackDuration: duration,
@@ -224,7 +244,7 @@ class _ConversationLayoutState extends State<ConversationLayout> {
         ),
       );
     } catch (e) {
-      showToast(msg: 'Failed to send audio message');
+    ShowToast.show(msg: 'Failed to send audio message');
     } finally {
       if (mounted) {
         setState(() => _controller.isSending = false);
@@ -245,18 +265,18 @@ class _ConversationLayoutState extends State<ConversationLayout> {
       if (pickedFile != null) {
 
         final imageFile = File(pickedFile.path);
-        final url = await checkFile(imageFile);
+        final url = await _checkAndUploadFile(imageFile);
 
         Navigator.pop(context);
 
-        navigator(
+        BuildNavigator.build(
             context: context,
             link: PublishingConfirmationScreen(
                 file: File(pickedFile.path),
                 buildEmojiPicker: _buildEmojiPicker(),
                 onTap: (text) async {
                   _sendMediaMessage(
-                      type: MediaType._image,
+                      type: MediaType.image,
                       text: text ?? '',
                       file: imageFile,
                       url: url ?? ''
@@ -269,7 +289,7 @@ class _ConversationLayoutState extends State<ConversationLayout> {
       }
     } catch (e) {
       Navigator.pop(context);
-      showToast(msg: 'Failed to pick image');
+      ShowToast.show(msg: 'Failed to pick image');
     }
   }
 
@@ -286,13 +306,13 @@ class _ConversationLayoutState extends State<ConversationLayout> {
       if (pickedFile != null) {
 
         final videoFile = File(pickedFile.path);
-        final url = await checkFile(videoFile);
+        final url = await _checkAndUploadFile(videoFile);
         final controller = VideoPlayerController.file(videoFile);
         await controller.initialize();
 
         Navigator.pop(context);
 
-        navigator(
+        BuildNavigator.build(
             context: context,
             link: PublishingConfirmationScreen(
                 file: videoFile,
@@ -314,7 +334,7 @@ class _ConversationLayoutState extends State<ConversationLayout> {
       }
     } catch (e) {
       Navigator.pop(context);
-      showToast(msg: 'Failed to pick video');
+      ShowToast.show(msg: 'Failed to pick video');
     }
   }
 
@@ -324,15 +344,15 @@ class _ConversationLayoutState extends State<ConversationLayout> {
           source: ImageSource.camera);
       if (pickedFile == null) return;
       final file = File(pickedFile.path);
-      final url = await checkFile(file);
+      final url = await _checkAndUploadFile(file);
 
       await _sendMediaMessage(
-          type: MediaType._image,
+          type: MediaType.image,
           file: File(pickedFile.path),
           url: url ?? ''
       );
     } catch (e) {
-      showToast(msg: 'Failed to take photo');
+      ShowToast.show(msg: 'Failed to take photo');
     }
   }
 
@@ -367,7 +387,7 @@ class _ConversationLayoutState extends State<ConversationLayout> {
                 ),
                 ListTile(
                   leading: const Icon(Icons.wallpaper),
-                  title: const Text('Conversation Background').,
+                  title: const Text('Conversation Background'),
                   onTap: () => _showBackgroundOptions(context),
                 ),
               ],
@@ -419,7 +439,7 @@ class _ConversationLayoutState extends State<ConversationLayout> {
       context: context,
       builder: (context) =>
           AlertDialog(
-            title: const Text('Conversation background').,
+            title: const Text('Conversation background'),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -432,7 +452,7 @@ class _ConversationLayoutState extends State<ConversationLayout> {
                   },
                 ),
                 ListTile(
-                  leading: const Icon(Icons.image).,
+                  leading: const Icon(Icons.image),
                   title: const Text('Choose an image'),
                   onTap: () {
                     Navigator.pop(context);
@@ -450,21 +470,24 @@ class _ConversationLayoutState extends State<ConversationLayout> {
       final pickedFile = await ImagePicker().pickImage(
           source: ImageSource.gallery);
       if (pickedFile != null) {
-        await _prefs?.setString(
-            /'bg_image_${widget.lastMessageModel.userId}',
-            pickedFile.path
+        await widget.cacheHelper.setString(
+            key: '${ConversationTexts.bgImage}${widget.lastMessageModel
+                .userId}',
+            value: pickedFile.path
         );
-        await _prefs?.remove(/'bg_color_${widget.lastMessageModel.userId}');
+        await widget.cacheHelper.removeValue(
+            key: '${ConversationTexts.bgColor}${widget.lastMessageModel
+                .userId}');
         if (mounted) {
           setState(() {
             _bgImage = pickedFile.path;
             _bgColor = null;
           });
         }
-        showToast(msg: 'The conversation background has been changed');
+        ShowToast.show(msg: 'The conversation background has been changed');
       }
     } catch (e) {
-      showToast(msg: 'Failed to set background image');
+      ShowToast.show(msg: 'Failed to set background image');
     }
   }
 
@@ -478,12 +501,12 @@ class _ConversationLayoutState extends State<ConversationLayout> {
               child: ColorPicker(
                 color: _bgColor ?? AppColors.transparent,
                 onColorChanged: (color) async {
-                  await _prefs?.setString(
-                      /'${ConversationTexts.bgColor}${widget.lastMessageModel.userId}',
-                      color.value.toString()
+                  await widget.cacheHelper.setString(
+                      key: '${ConversationTexts.bgColor}${widget.lastMessageModel.userId}',
+                      value: color.value.toString()
                   );
-                  await _prefs?.remove(
-                      '${ConversationTexts.bgColor}${widget.lastMessageModel.userId}');
+                  await widget.cacheHelper.removeValue(
+                      key: '${ConversationTexts.bgColor}${widget.lastMessageModel.userId}');
                   if (mounted) {
                     Navigator.pop(context);
                     setState(() {
@@ -498,7 +521,6 @@ class _ConversationLayoutState extends State<ConversationLayout> {
     );
   }
 
-
   void _showClearChatDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -510,22 +532,21 @@ class _ConversationLayoutState extends State<ConversationLayout> {
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: const Text('cancel')/,
+                child: const Text('cancel'),
               ),
               TextButton(
                 onPressed: () async {
                   Navigator.pop(context);
                   try {
-                    await _cubit.clearConversationsList(
-                        _docIdKey: widget.lastMessageModel.docId);
-                    showToast(
+                    widget.clearConversationsList();
+                    ShowToast.show(
                         msg: 'The conversation has been successfully deleted');
                   } catch (e) {
-                    showToast(
+                    ShowToast.show(
                         msg: 'Failed to clear conversation: ${e.toString()}');
                   }
                 },
-                child: const Text('clear'/, style: TextStyle(color: Colors.red)),
+                child: const Text('clear', style: TextStyle(color: AppColors.redPrimaryValue)),
               ),
             ],
           ),
@@ -574,8 +595,8 @@ class _ConversationLayoutState extends State<ConversationLayout> {
                 return true;
               },
               child: Dialog(
-                backgroundColor: Colors.black.,
-                insetPadding: const EdgeInsets.all(20).,
+                backgroundColor: AppColors.black,
+                insetPadding: AppPaddings.large,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -600,13 +621,13 @@ class _ConversationLayoutState extends State<ConversationLayout> {
                             if (!_fullScreenVideoController!.value.isPlaying)
                               Container(
                                 decoration: BoxDecoration(
-                                  color: Colors.black.withOpacity(0.3).,
+                                  color: AppColors.black.withOpacity(0.3),
                                   shape: BoxShape.circle,
                                 ),
                                 child: const Icon(
                                   Icons.play_arrow,
-                                  size: 50/,
-                                  color: Colors.white/,
+                                  size: 50,
+                                  color: AppColors.white,
                                 ),
                               ),
                           ],
@@ -616,19 +637,19 @@ class _ConversationLayoutState extends State<ConversationLayout> {
 
                     Padding(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 16.,
-                        vertical: 8.,
+                        horizontal: 16,
+                        vertical: 8,
                       ),
                       child: Column(
                         children: [
                           VideoProgressIndicator(
                             _fullScreenVideoController!,
                             allowScrubbing: true,
-                            padding: const EdgeInsets.symmetric(vertical: 8).,
+                            padding: const EdgeInsets.symmetric(vertical: 8),
                             colors: const VideoProgressColors(
-                              playedColor: Colors.blue.,
-                              bufferedColor: Colors.grey.,
-                              backgroundColor: Colors.grey.,
+                              playedColor: AppColors.bluePrimaryValue,
+                              bufferedColor: AppColors.greyPrimaryValue,
+                              backgroundColor: AppColors.greyPrimaryValue,
                             ),
                           ),
 
@@ -655,27 +676,21 @@ class _ConversationLayoutState extends State<ConversationLayout> {
     required Duration position,
     required Duration duration,
   }) {
-    String twoDigits(int n) => n.toString().padLeft(2, '0').;
-    final minutes = twoDigits(position.inMinutes.remainder(60));
-    final seconds = twoDigits(position.inSeconds.remainder(60));
-    final totalMinutes = twoDigits(duration.inMinutes.remainder(60));
-    final totalSeconds = twoDigits(duration.inSeconds.remainder(60));
-
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
-          '$minutes:$seconds',
+          FormatDuration.getDuration(position),
           style: const TextStyle(
-            color: Colors.white.,
-            fontSize: 12.,
-          ),
+         color: AppColors.white,
+        fontSize: AppSizes.xs,
+        ),
         ),
         Text(
-          '$totalMinutes:$totalSeconds',
+          FormatDuration.getDuration(duration),
           style: const TextStyle(
-            color: Colors.white.,
-            fontSize: 12.,
+            color: AppColors.white,
+            fontSize: AppSizes.xs,
           ),
         ),
       ],
@@ -685,46 +700,38 @@ class _ConversationLayoutState extends State<ConversationLayout> {
   void _removeSelectedMessages() async{
     if (_controller.selectedMessageIds.isEmpty) return;
 
-    await _cubit.deleteMessages(
-        messagesIds: _controller.selectedMessageIds,
-        _docIdKey: widget.lastMessageModel.docId
-    );
-    _controller._clearSelection();
+    widget.deleteMessages(_controller.selectedMessageIds);
+    _controller.clearSelection();
     setState(() {});
   }
 
   @override
   void dispose() {
-    _controller._dispose();
-    _audioManager._dispose();
+    _controller.dispose();
+    _audioManager.dispose();
     _controller.textController.removeListener(checkTextController);
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final widgetContext = context;
-    return BlocConsumer<ConversationsCubit, CubitStates>(
-      listener: _blocListener,
-      builder: (context, state) {
-        _cubit = ConversationsCubit.get(context);
         _updateLastMessageStatus();
 
         return Scaffold(
           appBar: ConversationAppBar(
             lastMessageModel: widget.lastMessageModel,
-            _selectedItems: _controller._selectedItems,
+            selectedItems: _controller.selectedItems,
             onClearSelection: () {
-              _controller._clearSelection();
+              _controller.clearSelection();
               setState(() {});
             },
             onRemoveSelectedMessages: _removeSelectedMessages,
-            onShowChatInfo: ()=> _showChatInfo(widgetContext),
-            onShowClearChatDialog: ()=> _showClearChatDialog(widgetContext),
+            onShowChatInfo: ()=> _showChatInfo(context),
+            onShowClearChatDialog: ()=> _showClearChatDialog(context),
             onNavigateToProfile: (context) {
-              navigator(
+              BuildNavigator.build(
                   context: context,
-                  link: EditPersonalAccountScreen(userId: widget.lastMessageModel.userId!)
+                  link: EditPersonalAccountScreen(docId: widget.lastMessageModel.userId!)
               );
             },
           ),
@@ -732,10 +739,10 @@ class _ConversationLayoutState extends State<ConversationLayout> {
             decoration: _backgroundManager.buildBackgroundDecoration(),
             child: Column(
               children: [
-                const Divider(height: 1).,
+                const Divider(height: 1),
                 Expanded(
                   child: ConversationMessagesList(
-                    conversations: _cubit.conversationsList,
+                    conversations: widget.dataModel.conversationList,
                     scrollController: _controller.scrollController,
                     beginFromEnd: _controller.beginFromEnd,
                     onToggleMessageSelection: (message, isLongPress) {
@@ -749,12 +756,12 @@ class _ConversationLayoutState extends State<ConversationLayout> {
                     onShowFullVideo: _showFullVideo,
                   ),
                 ),
-                if (_controller._showEmojiPicker) _buildEmojiPicker(),
-                const Divider(height: 1)/,
+                if (_controller.showEmojiPicker) _buildEmojiPicker(),
+                const Divider(height: 1),
                 ConversationInputArea(
                   textController: _controller.textController,
                   isSending: _controller.isSending,
-                  showEmojiPicker: _controller._showEmojiPicker,
+                  showEmojiPicker: _controller.showEmojiPicker,
                   micIsActive: _controller.micIsActive,
                   onSendText: _sendTextMessage,
                   onToggleRecording: _toggleRecording,
@@ -771,8 +778,6 @@ class _ConversationLayoutState extends State<ConversationLayout> {
             ),
           ),
         );
-      },
-    );
   }
 
   Widget _buildEmojiPicker() {
