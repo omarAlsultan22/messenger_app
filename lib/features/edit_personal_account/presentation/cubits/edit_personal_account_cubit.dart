@@ -1,13 +1,13 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../states/edit_personal_account_state.dart';
-import '../../../../core/errors/mappers/error_handler.dart';
 import '../../../../core/data/models/message_result_model.dart';
+import '../../../../core/presentation/mixins/error_handler_mixin.dart';
 import 'package:test_app/core/presentation/states/app_sub_states.dart';
 import 'package:test_app/features/edit_personal_account/domain/useCases/edit_personal_account_useCase.dart';
 import 'package:test_app/features/edit_personal_account/data/repositories_impl/firestore_edit_personal_account_repository.dart';
 
 
-class EditPersonalAccountCubit extends Cubit<EditPersonalAccountState> {
+class EditPersonalAccountCubit extends Cubit<EditPersonalAccountState> with ErrorHandlerMixin<EditPersonalAccountState> {
   final EditPersonalAccountUseCase _useCase;
   final FirestoreEditPersonalAccountRepository _repository;
 
@@ -31,7 +31,7 @@ class EditPersonalAccountCubit extends Cubit<EditPersonalAccountState> {
     try {
       final accountData = await _useCase.getAccountDataExecute(userId: docId);
 
-      if(accountData == null) {
+      if (accountData == null) {
         state.copyWith(subState: InitialState());
         return;
       }
@@ -44,12 +44,14 @@ class EditPersonalAccountCubit extends Cubit<EditPersonalAccountState> {
       );
     }
     catch (e, stackTrace) {
-      final errorHandler = ErrorHandler(
-          error: e,
-          stackTrace: stackTrace
+      handleError(e, stackTrace,
+          onError: (failure) =>
+              state.copyWith(
+                  subState: ErrorState(
+                      error: failure
+                  )
+              )
       );
-      final exception = errorHandler.handleException();
-      emit(state.copyWith(subState: ErrorState(error: exception)));
     }
   }
 
@@ -70,13 +72,11 @@ class EditPersonalAccountCubit extends Cubit<EditPersonalAccountState> {
       emit(state.copyWith(secondModel: MessageResult.success()));
     }
     catch (e, stackTrace) {
-      final errorHandler = ErrorHandler(
-          error: e,
-          stackTrace: stackTrace
+      handleError(e, stackTrace,
+          onError: (failure) =>
+              state.copyWith(secondModel: MessageResult.error(error: failure)
+              )
       );
-      final exception = errorHandler.handleException();
-      emit(state.copyWith(
-          secondModel: MessageResult.error(error: exception)));
     }
   }
 }

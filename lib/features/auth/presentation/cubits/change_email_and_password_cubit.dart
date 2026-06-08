@@ -6,9 +6,10 @@ import '../../../../core/data/models/message_result_model.dart';
 import '../../../../core/data/network/connectivity_service.dart';
 import '../../domain/useCases/change_email_and_password_useCase.dart';
 import '../../../../core/errors/exceptions/network_app_exception.dart';
+import '../../../../core/presentation/mixins/error_handler_mixin.dart';
 
 
-class ChangeEmailAndPasswordCubit extends Cubit<AuthState> {
+class ChangeEmailAndPasswordCubit extends Cubit<AuthState> with ErrorHandlerMixin<AuthState>{
   final ChangeEmailAndPasswordUseCase _useCase;
   final ConnectivityService _connectivityService;
 

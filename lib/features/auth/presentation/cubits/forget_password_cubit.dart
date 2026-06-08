@@ -5,11 +5,12 @@ import '../../domain/repositories/auth_repository.dart';
 import '../../../../core/errors/mappers/error_handler.dart';
 import '../../../../core/data/models/message_result_model.dart';
 import '../../../../core/data/network/connectivity_service.dart';
+import '../../../../core/presentation/mixins/error_handler_mixin.dart';
 import '../../../../core/errors/exceptions/network_app_exception.dart';
 import 'package:test_app/core/errors/exceptions/security_app_exception.dart';
 
 
-class ForgetPasswordCubit extends Cubit<AuthState> {
+class ForgetPasswordCubit extends Cubit<AuthState> with ErrorHandlerMixin<AuthState>{
   final AuthRepository _repository;
   final ConnectivityService _connectivityService;
 

@@ -5,7 +5,6 @@ import '../../data/models/conversation_model.dart';
 import '../../domain/useCases/send_message_use_case.dart';
 import '../../domain/useCases/update_typing_use_case.dart';
 import '../../domain/useCases/get_background_use_case.dart';
-import '../../../../core/errors/mappers/error_handler.dart';
 import '../../domain/useCases/delete_messages_use_case.dart';
 import '../../../../core/services/online_status_service.dart';
 import '../../domain/useCases/get_old_messages_use_case.dart';
@@ -13,11 +12,12 @@ import '../../domain/useCases/get_conversations_use_case.dart';
 import '../../domain/useCases/clear_conversations_use_case.dart';
 import '../../../../core/presentation/states/app_sub_states.dart';
 import '../../domain/useCases/update_unread_messages_use_case.dart';
-import 'package:test_app/core/errors/exceptions/firebase_app_exception.dart';
+import 'package:test_app/core/data/models/message_result_model.dart';
+import '../../../../core/presentation/mixins/error_handler_mixin.dart';
 import 'package:test_app/features/conversation/presentation/states/conversation_state.dart';
 
 
-class ConversationCubit extends Cubit<ConversationState> {
+class ConversationCubit extends Cubit<ConversationState> with ErrorHandlerMixin<ConversationState> {
   final GetBackgroundUseCase _getBackgroundUseCase;
   final UpdateUnreadMessagesUseCase _updateUnreadMessagesUseCase;
   final GetConversationsUseCase _getConversationsUseCase;
@@ -62,24 +62,32 @@ class ConversationCubit extends Cubit<ConversationState> {
   }
 
   Future<void> getSavedBackgroundColorAndImage(String docId) async {
-    final result = await _getBackgroundUseCase.execute(docId: docId);
-    final userStatus = state.updateFirstModel(
-        bgImage: result['bgImage'], bgColor: result['bgColor']);
-    emit(state.copyWith(firstModel: userStatus));
+    try {
+      final result = await _getBackgroundUseCase.execute(docId: docId);
+      final userStatus = state.updateFirstModel(
+          bgImage: result['bgImage'], bgColor: result['bgColor']);
+      emit(state.copyWith(firstModel: userStatus));
+    }
+    catch(e, stackTrace){
+      handleError(e, stackTrace,
+          onError: (failure) =>
+              state.copyWith(thirdModel: MessageResult.error(error: failure)
+              )
+      );
+    }
   }
 
   Future<void> updateUnreadMessages(String docId) async {
     emit(state.copyWith(subState: LoadingState()));
     try {
       await _updateUnreadMessagesUseCase.execute(docId: docId);
-      emit(state.copyWith(subState: SuccessState()));
+      emit(state.copyWith(subState: SuccessState(), thirdModel: MessageResult.success()));
     } catch (e, stackTrace) {
-      final errorHandler = ErrorHandler(
-          error: e,
-          stackTrace: stackTrace
+      handleError(e, stackTrace,
+          onError: (failure) =>
+              state.copyWith(thirdModel: MessageResult.error(error: failure)
+              )
       );
-      final exception = errorHandler.handleException();
-      emit(state.copyWith(subState: ErrorState(error: exception)));
     }
   }
 
@@ -108,13 +116,6 @@ class ConversationCubit extends Cubit<ConversationState> {
         }
       }
       emit(state.copyWith(subState: SuccessState()));
-    }, onError: (e) {
-      final errorHandler = ErrorHandler(
-          error: e,
-          stackTrace: StackTrace.current
-      );
-      final exception = errorHandler.handleException();
-      emit(state.copyWith(subState: ErrorState(error: exception)));
     });
   }
 
@@ -147,14 +148,15 @@ class ConversationCubit extends Cubit<ConversationState> {
     try {
       state.clearList();
       await _clearConversationsUseCase.execute(docId: docId);
-      emit(state.copyWith(subState: SuccessState()));
+      emit(state.copyWith(
+          subState: SuccessState(),
+          thirdModel: MessageResult.success(message: 'Deleted successfully')));
     } catch (e, stackTrace) {
-      final errorHandler = ErrorHandler(
-          error: e,
-          stackTrace: stackTrace
+      handleError(e, stackTrace,
+          onError: (failure) =>
+              state.copyWith(thirdModel: MessageResult.error(error: failure)
+              )
       );
-      final exception = errorHandler.handleException();
-      emit(state.copyWith(subState: ErrorState(error: exception)));
     }
   }
 
@@ -170,10 +172,12 @@ class ConversationCubit extends Cubit<ConversationState> {
         conversationList: state.conversationList,
       );
       emit(state.copyWith(subState: SuccessState()));
-    } catch (e) {
-      final exception = FirebaseAppException(
-          message: 'Error deleting messages: ${e.toString()}');
-      emit(state.copyWith(subState: ErrorState(error: exception)));
+    } catch (e, stackTrace) {
+      handleError(e, stackTrace,
+          onError: (failure) =>
+          state.copyWith(thirdModel: MessageResult.error(error: failure)
+          )
+      );
     }
   }
 
@@ -191,12 +195,11 @@ class ConversationCubit extends Cubit<ConversationState> {
       );
       emit(state.copyWith(subState: SuccessState()));
     } catch (e, stackTrace) {
-      final errorHandler = ErrorHandler(
-          error: e,
-          stackTrace: stackTrace
+      handleError(e, stackTrace,
+          onError: (failure) =>
+              state.copyWith(thirdModel: MessageResult.error(error: failure)
+              )
       );
-      final exception = errorHandler.handleException();
-      emit(state.copyWith(subState: ErrorState(error: exception)));
     }
   }
 
@@ -223,7 +226,6 @@ class ConversationCubit extends Cubit<ConversationState> {
   }
 
   Future<void> getOldMessages({required String docId}) async {
-    try {
       emit(state.copyWith(subState: LoadingState()));
 
       final dataModel = await _getOldMessagesUseCase.execute(
@@ -250,16 +252,7 @@ class ConversationCubit extends Cubit<ConversationState> {
               messages: group.messages
           );
         }
-      }
-
       emit(state.copyWith(subState: SuccessState()));
-    } catch (e, stackTrace) {
-      final errorHandler = ErrorHandler(
-          error: e,
-          stackTrace: stackTrace
-      );
-      final exception = errorHandler.handleException();
-      emit(state.copyWith(subState: ErrorState(error: exception)));
     }
   }
 

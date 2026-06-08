@@ -5,10 +5,11 @@ import '../../../../core/constants/app_strings.dart';
 import '../../../../core/errors/mappers/error_handler.dart';
 import '../../../../core/data/models/message_result_model.dart';
 import '../../../../core/data/network/connectivity_service.dart';
+import '../../../../core/presentation/mixins/error_handler_mixin.dart';
 import '../../../../core/errors/exceptions/network_app_exception.dart';
 
 
-class SignUpCubit extends Cubit<AuthState> {
+class SignUpCubit extends Cubit<AuthState> with ErrorHandlerMixin<AuthState>{
   final SignUpUseCase _useCase;
   final ConnectivityService _connectivityService;
 

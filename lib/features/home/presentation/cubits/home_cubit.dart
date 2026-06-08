@@ -3,12 +3,12 @@ import '../states/home_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/useCases/get_friends_use_case.dart';
 import '../../domain/useCases/get_profile_use_case.dart';
-import '../../../../core/errors/mappers/error_handler.dart';
 import '../../../../core/presentation/states/app_sub_states.dart';
 import 'package:test_app/core/data/models/last_message_model.dart';
+import '../../../../core/presentation/mixins/error_handler_mixin.dart';
 
 
-class HomeCubit extends Cubit<HomeState> {
+class HomeCubit extends Cubit<HomeState> with ErrorHandlerMixin<HomeState>{
   final GetProfileUseCase _getProfileUseCase;
   final GetFriendsUseCase _getFriendsUseCase;
 
@@ -35,12 +35,14 @@ class HomeCubit extends Cubit<HomeState> {
       emit(state.copyWith(subState: SuccessState(), firstModel: profileImage));
     }
     catch (e, stackTrace) {
-      final errorHandler = ErrorHandler(
-          error: e,
-          stackTrace: stackTrace
+      handleError(e, stackTrace,
+          onError: (failure) =>
+              state.copyWith(
+                  subState: ErrorState(
+                      error: failure
+                  )
+              )
       );
-      final exception = errorHandler.handleException();
-      emit(state.copyWith(subState: ErrorState(error: exception)));
     }
   }
 
@@ -48,21 +50,23 @@ class HomeCubit extends Cubit<HomeState> {
     emit(state.copyWith(subState: LoadingState()));
     _friendsSubscription?.cancel();
     _friendsSubscription = _getFriendsUseCase.execute(userId: docId).listen(
-          (updatedFriendsList) {
-        if (updatedFriendsList.isEmpty && state.isEmpty) {
-          state.copyWith(subState: InitialState());
+            (updatedFriendsList) {
+          if (updatedFriendsList.isEmpty && state.isEmpty) {
+            state.copyWith(subState: InitialState());
+          }
+          emit(state.copyWith(
+              subState: SuccessState(), secondModel: updatedFriendsList));
+        },
+        onError: (e) {
+          handleError(e, StackTrace.current,
+              onError: (failure) =>
+                  state.copyWith(
+                      subState: ErrorState(
+                          error: failure
+                      )
+                  )
+          );
         }
-        emit(state.copyWith(
-            subState: SuccessState(), secondModel: updatedFriendsList));
-      },
-      onError: (e) {
-        final errorHandler = ErrorHandler(
-            error: e,
-            stackTrace: StackTrace.current
-        );
-        final exception = errorHandler.handleException();
-        emit(state.copyWith(subState: ErrorState(error: exception)));
-      },
     );
   }
 
