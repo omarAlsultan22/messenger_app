@@ -1,6 +1,7 @@
 import 'package:test_app/core/data/data_sources/remote/firestore/firestore_base_service.dart';
 import '../../../../core/data/data_sources/remote/firebase_auth_service.dart';
 import '../../../../core/data/data_sources/local/shared_preferences.dart';
+import '../../data/repositories_impl/firebase_sign_up_repository.dart';
 import '../../data/repositories_impl/firebase_auth_repository.dart';
 import '../../../../core/data/network/connectivity_service.dart';
 import '../../domain/useCases/sign_up_useCase.dart';
@@ -12,7 +13,7 @@ import '../states/auth_states.dart';
 
 
 class SignUpScreen extends StatelessWidget {
-  const SignUpScreen({Key? key}) : super(key: key);
+  const SignUpScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -20,12 +21,13 @@ class SignUpScreen extends StatelessWidget {
     final repository = FirestoreBaseService();
     final cacheHelper = CacheHelper();
     final authRepository = FirebaseAuthRepository(auth: auth);
-    final settingsRepository = FirestoreSettingsRepository(
-        repository: repository, cacheHelper: cacheHelper);
+    final settingsRepository = FirebaseSignUpRepository(
+        repository: repository
+    );
     final useCase = SignUpUseCase(
         cacheHelper: cacheHelper,
         authRepository: authRepository,
-        settingsRepository: settingsRepository
+        signUpRepository: settingsRepository
     );
     final connectivityService = ConnectivityService();
     final cubit = SignUpCubit(
@@ -42,9 +44,9 @@ class SignUpScreen extends StatelessWidget {
                 required String userPassword,
               }) =>
                   cubit.signUp(
-                      userName: userName,
-                      userEmail: userEmail,
-                      userPassword: userPassword,
+                    userName: userName,
+                    userEmail: userEmail,
+                    userPassword: userPassword,
                   )
           );
         }
