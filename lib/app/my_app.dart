@@ -1,7 +1,7 @@
-import '../main.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../core/theme/theme_notifier.dart';
+import '../core/services/navigation_service.dart';
 import 'package:test_app/core/constants/app_colors.dart';
 import '../features/auth/presentation/screens/sign_in_screen.dart';
 
@@ -91,7 +91,7 @@ class MyApp extends StatelessWidget {
         child: Consumer<ThemeNotifier>(
             builder: (context, themeNotifier, child) {
               return MaterialApp(
-                navigatorKey: navigatorKey,
+                navigatorKey: NavigationService.navigatorKey,
                 theme: _getLightTheme(),
                 darkTheme: _getDarkTheme(),
                 themeMode: themeNotifier.themeMode,

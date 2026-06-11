@@ -3,5 +3,6 @@ enum ProcessingState {
   loading,
   buffering,
   ready,
-  completed
+  completed,
+  playing
 }

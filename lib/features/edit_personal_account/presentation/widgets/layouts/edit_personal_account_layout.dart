@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../core/constants/app_spaces.dart';
-import '../../../../../core/components/components.dart';
 import 'package:test_app/core/constants/app_sizes.dart';
+import '../../../../../core/utils/validate_input.dart';
 import '../../screens/edit_personal_account_screen.dart';
 import 'package:test_app/core/constants/app_colors.dart';
 import 'package:test_app/core/constants/app_borders.dart';
 import 'package:test_app/core/constants/app_strings.dart';
 import 'package:test_app/core/constants/app_paddings.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:test_app/core/services/media_upload_service.dart';
 import '../../../../../core/data/models/message_result_model.dart';
 import 'package:test_app/core/presentation/widgets/build_snack_bar.dart';
 import 'package:test_app/core/presentation/widgets/text_form_field.dart';
@@ -16,7 +16,6 @@ import 'package:test_app/core/presentation/widgets/navigation/navigator.dart';
 import '../../../../auth/presentation/screens/change_email_and_password_screen.dart';
 import 'package:test_app/features/edit_personal_account/data/models/account_model.dart';
 import 'package:test_app/features/edit_personal_account/presentation/widgets/layouts/view_image_layout.dart';
-import 'package:test_app/features/edit_personal_account/presentation/cubits/edit_personal_account_cubit.dart';
 
 
 class EditPersonalAccountLayout extends StatefulWidget {
@@ -49,7 +48,7 @@ class _EditPersonalAccountLayoutState extends State<EditPersonalAccountLayout> {
 
   static const double _avatarRadius = 100.0;
   static const _sizedBox = SizedBox(height: 16.0);
-
+  late final imageUrl = widget.accountModel.userImage;
 
   String _mediaUrl = '';
   String? _image;
@@ -59,6 +58,15 @@ class _EditPersonalAccountLayoutState extends State<EditPersonalAccountLayout> {
     super.initState();
     _nameController = TextEditingController();
     _stateController = TextEditingController();
+  }
+
+  @override
+  void didUpdateWidget(covariant EditPersonalAccountLayout oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.messageResult.message != null) {
+      _showMessageResult(widget.messageResult);
+    }
+    setState(() {});
   }
 
   @override
@@ -112,21 +120,21 @@ class _EditPersonalAccountLayoutState extends State<EditPersonalAccountLayout> {
         padding: AppPaddings.medium,
         child: Center(
           child: Column(
-              children: [
+            children: [
               const SizedBox(height: 50.0),
-          _buildAvatarSection(),
-          _sizedBox,
-          _sizedBox,
-          _buildNameField(),
-          _sizedBox,
-          _buildStateField(),
-          AppSpaces.vertical_24,
-          _buildChangePasswordButton(),
-          _sizedBox,
-          ],
-                ),
+              _buildAvatarSection(),
+              _sizedBox,
+              _sizedBox,
+              _buildNameField(),
+              _sizedBox,
+              _buildStateField(),
+              AppSpaces.vertical_24,
+              _buildChangePasswordButton(),
+              _sizedBox,
+            ],
+          ),
         ),
-    ),);
+      ),);
   }
 
   Widget _buildAvatarSection() {
@@ -142,9 +150,22 @@ class _EditPersonalAccountLayoutState extends State<EditPersonalAccountLayout> {
   Widget _buildAvatar() {
     return CircleAvatar(
       radius: _avatarRadius,
-      backgroundImage: CachedNetworkImageProvider(AppStrings._image),
       child: GestureDetector(
         onTap: () => _viewImage(context),
+        child: CachedNetworkImage(
+          imageUrl: imageUrl ?? '',
+          imageBuilder: (context, imageProvider) =>
+              CircleAvatar(
+                radius: _avatarRadius,
+                backgroundImage: imageProvider,
+              ),
+          placeholder: (context, url) => const CircularProgressIndicator(),
+          errorWidget: (context, url, error) =>
+          const CircleAvatar(
+            radius: _avatarRadius,
+            child: Icon(Icons.person, size: 40),
+          ),
+        ),
       ),
     );
   }
@@ -173,6 +194,7 @@ class _EditPersonalAccountLayoutState extends State<EditPersonalAccountLayout> {
       controller: _nameController,
       hintText: 'Name',
       enabled: _isFieldEnabled(),
+      validator: (value) => ValidateInput.validator(value!),
     );
   }
 
@@ -183,6 +205,7 @@ class _EditPersonalAccountLayoutState extends State<EditPersonalAccountLayout> {
       controller: _stateController,
       hintText: 'State',
       enabled: _isFieldEnabled(),
+      validator: (value) => ValidateInput.validator(value!),
     );
   }
 
@@ -205,9 +228,9 @@ class _EditPersonalAccountLayoutState extends State<EditPersonalAccountLayout> {
   }
 
   void _initializeControllers() {
-      _image = widget.accountModel.userImage ?? '';
-      _nameController.text = widget.accountModel.userName ?? '';
-      _stateController.text = widget.accountModel.userState ?? '';
+    _image = widget.accountModel.userImage ?? '';
+    _nameController.text = widget.accountModel.userName ?? '';
+    _stateController.text = widget.accountModel.userState ?? '';
   }
 
   Future<void> _onSavePressed() async {
@@ -233,12 +256,15 @@ class _EditPersonalAccountLayoutState extends State<EditPersonalAccountLayout> {
   void _viewImage(BuildContext context) {
     BuildNavigator.build(
       context: context,
-      link: ViewImageLayout(userImage: UserDetails._image),
+      link: ViewImageLayout(userImage: imageUrl ?? ''),
     );
   }
 
   Future<void> _pickImage() async {
-    _mediaUrl = (await pickImage()) ?? '';
+    final imageFile = await MediaUploadService.pickImage();
+    if (imageFile != null) {
+      _mediaUrl = await MediaUploadService.checkAndUploadFile(imageFile) ?? '';
+    }
   }
 
   bool _isFieldEnabled() {
@@ -264,11 +290,11 @@ class _EditPersonalAccountLayoutState extends State<EditPersonalAccountLayout> {
     );
   }
 
-  void _showSuccessMessage() {
+  void _showMessageResult(MessageResult messageResult) {
     BuildSnackBar.show(
         context: context,
-        backgroundColor: AppColors.successGreen,
-        message: 'The account has been updated successfully'
+        message: messageResult.message!,
+        backgroundColor: messageResult.color!
     );
   }
 }

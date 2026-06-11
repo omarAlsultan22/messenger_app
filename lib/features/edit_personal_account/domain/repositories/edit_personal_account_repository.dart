@@ -6,7 +6,7 @@ abstract class EditPersonalAccountRepository {
     required String userId
   });
 
-  updateAccountDataExecute({
+  updateAccountData({
     required String userId,
     required String userImage,
     required String userName,

@@ -36,13 +36,13 @@ abstract class MediaUploadService {
   ];
 
 
-  static Future<String?> pickImage() async {
+  static Future<File?> pickImage() async {
     try {
       final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
 
       if (pickedFile != null) {
         File file = File(pickedFile.path);
-        return await _checkAndUploadFile(file);
+        return file;
       }
       return null;
     } catch (e) {
@@ -50,13 +50,13 @@ abstract class MediaUploadService {
     }
   }
 
-  static Future<String?> pickVideo() async {
+  static Future<File?> pickVideo() async {
     try {
       final pickedFile = await _picker.pickVideo(source: ImageSource.gallery);
 
       if (pickedFile != null) {
         File file = File(pickedFile.path);
-        return await _checkAndUploadFile(file);
+        return file;
       }
       return null;
     } catch (e) {
@@ -64,7 +64,7 @@ abstract class MediaUploadService {
     }
   }
 
-  static Future<String?> _checkAndUploadFile(File file) async {
+  static Future<String?> checkAndUploadFile(File file) async {
     try {
       String filePath = file.path.toLowerCase();
       String extension = path.extension(filePath).replaceFirst('.', '');
@@ -107,9 +107,5 @@ abstract class MediaUploadService {
       print('❌ Upload error: $e');
       return null;
     }
-  }
-
-  Future<String?> uploadExistingFile(File file) async {
-    return await _checkAndUploadFile(file);
   }
 }

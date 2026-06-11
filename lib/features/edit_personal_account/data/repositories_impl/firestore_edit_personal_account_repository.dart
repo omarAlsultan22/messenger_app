@@ -23,7 +23,7 @@ class FirestoreEditPersonalAccountRepository implements EditPersonalAccountRepos
   }
 
   @override
-  void updateAccountDataExecute({
+  void updateAccountData({
     required String userId,
     required String userImage,
     required String userName,

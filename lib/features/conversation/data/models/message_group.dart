@@ -1,4 +1,5 @@
 import 'conversation_model.dart';
+import 'package:flutter/cupertino.dart';
 
 
 class MessageGroup {
@@ -30,4 +31,8 @@ class MessageGroup {
 
   void insertAllMessages(List<ConversationModel> messages) =>
       this.messages.insertAll(0, messages);
+
+  List<Widget> exactMatches({
+    required Widget Function(ConversationModel) builder,
+  }) => messages.map(builder).toList();
 }

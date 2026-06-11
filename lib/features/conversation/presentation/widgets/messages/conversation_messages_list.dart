@@ -52,8 +52,7 @@ class ConversationMessagesList extends StatelessWidget {
         return Column(
           children: [
             _buildDateHeader(group.date, context),
-            ...group.messages._exactMatches((message) =>
-                _buildMessageItem(message, context)),
+            ...group.exactMatches(builder: (message) => _buildMessageItem(message, context)),
           ],
         );
       },

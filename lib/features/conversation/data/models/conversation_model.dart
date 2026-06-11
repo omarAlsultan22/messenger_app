@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'audio_player_state.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:video_player/video_player.dart';
 import '../../presentation/enums/media_type.dart';
@@ -96,12 +97,25 @@ class ConversationModel implements JsonModel{
       playbackDuration: playbackDuration ?? this.playbackDuration,
     );
   }
+
+  void updatePlaybackState({
+    required bool playing,
+    Duration position = Duration.zero,
+  }) {
+    isPlaying = playing;
+    isPlayingNotifier.value = playing;
+    playbackPosition = position;
+    positionNotifier.value = position.inMilliseconds.toDouble();
+    playerStateNotifier.value = AudioPlayerState(
+      playing,
+      playing ? ProcessingState.playing : ProcessingState.idle,
+    );
+  }
 }
 
-
-class AudioPlayerState {
-  final bool playing;
-  final ProcessingState processingState;
-
-  AudioPlayerState(this.playing, this.processingState);
+extension ExactMatchesExtension on List<ConversationModel> {
+  List<ConversationModel> exactMatches(bool Function(ConversationModel) test) {
+    return where(test).toList();
+  }
 }
+

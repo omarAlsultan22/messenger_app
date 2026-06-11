@@ -1,22 +1,22 @@
-import 'package:test_app/core/constants/app_spaces.dart';
-import 'package:test_app/core/constants/app_text_styles.dart';
-import 'package:test_app/features/auth/constants/auth_colors.dart';
+import 'package:test_app/features/auth/presentation/utils/validate/validate_email.dart';
+import '../../../../../core/presentation/widgets/icon_button_widget.dart';
+import '../../../../../core/presentation/widgets/build_snack_bar.dart';
+import '../../../../../core/presentation/widgets/text_form_field.dart';
+import '../../../../../core/presentation/widgets/loading_widget.dart';
 import 'package:test_app/features/auth/constants/auth_strings.dart';
 import '../../../../../core/data/models/message_result_model.dart';
-import 'package:test_app/core/constants/app_strings.dart';
+import 'package:test_app/features/auth/constants/auth_colors.dart';
+import 'package:test_app/core/constants/app_text_styles.dart';
 import '../../../../../core/constants/app_paddings.dart';
 import 'package:test_app/core/constants/app_colors.dart';
+import 'package:test_app/core/constants/app_spaces.dart';
 import '../../../../../core/constants/app_sizes.dart';
-import '../../../../../core/presentation/widgets/build_snack_bar.dart';
-import '../../../../../core/presentation/widgets/icon_button_widget.dart';
-import '../../../../../core/presentation/widgets/loading_widget.dart';
-import '../../../../../core/presentation/widgets/text_form_field.dart';
-import '../../screens/sign_in_screen.dart';
 import '../../utils/validate/validate_password.dart';
-import 'package:flutter/cupertino.dart';
+import '../../../../../core/utils/validate_input.dart';
+import '../../screens/sign_in_screen.dart';
 import 'package:flutter/material.dart';
-import '../build_app_icon.dart';
 import '../navigator_with_delay.dart';
+import '../build_app_icon.dart';
 
 
 class SignUpLayout extends StatefulWidget {
@@ -101,7 +101,7 @@ class _SignUpLayoutState extends State<SignUpLayout> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        BuildAppIcon(),
+                        const BuildAppIcon(),
                         const SizedBox(height: 30),
                         _buildHeader(context),
                         AppSpaces.vertical_24,
@@ -187,10 +187,10 @@ class _SignUpLayoutState extends State<SignUpLayout> {
       controller: _nameController,
       labelText: 'Enter your name',
       hintText: 'Name',
-      prefixIcon: Icons.person,
+      prefixIcon: const Icon(Icons.person, color: AppColors.white),
       autofillHints: const [AutofillHints.name],
       validator: (value) =>
-          ValidateInput.validator(value!, 'Enter your name'),
+          ValidateInput.validator(value!),
     );
   }
 
@@ -199,7 +199,7 @@ class _SignUpLayoutState extends State<SignUpLayout> {
       controller: _emailController,
       labelText: AuthStrings.emailLabel,
       hintText: AuthStrings.emailHint,
-      prefixIcon: Icons.email,
+      prefixIcon: const Icon(Icons.email, color: AppColors.white),
       keyboardType: TextInputType.emailAddress,
       autofillHints: const [AutofillHints.email],
       validator: (value) => ValidateEmail.validator(value!),
@@ -211,7 +211,7 @@ class _SignUpLayoutState extends State<SignUpLayout> {
       controller: _passwordController,
       labelText: AuthStrings.passwordLabel,
       hintText: AuthStrings.passwordHint,
-      prefixIcon: Icons.lock,
+      prefixIcon: const Icon(Icons.lock, color: AppColors.white),
       obscureText: _isObscure,
       suffixIcon: _buildPasswordVisibilityToggle(),
       autofillHints: const [AutofillHints.newPassword],
@@ -223,7 +223,7 @@ class _SignUpLayoutState extends State<SignUpLayout> {
     return IconButton(
       icon: Icon(
         _isObscure ? Icons.visibility_off : Icons.visibility,
-        color: AuthColors.amber_500,
+        color: AppColors.white,
       ),
       onPressed: _togglePasswordVisibility,
     );

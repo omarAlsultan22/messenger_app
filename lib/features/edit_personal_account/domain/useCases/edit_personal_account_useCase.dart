@@ -11,7 +11,6 @@ class EditPersonalAccountUseCase {
       {required FirestoreEditPersonalAccountRepository repository})
       : _repository = repository;
 
-
   Future<AccountModel?> getAccountDataExecute({
     required String userId
   }) async {

@@ -84,7 +84,8 @@ class _HomeLayoutState extends State<HomeLayout> {
     setState(() => _isDarkMode = !_isDarkMode);
 
     final newThemeMode = _isDarkMode ? ThemeMode.dark : ThemeMode.light;
-    await widget.cacheHelper.setString(key: 'themeColor', value: newThemeMode.toString());
+    await widget.cacheHelper.setString(
+        key: 'themeColor', value: newThemeMode.toString());
     themeNotifier.setThemeMode(newThemeMode);
   }
 
@@ -99,7 +100,6 @@ class _HomeLayoutState extends State<HomeLayout> {
       context: context,
       link: ConversationScreen(
         lastMessageModel: lastMessageModel,
-        onlineStatusService: _onlineStatusService,
       ),
     );
   }
@@ -107,7 +107,7 @@ class _HomeLayoutState extends State<HomeLayout> {
   void _navigateToProfile() {
     BuildNavigator.build(
       context: context,
-      link: EditPersonalAccountScreen(docId: AppStrings.docId),
+      link: EditPersonalAccountScreen(docId: AppStrings.docId, ),
     );
   }
 
@@ -139,13 +139,13 @@ class _HomeLayoutState extends State<HomeLayout> {
             _verticalSpacing,
             StoriesList(
               friends: widget.friendList,
-              onFriendTap: (friend)=> _navigateToConversation(friend),
+              onFriendTap: (friend) => _navigateToConversation(friend),
             ),
-        _verticalSpacing,
+            _verticalSpacing,
             ChatsList(
               filteredData: _filteredData,
               searchController: _searchController,
-              onChatTap: (friend)=> _navigateToConversation(friend),
+              onChatTap: (friend) => _navigateToConversation(friend),
             ),
           ],
         ),

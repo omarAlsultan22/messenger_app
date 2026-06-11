@@ -21,8 +21,6 @@ class ChatsList extends StatelessWidget {
     super.key,
   });
 
-
-
   Future<void> _addRandomFriend() async {
     setState(() {
       isAddingRandomFriend = true;

@@ -68,7 +68,8 @@ class ConversationAudioManager {
     await _audioPlayer.stopPlayer();
     await _playbackSubscription?.cancel();
 
-    _currentlyPlayingAudio?.updatePlaybackState(playing: false, position: Duration.zero);
+    _currentlyPlayingAudio?.updatePlaybackState(
+        playing: false, position: Duration.zero);
     _currentlyPlayingAudio = null;
   }
 
@@ -90,13 +91,13 @@ class ConversationAudioManager {
           message.playbackDuration = disposition.duration;
         }
 
-        message.positionNotifier.value = disposition.position.inMilliseconds.toDouble();
+        message.positionNotifier.value =
+            disposition.position.inMilliseconds.toDouble();
         message.playbackPosition = disposition.position;
       });
 
       message.updatePlaybackState(playing: true);
       _currentlyPlayingAudio = message;
-
     } catch (e) {
       print('Playback error: $e');
       _resetPlayback(message);

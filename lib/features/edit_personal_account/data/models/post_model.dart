@@ -12,10 +12,9 @@ class PostModel extends UserModel implements JsonModel{
   late String? postType;
   late String? pathType;
   final DateTime? dateTime;
-  int? likesNumber;/
-  int? commentsNumber;/
-  int? sharesNumber;/
-
+  int? likesNumber;
+  int? commentsNumber;
+  int? sharesNumber;
 
   PostModel({
     super.userId,
@@ -34,7 +33,6 @@ class PostModel extends UserModel implements JsonModel{
     this.userPost,
     this.userText,
   });
-
 
   @override
   Map<String, dynamic> toJson() {

@@ -23,6 +23,7 @@ import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import '../../../../../core/services/notification_service.dart';
 import '../../../../../core/services/online_status_service.dart';
 import '../../../../../core/data/models/last_message_model.dart';
+import 'package:test_app/core/services/media_upload_service.dart';
 import 'package:test_app/features/conversation/utils/show_toast.dart';
 import 'package:test_app/core/presentation/widgets/navigation/navigator.dart';
 import 'package:test_app/core/data/data_sources/local/shared_preferences.dart';
@@ -117,7 +118,8 @@ class _ConversationLayoutState extends State<ConversationLayout> {
       });
     }
     setState(() {
-      _controller.beginFromEnd = _controller.scrollController.position.maxScrollExtent > 0;
+      _controller.beginFromEnd =
+          _controller.scrollController.position.maxScrollExtent > 0;
     });
   }
 
@@ -130,19 +132,24 @@ class _ConversationLayoutState extends State<ConversationLayout> {
   }
 
   void _updateLastMessageStatus() {
-    widget.lastMessageModel.isOnline = widget.userStatus.isOnline ?? widget.lastMessageModel.isOnline;
-    widget.lastMessageModel.isTyping = widget.userStatus.isTyping ?? widget.lastMessageModel.isTyping;
-    widget.lastMessageModel.lastSeen = widget.userStatus.lastSeen ?? widget.lastMessageModel.lastSeen;
+    widget.lastMessageModel.isOnline =
+        widget.userStatus.isOnline ?? widget.lastMessageModel.isOnline;
+    widget.lastMessageModel.isTyping =
+        widget.userStatus.isTyping ?? widget.lastMessageModel.isTyping;
+    widget.lastMessageModel.lastSeen =
+        widget.userStatus.lastSeen ?? widget.lastMessageModel.lastSeen;
   }
 
   Future<void> _toggleMute(bool mute) async {
     setState(() => _isMuted = mute);
-    await widget.cacheHelper.setBool(key: 'mute_${widget.lastMessageModel.docId}', value: mute);
+    await widget.cacheHelper.setBool(
+        key: 'mute_${widget.lastMessageModel.docId}', value: mute);
 
     if (mute) {
       await _notificationService.unsubscribeFromTopic(
           'chat_${widget.lastMessageModel.docId}');
-      ShowToast.show(msg: 'Notifications for this conversation have been muted');
+      ShowToast.show(
+          msg: 'Notifications for this conversation have been muted');
     } else {
       await _notificationService.subscribeToTopic(
           'chat_${widget.lastMessageModel.docId}');
@@ -168,7 +175,7 @@ class _ConversationLayoutState extends State<ConversationLayout> {
       );
       setState(() => _controller.textController.clear());
     } catch (e) {
-    ShowToast.show(msg: 'Failed to send message');
+      ShowToast.show(msg: 'Failed to send message');
     } finally {
       if (mounted) {
         setState(() => _controller.isSending = false);
@@ -225,7 +232,8 @@ class _ConversationLayoutState extends State<ConversationLayout> {
     );
   }
 
-  Future<void> _sendAudioMessage({required String? audioPath, required Duration duration}) async {
+  Future<void> _sendAudioMessage(
+      {required String? audioPath, required Duration duration}) async {
     if (audioPath == null) return;
 
     setState(() => _controller.isSending = true);
@@ -244,7 +252,7 @@ class _ConversationLayoutState extends State<ConversationLayout> {
         ),
       );
     } catch (e) {
-    ShowToast.show(msg: 'Failed to send audio message');
+      ShowToast.show(msg: 'Failed to send audio message');
     } finally {
       if (mounted) {
         setState(() => _controller.isSending = false);
@@ -260,19 +268,16 @@ class _ConversationLayoutState extends State<ConversationLayout> {
     );
 
     try {
-      final pickedFile = await ImagePicker().pickImage(
-          source: ImageSource.gallery);
-      if (pickedFile != null) {
-
-        final imageFile = File(pickedFile.path);
-        final url = await _checkAndUploadFile(imageFile);
+      final imageFile = await MediaUploadService.pickImage();
+      if (imageFile != null) {
+        final url = await MediaUploadService.checkAndUploadFile(imageFile);
 
         Navigator.pop(context);
 
         BuildNavigator.build(
             context: context,
             link: PublishingConfirmationScreen(
-                file: File(pickedFile.path),
+                file: imageFile,
                 buildEmojiPicker: _buildEmojiPicker(),
                 onTap: (text) async {
                   _sendMediaMessage(
@@ -280,7 +285,7 @@ class _ConversationLayoutState extends State<ConversationLayout> {
                       text: text ?? '',
                       file: imageFile,
                       url: url ?? ''
-                  ).whenComplete(()=> Navigator.pop(context));
+                  ).whenComplete(() => Navigator.pop(context));
                 }
             )
         );
@@ -301,12 +306,9 @@ class _ConversationLayoutState extends State<ConversationLayout> {
     );
 
     try {
-      final pickedFile = await ImagePicker().pickVideo(
-          source: ImageSource.gallery);
-      if (pickedFile != null) {
-
-        final videoFile = File(pickedFile.path);
-        final url = await _checkAndUploadFile(videoFile);
+      final videoFile = await MediaUploadService.pickImage();
+      if (videoFile != null) {
+        final url = await MediaUploadService.checkAndUploadFile(videoFile);
         final controller = VideoPlayerController.file(videoFile);
         await controller.initialize();
 
@@ -325,7 +327,7 @@ class _ConversationLayoutState extends State<ConversationLayout> {
                     file: videoFile,
                     url: url ?? '',
                     videoController: controller,
-                  ).whenComplete(()=> Navigator.pop(context));
+                  ).whenComplete(() => Navigator.pop(context));
                 }
             )
         );
@@ -340,15 +342,13 @@ class _ConversationLayoutState extends State<ConversationLayout> {
 
   Future<void> _takePhoto() async {
     try {
-      final pickedFile = await ImagePicker().pickImage(
-          source: ImageSource.camera);
-      if (pickedFile == null) return;
-      final file = File(pickedFile.path);
-      final url = await _checkAndUploadFile(file);
+      final imageFile = await MediaUploadService.pickImage();
+      if (imageFile == null) return;
+      final url = await MediaUploadService.checkAndUploadFile(imageFile);
 
       await _sendMediaMessage(
           type: MediaType.image,
-          file: File(pickedFile.path),
+          file: imageFile,
           url: url ?? ''
       );
     } catch (e) {
@@ -402,33 +402,33 @@ class _ConversationLayoutState extends State<ConversationLayout> {
     );
   }
 
-  void _showMediaPicker(BuildContext context) async{
+  void _showMediaPicker(BuildContext context) async {
     await showModalBottomSheet(
-    context: context,
-    builder: (context) =>
-        SafeArea(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                leading: const Icon(Icons.photo_library),
-                title: const Text('Image from the exhibition'),
-                onTap: () {
-                  Navigator.pop(context);
-                  _pickImage();
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.video_library),
-                title: const Text('Video from the exhibition'),
-                onTap: () {
-                  Navigator.pop(context);
-                  _pickVideo();
-                },
-              ),
-            ],
+      context: context,
+      builder: (context) =>
+          SafeArea(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ListTile(
+                  leading: const Icon(Icons.photo_library),
+                  title: const Text('Image from the exhibition'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    _pickImage();
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.video_library),
+                  title: const Text('Video from the exhibition'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    _pickVideo();
+                  },
+                ),
+              ],
+            ),
           ),
-        ),
     );
   }
 
@@ -502,11 +502,13 @@ class _ConversationLayoutState extends State<ConversationLayout> {
                 color: _bgColor ?? AppColors.transparent,
                 onColorChanged: (color) async {
                   await widget.cacheHelper.setString(
-                      key: '${ConversationTexts.bgColor}${widget.lastMessageModel.userId}',
+                      key: '${ConversationTexts.bgColor}${widget
+                          .lastMessageModel.userId}',
                       value: color.value.toString()
                   );
                   await widget.cacheHelper.removeValue(
-                      key: '${ConversationTexts.bgColor}${widget.lastMessageModel.userId}');
+                      key: '${ConversationTexts.bgColor}${widget
+                          .lastMessageModel.userId}');
                   if (mounted) {
                     Navigator.pop(context);
                     setState(() {
@@ -546,14 +548,15 @@ class _ConversationLayoutState extends State<ConversationLayout> {
                         msg: 'Failed to clear conversation: ${e.toString()}');
                   }
                 },
-                child: const Text('clear', style: TextStyle(color: AppColors.redPrimaryValue)),
+                child: const Text('clear',
+                    style: TextStyle(color: AppColors.redPrimaryValue)),
               ),
             ],
           ),
     );
   }
 
-  void _showFullImage(String? imageFile, BuildContext context) async{
+  void _showFullImage(String? imageFile, BuildContext context) async {
     if (imageFile == null) return;
 
     showDialog(
@@ -682,9 +685,9 @@ class _ConversationLayoutState extends State<ConversationLayout> {
         Text(
           FormatDuration.getDuration(position),
           style: const TextStyle(
-         color: AppColors.white,
-        fontSize: AppSizes.xs,
-        ),
+            color: AppColors.white,
+            fontSize: AppSizes.xs,
+          ),
         ),
         Text(
           FormatDuration.getDuration(duration),
@@ -697,7 +700,7 @@ class _ConversationLayoutState extends State<ConversationLayout> {
     );
   }
 
-  void _removeSelectedMessages() async{
+  void _removeSelectedMessages() async {
     if (_controller.selectedMessageIds.isEmpty) return;
 
     widget.deleteMessages(_controller.selectedMessageIds);
@@ -715,69 +718,70 @@ class _ConversationLayoutState extends State<ConversationLayout> {
 
   @override
   Widget build(BuildContext context) {
-        _updateLastMessageStatus();
+    _updateLastMessageStatus();
 
-        return Scaffold(
-          appBar: ConversationAppBar(
-            lastMessageModel: widget.lastMessageModel,
-            selectedItems: _controller.selectedItems,
-            onClearSelection: () {
-              _controller.clearSelection();
-              setState(() {});
-            },
-            onRemoveSelectedMessages: _removeSelectedMessages,
-            onShowChatInfo: ()=> _showChatInfo(context),
-            onShowClearChatDialog: ()=> _showClearChatDialog(context),
-            onNavigateToProfile: (context) {
-              BuildNavigator.build(
-                  context: context,
-                  link: EditPersonalAccountScreen(docId: widget.lastMessageModel.userId!)
-              );
-            },
-          ),
-          body: Container(
-            decoration: _backgroundManager.buildBackgroundDecoration(),
-            child: Column(
-              children: [
-                const Divider(height: 1),
-                Expanded(
-                  child: ConversationMessagesList(
-                    conversations: widget.dataModel.conversationList,
-                    scrollController: _controller.scrollController,
-                    beginFromEnd: _controller.beginFromEnd,
-                    onToggleMessageSelection: (message, isLongPress) {
-                      _controller.toggleMessageSelection(message, isLongPress);
-                      setState(() {});
-                    },
-                    onPlayAudio: _audioManager.playRecording,
-                    onStopAudio: _audioManager.stopPlaying,
-                    onSeekAudio: _audioManager.seekAudio,
-                    onShowFullImage: _showFullImage,
-                    onShowFullVideo: _showFullVideo,
-                  ),
-                ),
-                if (_controller.showEmojiPicker) _buildEmojiPicker(),
-                const Divider(height: 1),
-                ConversationInputArea(
-                  textController: _controller.textController,
-                  isSending: _controller.isSending,
-                  showEmojiPicker: _controller.showEmojiPicker,
-                  micIsActive: _controller.micIsActive,
-                  onSendText: _sendTextMessage,
-                  onToggleRecording: _toggleRecording,
-                  onToggleEmojiPicker: () {
-                    _controller.toggleEmojiPicker();
-                    setState(() {});
-                  },
-                  onPickImage: _pickImage,
-                  onPickVideo: _pickVideo,
-                  onTakePhoto: _takePhoto,
-                  onShowMediaPicker: _showMediaPicker,
-                ),
-              ],
+    return Scaffold(
+      appBar: ConversationAppBar(
+        lastMessageModel: widget.lastMessageModel,
+        selectedItems: _controller.selectedItems,
+        onClearSelection: () {
+          _controller.clearSelection();
+          setState(() {});
+        },
+        onRemoveSelectedMessages: _removeSelectedMessages,
+        onShowChatInfo: () => _showChatInfo(context),
+        onShowClearChatDialog: () => _showClearChatDialog(context),
+        onNavigateToProfile: (context) {
+          BuildNavigator.build(
+              context: context,
+              link: EditPersonalAccountScreen(
+                  docId: widget.lastMessageModel.userId!)
+          );
+        },
+      ),
+      body: Container(
+        decoration: _backgroundManager.buildBackgroundDecoration(),
+        child: Column(
+          children: [
+            const Divider(height: 1),
+            Expanded(
+              child: ConversationMessagesList(
+                conversations: widget.dataModel.conversationList,
+                scrollController: _controller.scrollController,
+                beginFromEnd: _controller.beginFromEnd,
+                onToggleMessageSelection: (message, isLongPress) {
+                  _controller.toggleMessageSelection(message, isLongPress);
+                  setState(() {});
+                },
+                onPlayAudio: _audioManager.playRecording,
+                onStopAudio: _audioManager.stopPlaying,
+                onSeekAudio: _audioManager.seekAudio,
+                onShowFullImage: _showFullImage,
+                onShowFullVideo: _showFullVideo,
+              ),
             ),
-          ),
-        );
+            if (_controller.showEmojiPicker) _buildEmojiPicker(),
+            const Divider(height: 1),
+            ConversationInputArea(
+              textController: _controller.textController,
+              isSending: _controller.isSending,
+              showEmojiPicker: _controller.showEmojiPicker,
+              micIsActive: _controller.micIsActive,
+              onSendText: _sendTextMessage,
+              onToggleRecording: _toggleRecording,
+              onToggleEmojiPicker: () {
+                _controller.toggleEmojiPicker();
+                setState(() {});
+              },
+              onPickImage: _pickImage,
+              onPickVideo: _pickVideo,
+              onTakePhoto: _takePhoto,
+              onShowMediaPicker: _showMediaPicker,
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildEmojiPicker() {

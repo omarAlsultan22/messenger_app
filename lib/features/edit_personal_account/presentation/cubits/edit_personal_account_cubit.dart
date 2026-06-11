@@ -63,7 +63,7 @@ class EditPersonalAccountCubit extends Cubit<EditPersonalAccountState> with Erro
   }) async {
     emit(state.copyWith(secondModel: MessageResult.loading()));
     try {
-      _repository.updateAccountDataExecute(
+      _repository.updateAccountData(
           userId: userId,
           userImage: userImage,
           userName: userName,

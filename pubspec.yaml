@@ -66,6 +66,7 @@ dependencies:
   rxdart: ^0.28.0
   just_audio: ^0.9.34 #
   audio_session: ^0.1.25 # لتحسين تجربة الصوت
+  connectivity_plus: ^7.1.1
 
   #jitsi_meet_wrapper: ^0.2.0+1
   #agora_rtc_engine: ^6.3.0 # لمكالمات الفيديو/الصوت

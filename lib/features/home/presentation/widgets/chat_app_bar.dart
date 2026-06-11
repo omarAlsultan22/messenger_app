@@ -27,14 +27,14 @@ class ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       elevation: AppSizes.none,
       scrolledUnderElevation: AppSizes.none,
-      title: const Row(
+      title: Row(
         children: [
           CircleAvatar(
             radius: _md,
-            backgroundImage: CachedNetworkImageProvider(_image),
+            backgroundImage: CachedNetworkImageProvider(profileImage),
           ),
-          SizedBox(width: _sm),
-          Text(
+          const SizedBox(width: _sm),
+          const Text(
             'Chats',
             style: TextStyle(
               fontSize: _md,

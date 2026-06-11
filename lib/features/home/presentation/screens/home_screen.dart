@@ -2,6 +2,7 @@ import 'package:test_app/features/home/data/repositories_impl/firestore_home_rep
 import 'package:test_app/features/home/presentation/widgets/layouts/home_layout.dart';
 import 'package:test_app/features/home/data/data_source/firestore_home_service.dart';
 import 'package:test_app/features/home/domain/useCases/get_profile_use_case.dart';
+import 'package:test_app/core/data/data_sources/local/shared_preferences.dart';
 import '../../../../core/presentation/widgets/states/initial_state.dart';
 import '../../../../core/presentation/widgets/states/loading_state.dart';
 import 'package:test_app/core/presentation/states/loaded_states.dart';
@@ -27,6 +28,7 @@ class HomeScreen extends StatelessWidget {
         repository: firestoreHomeRepository);
     final getFriendsUseCase = GetFriendsUseCase(
         repository: firestoreHomeRepository);
+    final cacheHelper = CacheHelper();
     return BlocProvider(
         create: (context) =>
         HomeCubit(
@@ -44,9 +46,11 @@ class HomeScreen extends StatelessWidget {
                 onLoading: () => const LoadingStateWidget(),
                 onLoaded: (loadedState) {
                   if (loadedState is DoubleModelSuccessState) {
-                    HomeLayout(profileImage: loadedState.firstModel,
+                    HomeLayout(
                         cacheHelper: cacheHelper,
-                        friendList: loadedState.secondModel);
+                        profileImage: loadedState.firstModel,
+                        friendList: loadedState.secondModel
+                    );
                   }
                   return const InitialStateWidget(
                       text: _defaultInfoText, icon: _defaultInfoIcon);

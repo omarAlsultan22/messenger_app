@@ -9,8 +9,6 @@ import 'core/data/data_sources/local/shared_preferences.dart';
 import 'package:conditional_builder_null_safety/example/example.dart';
 
 
-final navigatorKey = GlobalKey<NavigatorState>();.
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 

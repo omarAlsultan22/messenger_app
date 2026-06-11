@@ -1,3 +1,4 @@
+import '../../presentation/widgets/internet_unavailability.dart';
 import 'base/app_exception.dart';
 import 'package:flutter/cupertino.dart';
 import '../../data/network/connectivity_service.dart';
@@ -17,7 +18,7 @@ class NetworkAppException extends AppException {
     return InternetUnavailability(
       message: message,
       onRetry: onRetry,
-      _connectivityService: connectivityService,
+      connectivityService: connectivityService,
     );
   }
 }

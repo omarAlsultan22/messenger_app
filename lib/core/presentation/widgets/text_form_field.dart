@@ -4,31 +4,30 @@ import 'package:test_app/core/constants/app_borders.dart';
 
 
 class BuildInputField extends StatelessWidget {
+  bool enabled;
+  bool obscureText;
+  final String? hintText;
   final String? labelText;
   final Widget? suffixIcon;
-  final bool obscureText;
+  final double borderRadius;
+  final Widget? prefixIcon;
   final InputDecoration? decoration;
   final List<String>? autofillHints;
   final TextInputType? keyboardType;
   final TextEditingController controller;
-  final String? hintText;
-  final Widget? prefixIcon;
-  final bool enabled;
-  final double borderRadius;
-  final String Function(dynamic value)? validator;
+  final String? Function(dynamic value)? validator;
 
-
-  const BuildInputField({
+  BuildInputField({
     super.key,
     this.labelText,
     this.suffixIcon,
-    this.obscureText = false,
     this.autofillHints,
     this.keyboardType,
     this.hintText,
     this.prefixIcon,
     this.decoration,
     this.enabled = true,
+    this.obscureText = false,
     this.borderRadius = 50.0,
     required this.controller,
     this.validator,

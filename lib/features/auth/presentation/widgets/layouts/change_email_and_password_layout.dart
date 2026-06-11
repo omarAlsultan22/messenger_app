@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:test_app/features/auth/constants/auth_colors.dart';
-import 'package:test_app/features/auth/presentation/screens/sign_in_screen.dart';
-import 'package:test_app/features/auth/presentation/widgets/navigator_with_delay.dart';
 import '../../utils/validate/validate_email.dart';
 import '../../utils/validate/validate_password.dart';
 import '../../../../../core/constants/app_sizes.dart';
@@ -9,11 +6,14 @@ import '../../../../../core/constants/app_spaces.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/app_paddings.dart';
 import 'package:test_app/core/constants/app_borders.dart';
+import 'package:test_app/features/auth/constants/auth_colors.dart';
 import '../../../../../core/data/models/message_result_model.dart';
 import '../../../../../core/presentation/widgets/text_form_field.dart';
 import '../../../../../core/presentation/widgets/build_snack_bar.dart';
 import '../../../../../core/presentation/widgets/icon_button_widget.dart';
 import '../../../../../core/data/data_sources/local/shared_preferences.dart';
+import 'package:test_app/features/auth/presentation/screens/sign_in_screen.dart';
+import 'package:test_app/features/auth/presentation/widgets/navigator_with_delay.dart';
 
 
 class ChangeEmailAndPasswordLayout extends StatefulWidget {
@@ -169,7 +169,7 @@ class _ChangeEmailAndPasswordLayoutState extends State<ChangeEmailAndPasswordLay
     return BuildInputField(
       controller: _newEmailController,
       hintText: 'You can add a new email',
-      prefixIcon: Icons.email,
+      prefixIcon: const Icon(Icons.email, color: AppColors.white),
       validator: (value) => ValidateEmail.validator(value),
     );
   }
@@ -178,7 +178,7 @@ class _ChangeEmailAndPasswordLayoutState extends State<ChangeEmailAndPasswordLay
     return BuildInputField(
       controller: _currentPasswordController,
       hintText: 'Current Password',
-      prefixIcon: Icons.lock,
+      prefixIcon: const Icon(Icons.lock, color: AppColors.white),
       obscureText: _isObscureCurrent,
       suffixIcon: _buildVisibilityToggle(isObscure: _isObscureCurrent,
           onToggle: (value) => setState(() => _isObscureCurrent = value)),
@@ -190,7 +190,7 @@ class _ChangeEmailAndPasswordLayoutState extends State<ChangeEmailAndPasswordLay
     return BuildInputField(
       controller: _newPasswordController,
       hintText: 'New password',
-      prefixIcon: Icons.lock,
+      prefixIcon: const Icon(Icons.lock, color: AppColors.white),
       obscureText: _isObscureNew,
       suffixIcon: _buildVisibilityToggle(
           isObscure: _isObscureNew,
@@ -204,13 +204,13 @@ class _ChangeEmailAndPasswordLayoutState extends State<ChangeEmailAndPasswordLay
     return BuildInputField(
       controller: _repeatNewPasswordController,
       hintText: "Confirm the new password",
-      prefixIcon: Icons.lock_reset,
+      prefixIcon: const Icon(Icons.lock_reset, color: AppColors.white),
       obscureText: _isObscureConfirm,
       suffixIcon: _buildVisibilityToggle(
           isObscure: _isObscureConfirm,
           onToggle: (value) =>
               setState(() => _isObscureConfirm = value)),
-      validator: _validatePasswordConfirmation(value),
+      validator: (value)=> _validatePasswordConfirmation(value),
     );
   }
 

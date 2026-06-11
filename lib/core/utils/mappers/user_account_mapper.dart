@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 
 abstract class UserAccountMapper {
-  static Future<Map<String, dynamic>> enrichUserAccount({
+  static Future<Map<String, dynamic>>  enrichUserAccount({
     required Map<String, dynamic> userAccount,
   }) async {
     try {

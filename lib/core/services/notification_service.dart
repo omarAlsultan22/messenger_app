@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
-import '../../../main.dart';
+import 'navigation_service.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -106,7 +106,7 @@ class NotificationService {
     try {
       final docId = data[_dataKey][_docIdKey];
 
-      navigatorKey.currentState?.pushReplacement(
+      NavigationService.currentState?.pushReplacement(
         MaterialPageRoute(
             builder: (context) {
               final friendsList = HomeCubit
@@ -122,7 +122,7 @@ class NotificationService {
       );
     }
     catch (e) {
-      navigatorKey.currentState?.push(
+      NavigationService.currentState?.push(
         MaterialPageRoute(
           builder: (context) =>
           const Scaffold(
