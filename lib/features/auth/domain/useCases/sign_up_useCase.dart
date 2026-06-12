@@ -5,7 +5,6 @@ import '../../../../core/data/data_sources/local/shared_preferences.dart';
 
 
 class SignUpUseCase {
-  final CacheHelper _cacheHelper;
   final AuthRepository _authRepository;
   final SignUpRepository _signUpRepository;
 
@@ -15,12 +14,12 @@ class SignUpUseCase {
     required SignUpRepository signUpRepository
   })
       :
-        _cacheHelper = cacheHelper,
         _authRepository = authRepository,
         _signUpRepository = signUpRepository;
 
   Future<void> signUpExecute({
-    required String userName,
+    required String firstName,
+    required String lastName,
     required String userEmail,
     required String userPassword,
   }) async {
@@ -31,13 +30,14 @@ class SignUpUseCase {
       );
 
       UserModel userModel = UserModel(
-        userName: userName,
+        firstName: firstName,
+        lastName: lastName,
+        fullName: '$firstName''$lastName'
       );
 
       await _signUpRepository.createUserInfo(
           userModel: userModel, userCredential: userCredential);
 
-      await _cacheHelper.setString(key: 'userName', value: userName);
     } catch (e) {
     rethrow;
     }

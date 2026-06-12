@@ -106,7 +106,7 @@ class StoryItem extends StatelessWidget {
             ),
             const SizedBox(height: 6.0),
             Text(
-              friend.userName ?? '',
+              friend.firstName ?? '',
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
               textAlign: TextAlign.center,

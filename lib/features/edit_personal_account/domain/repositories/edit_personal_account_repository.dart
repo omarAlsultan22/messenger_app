@@ -9,7 +9,8 @@ abstract class EditPersonalAccountRepository {
   updateAccountData({
     required String userId,
     required String userImage,
-    required String userName,
+    required String firstName,
+    required String lastName,
     required String userState,
   });
 }

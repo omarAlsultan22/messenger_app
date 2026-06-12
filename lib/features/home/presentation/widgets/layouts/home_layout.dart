@@ -74,7 +74,7 @@ class _HomeLayoutState extends State<HomeLayout> {
       _filteredData = query.isEmpty
           ? widget.friendList
           : widget.friendList.where((item) =>
-          item.userName!.toLowerCase().contains(query)).toList();
+          item.firstName!.toLowerCase().contains(query)).toList();
     });
   }
 

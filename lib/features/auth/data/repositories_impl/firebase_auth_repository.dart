@@ -26,7 +26,6 @@ class FirebaseAuthRepository implements AuthRepository {
     }
   }
 
-
   @override
   Future<UserCredential> signUp({
     required String userEmail,
@@ -45,7 +44,6 @@ class FirebaseAuthRepository implements AuthRepository {
       rethrow;
     }
   }
-
 
   @override
   Future<User?> updateProfile({

@@ -55,10 +55,9 @@ class OnlineStatusService {
 
 
   Stream<bool> getUserTypingStatus(String userId) {
-    const isTyping = 'isTyping';
     return _firestore.collection(_accounts).doc(userId)
         .snapshots()
-        .map((snapshot) => snapshot.data()?[isTyping] ?? false);
+        .map((snapshot) => snapshot.data()?['isTyping'] ?? false);
   }
 
   Stream<bool> getUserOnlineStatus(String userId) {
@@ -100,7 +99,7 @@ class LifecycleEventHandler extends WidgetsBindingObserver {
         await detachCallBack();
         break;
       case AppLifecycleState.hidden:
-        // TODO: Handle this case.
+      // TODO: Handle this case.
         throw UnimplementedError();
     }
   }

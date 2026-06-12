@@ -25,7 +25,8 @@ class SignUpCubit extends Cubit<AuthState> with ErrorHandlerMixin<AuthState>{
   static SignUpCubit get(context) => BlocProvider.of(context);
 
   Future<void> signUp({
-    required String userName,
+    required String firstName,
+    required String lastName,
     required String userEmail,
     required String userPassword,
   }) async {
@@ -43,7 +44,8 @@ class SignUpCubit extends Cubit<AuthState> with ErrorHandlerMixin<AuthState>{
     emit(AuthState(messageResult: MessageResult.loading()));
     try {
       await _useCase.signUpExecute(
-          userName: userName,
+          firstName: firstName,
+          lastName: lastName,
           userEmail: userEmail,
           userPassword: userPassword,
       );

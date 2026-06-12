@@ -12,8 +12,8 @@ import '../controllers/conversation_controller.dart';
 import '../messages/conversation_messages_list.dart';
 import '../../../data/models/conversation_model.dart';
 import '../controllers/conversation_audio_manager.dart';
-import 'package:test_app/core/constants/app_colors.dart';
 import 'package:test_app/core/constants/app_sizes.dart';
+import 'package:test_app/core/constants/app_colors.dart';
 import 'package:test_app/core/constants/app_strings.dart';
 import 'package:test_app/core/utils/format_duration.dart';
 import 'package:flex_color_picker/flex_color_picker.dart';
@@ -49,6 +49,7 @@ class ConversationLayout extends StatefulWidget {
   final OnlineStatusService onlineStatusService;
 
   const ConversationLayout({
+    super.key,
     required this.dataModel,
     required this.userStatus,
     required this.cacheHelper,
@@ -58,8 +59,7 @@ class ConversationLayout extends StatefulWidget {
     required this.deleteMessages,
     required this.lastMessageModel,
     required this.onlineStatusService,
-    required this.clearConversationsList,
-    super.key
+    required this.clearConversationsList
   });
 
   @override
@@ -100,7 +100,7 @@ class _ConversationLayoutState extends State<ConversationLayout> {
         updateTyping: _updateTypingStatus,
         conversationList: widget.dataModel.conversationList
     );
-    _controller.textController.addListener(checkTextController);
+    _controller.addListener(checkTextController);
     _audioManager.initialize();
   }
 
@@ -109,8 +109,8 @@ class _ConversationLayoutState extends State<ConversationLayout> {
   }
 
   void _handleScroll() {
-    if (_controller.scrollController.position.pixels <=
-        _controller.scrollController.position.minScrollExtent + 200.0 &&
+    if (_controller.pixels <=
+        _controller.minScrollExtent + 200.0 &&
         widget.dataModel.hasMessages && _controller.isLoadingOldMessages) {
       _controller.isLoadingOldMessages = false;
       widget.getOldMessages.then((_) {
@@ -119,12 +119,12 @@ class _ConversationLayoutState extends State<ConversationLayout> {
     }
     setState(() {
       _controller.beginFromEnd =
-          _controller.scrollController.position.maxScrollExtent > 0;
+          _controller.maxScrollExtent > 0;
     });
   }
 
   void _updateTypingStatus() {
-    if (_controller.textController.text.isNotEmpty) {
+    if (_controller.isNotEmpty) {
       widget.updateTyping(true);
     } else {
       widget.updateTyping(false);
@@ -158,7 +158,7 @@ class _ConversationLayoutState extends State<ConversationLayout> {
   }
 
   Future<void> _sendTextMessage() async {
-    if (_controller.textController.text.isEmpty) return;
+    if (!_controller.isNotEmpty) return;
 
     setState(() => _controller.isSending = true);
 
@@ -168,12 +168,12 @@ class _ConversationLayoutState extends State<ConversationLayout> {
         docId: widget.lastMessageModel.docId,
         conversation: ConversationModel(
           senderId: AppStrings.docId,
-          text: _controller.textController.text,
+          text: _controller.message,
           content: 'text',
           dateTime: DateTime.now(),
         ),
       );
-      setState(() => _controller.textController.clear());
+      setState(() => _controller.clear);
     } catch (e) {
       ShowToast.show(msg: 'Failed to send message');
     } finally {
@@ -370,7 +370,7 @@ class _ConversationLayoutState extends State<ConversationLayout> {
                     backgroundImage: NetworkImage(
                         widget.lastMessageModel.userImage!),
                   ),
-                  title: Text(widget.lastMessageModel.userName!),
+                  title: Text(widget.lastMessageModel.fullName!),
                   subtitle: Text(
                       _isMuted
                           ? 'Notifications are muted'
@@ -701,7 +701,7 @@ class _ConversationLayoutState extends State<ConversationLayout> {
   }
 
   void _removeSelectedMessages() async {
-    if (_controller.selectedMessageIds.isEmpty) return;
+    if (_controller.selectedMessageIdsIsEmpty) return;
 
     widget.deleteMessages(_controller.selectedMessageIds);
     _controller.clearSelection();
@@ -712,7 +712,7 @@ class _ConversationLayoutState extends State<ConversationLayout> {
   void dispose() {
     _controller.dispose();
     _audioManager.dispose();
-    _controller.textController.removeListener(checkTextController);
+    _controller.removeListener(checkTextController);
     super.dispose();
   }
 
@@ -746,6 +746,7 @@ class _ConversationLayoutState extends State<ConversationLayout> {
             const Divider(height: 1),
             Expanded(
               child: ConversationMessagesList(
+                lastMessageModel: widget.lastMessageModel,
                 conversations: widget.dataModel.conversationList,
                 scrollController: _controller.scrollController,
                 beginFromEnd: _controller.beginFromEnd,

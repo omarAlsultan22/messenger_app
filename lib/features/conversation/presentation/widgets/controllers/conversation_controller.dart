@@ -25,6 +25,28 @@ class ConversationController {
   final ScrollController scrollController = ScrollController();
   final TextEditingController textController = TextEditingController();
 
+  ScrollPosition get _position => scrollController.position;
+
+  double get pixels => _position.pixels;
+
+  double get maxScrollExtent => _position.maxScrollExtent;
+
+  double get minScrollExtent => _position.minScrollExtent;
+
+  String get message => textController.text;
+
+  bool get isNotEmpty => textController.text.isNotEmpty;
+
+  bool get selectedMessageIdsIsEmpty => selectedMessageIds.isEmpty;
+
+  void get clear => textController.clear();
+
+  void addListener(VoidCallback addMethod) =>
+      textController.addListener(addMethod);
+
+  void removeListener(VoidCallback removeMethod) =>
+      textController.removeListener(removeMethod);
+
   void initialize({
     required VoidCallback handleScroll,
     required VoidCallback updateTyping,

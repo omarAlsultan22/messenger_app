@@ -56,6 +56,7 @@ class ConversationCubit extends Cubit<ConversationState> with ErrorHandlerMixin<
   StreamSubscription? _conversationsSubscription;
   StreamSubscription? _lastSeenSubscription;
   StreamSubscription? _onlineSubscription;
+  StreamSubscription? _typingSubscription;
 
   Future<void> updateTyping(bool isTyping) async {
     await _updateTypingUseCase.execute(isTyping);
@@ -128,7 +129,7 @@ class ConversationCubit extends Cubit<ConversationState> with ErrorHandlerMixin<
   }
 
   void getUserTypingStatus(String userId) {
-    _onlineSubscription =
+    _typingSubscription =
         _onlineStatusService.getUserTypingStatus(userId).listen((value) {
           final userStatus = state.updateFirstModel(isTyping: value);
           emit(state.copyWith(firstModel: userStatus));
@@ -260,6 +261,7 @@ class ConversationCubit extends Cubit<ConversationState> with ErrorHandlerMixin<
   Future<void> close() async {
     _conversationsSubscription?.cancel();
     _onlineSubscription?.cancel();
+    _typingSubscription?.cancel();
     _lastSeenSubscription?.cancel();
     await _interactionsSubscription?.cancel();
     return super.close();

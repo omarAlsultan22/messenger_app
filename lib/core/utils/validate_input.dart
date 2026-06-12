@@ -1,5 +1,8 @@
 class ValidateInput {
-  static String? validator(String? value) {
+  static String? validator({
+    required String? value,
+    required String item
+  }) {
     if (value == null || value.isEmpty) {
       return 'Please Enter Your name';
     }

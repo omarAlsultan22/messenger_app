@@ -58,7 +58,8 @@ class EditPersonalAccountCubit extends Cubit<EditPersonalAccountState> with Erro
   Future<void> updateAccountData({
     required String userId,
     required String userImage,
-    required String userName,
+    required String firstName,
+    required String lastName,
     required String userState,
   }) async {
     emit(state.copyWith(secondModel: MessageResult.loading()));
@@ -66,7 +67,8 @@ class EditPersonalAccountCubit extends Cubit<EditPersonalAccountState> with Erro
       _repository.updateAccountData(
           userId: userId,
           userImage: userImage,
-          userName: userName,
+          firstName: firstName,
+          lastName: lastName,
           userState: userState
       );
       emit(state.copyWith(secondModel: MessageResult.success()));

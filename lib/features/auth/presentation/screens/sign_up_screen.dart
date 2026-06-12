@@ -39,12 +39,14 @@ class SignUpScreen extends StatelessWidget {
           return SignUpLayout(
               messageResult: state.messageResult!,
               onUpdate: ({
-                required String userName,
+                required String firstName,
+                required String lastName,
                 required String userEmail,
                 required String userPassword,
               }) =>
                   cubit.signUp(
-                    userName: userName,
+                    firstName: firstName,
+                    lastName: lastName,
                     userEmail: userEmail,
                     userPassword: userPassword,
                   )

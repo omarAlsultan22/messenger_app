@@ -18,7 +18,7 @@ class FirebaseSignUpRepository implements SignUpRepository {
   }) async {
     try {
       await _repository.setData(
-          collectionPath: AppKeys.users,
+          collectionPath: 'accounts',
           docId: userCredential.user!.uid,
           data: userModel.toJson());
     } catch (e) {

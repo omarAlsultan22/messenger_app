@@ -85,7 +85,7 @@ class GetFriendsUseCase {
           final userModel = await _getUserModelData(docId: senderId);
           final messageWithDetails = {
             ...unreadMessage,
-            'userName': userModel.userName,
+            'userName': userModel.firstName,
             'docId': docId,
           };
 
@@ -123,7 +123,7 @@ class GetFriendsUseCase {
           }
 
           processedMessage['userId'] = userModel.userId;
-          processedMessage['userName'] = userModel.userName;
+          processedMessage['userName'] = userModel.firstName;
           processedMessage['userImage'] = userModel.userImage;
           processedMessage['isOnline'] = userModel.isOnline;
           processedMessage['lastSeen'] = lastSeen;

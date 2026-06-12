@@ -46,12 +46,14 @@ class EditPersonalAccountScreen extends StatelessWidget {
                       onUpdate: ({
                         required String userId,
                         required String userImage,
-                        required String userName,
+                        required String firstName,
+                        required String lastName,
                         required String userState
                       }) =>
                           cubit.updateAccountData(
                               userId: userId,
-                              userName: userName,
+                              firstName: firstName,
+                              lastName: lastName,
                               userImage: userImage,
                               userState: userState
                           ),

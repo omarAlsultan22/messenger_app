@@ -26,8 +26,9 @@ class FirestoreEditPersonalAccountRepository implements EditPersonalAccountRepos
   void updateAccountData({
     required String userId,
     required String userImage,
-    required String userName,
-    required String userState,
+    required String firstName,
+    required String lastName,
+    required String userState
 }) async {
     final docRef = _service.createDoc(collectionPath: 'posts');
 
@@ -42,7 +43,9 @@ class FirestoreEditPersonalAccountRepository implements EditPersonalAccountRepos
     );
 
     UserModel userModel = UserModel(
-      userName: userName,
+      firstName: firstName,
+      lastName: lastName,
+      fullName: '$firstName''$lastName',
       userImage: docRef.path,
     );
 

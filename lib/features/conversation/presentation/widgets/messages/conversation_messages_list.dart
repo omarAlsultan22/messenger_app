@@ -9,32 +9,35 @@ import 'package:test_app/core/constants/app_borders.dart';
 import 'package:test_app/core/utils/format_duration.dart';
 import 'package:test_app/core/constants/app_strings.dart';
 import 'package:test_app/core/constants/app_paddings.dart';
+import '../../../../../core/data/models/last_message_model.dart';
 import 'package:test_app/features/conversation/utils/format_time.dart';
 import 'package:test_app/features/conversation/constants/conversation_borders.dart';
 
 
 class ConversationMessagesList extends StatelessWidget {
-  final List<MessageGroup> conversations;
-  final ScrollController scrollController;
   final bool beginFromEnd;
-  final Function(ConversationModel, bool) onToggleMessageSelection;
+  final List<MessageGroup> conversations;
+  final LastMessageModel lastMessageModel;
+  final ScrollController scrollController;
   final Function(ConversationModel) onPlayAudio;
   final Function(ConversationModel) onStopAudio;
-  final Function(ConversationModel, Duration) onSeekAudio;
   final Function(String?, BuildContext) onShowFullImage;
+  final Function(ConversationModel, Duration) onSeekAudio;
   final Function(ConversationModel, BuildContext) onShowFullVideo;
+  final Function(ConversationModel, bool) onToggleMessageSelection;
 
   const ConversationMessagesList({
+    super.key,
     required this.conversations,
-    required this.scrollController,
     required this.beginFromEnd,
-    required this.onToggleMessageSelection,
     required this.onPlayAudio,
     required this.onStopAudio,
     required this.onSeekAudio,
     required this.onShowFullImage,
     required this.onShowFullVideo,
-    super.key,
+    required this.scrollController,
+    required this.lastMessageModel,
+    required this.onToggleMessageSelection,
   });
 
   static const _borderRadius_8 = ConversationBorders.borderRadius_8;
@@ -43,18 +46,36 @@ class ConversationMessagesList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isTyping = lastMessageModel.isTyping ?? false;
     return ListView.builder(
       controller: scrollController,
       reverse: beginFromEnd,
-      itemCount: conversations.length,
+      itemCount: isTyping ? conversations.length + 1 : conversations.length,
       itemBuilder: (context, index) {
         final group = conversations[index];
-        return Column(
-          children: [
-            _buildDateHeader(group.date, context),
-            ...group.exactMatches(builder: (message) => _buildMessageItem(message, context)),
-          ],
-        );
+        if (index < conversations.length) {
+          return Column(
+            children: [
+              _buildDateHeader(group.date, context),
+              ...group.exactMatches(
+                  builder: (message) => _buildMessageItem(message, context)),
+            ],
+          );
+        }
+        else {
+          return Align(
+              alignment: Alignment.centerLeft,
+              child: Container(
+                  padding: const EdgeInsets.all(2.0),
+                  constraints: BoxConstraints(
+                    maxWidth: MediaQuery
+                        .of(context)
+                        .size
+                        .width * 0.7,
+                  ),
+                  child: const Icon(Icons.message)
+              ));
+        }
       },
     );
   }

@@ -13,7 +13,7 @@ class LastMessageModel extends UserModel implements JsonModel {
 
   LastMessageModel({
     super.userId,
-    super.userName,
+    super.firstName,
     super.userImage,
     super.isOnline,
     super.isTyping,
@@ -50,7 +50,7 @@ class LastMessageModel extends UserModel implements JsonModel {
         isTyping: isTyping ?? isTyping,
         lastSeen: lastSeen ?? this.lastSeen,
         isOnline: isOnline ?? this.isOnline,
-        userName: userName ?? this.userName,
+        firstName: userName ?? this.firstName,
         userImage: userImage ?? this.userImage,
         lastMessage: lastMessage ?? this.lastMessage,
         participants: participants ?? this.participants,
@@ -64,7 +64,7 @@ class LastMessageModel extends UserModel implements JsonModel {
     return LastMessageModel(
         docId: json['docId'] ?? '',
         userId: json['userId'] ?? '',
-        userName: json['userName'] ?? '',
+        firstName: json['userName'] ?? '',
         userImage: json['userImage'] ?? '',
         participants: json['participants'] ?? '',
         lastMessage: json['lastMessage'] ?? '',
@@ -84,7 +84,7 @@ class LastMessageModel extends UserModel implements JsonModel {
       lastMessage: '',
       lastMessageSender: '',
       userId: friendId,
-      userName: '',
+      firstName: '',
       userImage: '',
       isOnline: false,
       lastSeen: DateTime.now(),

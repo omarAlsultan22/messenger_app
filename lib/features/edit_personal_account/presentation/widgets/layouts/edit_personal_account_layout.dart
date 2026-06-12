@@ -22,7 +22,8 @@ class EditPersonalAccountLayout extends StatefulWidget {
   final Future <void> Function({
   required String userId,
   required String userImage,
-  required String userName,
+  required String firstName,
+  required String lastName,
   required String userState,
   }) onUpdate;
   final String docId;
@@ -43,7 +44,8 @@ class EditPersonalAccountLayout extends StatefulWidget {
 class _EditPersonalAccountLayoutState extends State<EditPersonalAccountLayout> {
 
   //controllers
-  late final TextEditingController _nameController;
+  late final TextEditingController _firstNameController;
+  late final TextEditingController _lastNameController;
   late final TextEditingController _stateController;
 
   static const double _avatarRadius = 100.0;
@@ -56,7 +58,8 @@ class _EditPersonalAccountLayoutState extends State<EditPersonalAccountLayout> {
   @override
   void initState() {
     super.initState();
-    _nameController = TextEditingController();
+    _firstNameController = TextEditingController();
+    _lastNameController = TextEditingController();
     _stateController = TextEditingController();
   }
 
@@ -71,7 +74,8 @@ class _EditPersonalAccountLayoutState extends State<EditPersonalAccountLayout> {
 
   @override
   void dispose() {
-    _nameController.dispose();
+    _firstNameController.dispose();
+    _lastNameController.dispose();
     _stateController.dispose();
     super.dispose();
   }
@@ -125,7 +129,9 @@ class _EditPersonalAccountLayoutState extends State<EditPersonalAccountLayout> {
               _buildAvatarSection(),
               _sizedBox,
               _sizedBox,
-              _buildNameField(),
+              _buildFirstNameField(),
+              _sizedBox,
+              _buildLastNameField(),
               _sizedBox,
               _buildStateField(),
               AppSpaces.vertical_24,
@@ -187,14 +193,27 @@ class _EditPersonalAccountLayoutState extends State<EditPersonalAccountLayout> {
     );
   }
 
-  Widget _buildNameField() {
+  Widget _buildFirstNameField() {
     return BuildInputField(
-      labelText: 'Name',
+      labelText: 'First Name',
       prefixIcon: const Icon(Icons.person),
-      controller: _nameController,
-      hintText: 'Name',
+      controller: _firstNameController,
+      hintText: 'Enter your first name',
       enabled: _isFieldEnabled(),
-      validator: (value) => ValidateInput.validator(value!),
+      validator: (value) =>
+          ValidateInput.validator(value: value!, item: 'first name'),
+    );
+  }
+
+  Widget _buildLastNameField() {
+    return BuildInputField(
+      labelText: 'Last Name',
+      prefixIcon: const Icon(Icons.person),
+      controller: _lastNameController,
+      hintText: 'Enter your last name',
+      enabled: _isFieldEnabled(),
+      validator: (value) =>
+          ValidateInput.validator(value: value!, item: 'last name'),
     );
   }
 
@@ -205,7 +224,8 @@ class _EditPersonalAccountLayoutState extends State<EditPersonalAccountLayout> {
       controller: _stateController,
       hintText: 'State',
       enabled: _isFieldEnabled(),
-      validator: (value) => ValidateInput.validator(value!),
+      validator: (value) =>
+          ValidateInput.validator(value: value!, item: 'state'),
     );
   }
 
@@ -229,7 +249,8 @@ class _EditPersonalAccountLayoutState extends State<EditPersonalAccountLayout> {
 
   void _initializeControllers() {
     _image = widget.accountModel.userImage ?? '';
-    _nameController.text = widget.accountModel.userName ?? '';
+    _firstNameController.text = widget.accountModel.userName ?? '';
+    _lastNameController.text = widget.accountModel.userName ?? '';
     _stateController.text = widget.accountModel.userState ?? '';
   }
 
@@ -237,7 +258,8 @@ class _EditPersonalAccountLayoutState extends State<EditPersonalAccountLayout> {
     await widget.onUpdate(
       userId: widget.docId,
       userImage: _mediaUrl,
-      userName: _nameController.text,
+      firstName: _firstNameController.text,
+      lastName: _lastNameController.text,
       userState: _stateController.text,
     ).then((_) {
       _refreshPage();

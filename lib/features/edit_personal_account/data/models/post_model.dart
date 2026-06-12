@@ -18,7 +18,7 @@ class PostModel extends UserModel implements JsonModel{
 
   PostModel({
     super.userId,
-    super.userName,
+    super.firstName,
     super.userImage,
     this.postType,
     this.pathType,

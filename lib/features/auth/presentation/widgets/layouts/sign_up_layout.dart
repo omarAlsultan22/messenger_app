@@ -10,9 +10,9 @@ import 'package:test_app/core/constants/app_text_styles.dart';
 import '../../../../../core/constants/app_paddings.dart';
 import 'package:test_app/core/constants/app_colors.dart';
 import 'package:test_app/core/constants/app_spaces.dart';
+import '../../../../../core/utils/validate_input.dart';
 import '../../../../../core/constants/app_sizes.dart';
 import '../../utils/validate/validate_password.dart';
-import '../../../../../core/utils/validate_input.dart';
 import '../../screens/sign_in_screen.dart';
 import 'package:flutter/material.dart';
 import '../navigator_with_delay.dart';
@@ -21,7 +21,8 @@ import '../build_app_icon.dart';
 
 class SignUpLayout extends StatefulWidget {
   final void Function({
-  required String userName,
+  required String firstName,
+  required String lastName,
   required String userEmail,
   required String userPassword,
   }) onUpdate;
@@ -42,17 +43,17 @@ class _SignUpLayoutState extends State<SignUpLayout> {
   final _formKey = GlobalKey<FormState>();
 
   //controllers
-  final _nameController = TextEditingController();
+  final _firstNameController = TextEditingController();
+  final _lastNameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _locationController = TextEditingController();
 
   @override
   void dispose() {
-    _nameController.dispose();
+    _firstNameController.dispose();
+    _lastNameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
-    _locationController.dispose();
     super.dispose();
   }
 
@@ -173,7 +174,11 @@ class _SignUpLayoutState extends State<SignUpLayout> {
   Widget _buildInputFields() {
     return Column(
       children: [
-        _buildNameField(),
+        Row(children: [
+          Expanded(child: _buildFirstNameField()),
+          const SizedBox(width: 15.0),
+          Expanded(child: _buildLastNameField()),
+        ]),
         AppSpaces.vertical_16,
         _buildEmailField(),
         AppSpaces.vertical_16,
@@ -182,15 +187,27 @@ class _SignUpLayoutState extends State<SignUpLayout> {
     );
   }
 
-  Widget _buildNameField() {
+  Widget _buildFirstNameField() {
     return BuildInputField(
-      controller: _nameController,
-      labelText: 'Enter your name',
-      hintText: 'Name',
+      controller: _firstNameController,
+      labelText: 'First Name',
+      hintText: 'Enter your first name',
       prefixIcon: const Icon(Icons.person, color: AppColors.white),
       autofillHints: const [AutofillHints.name],
       validator: (value) =>
-          ValidateInput.validator(value!),
+          ValidateInput.validator(value: value!, item: 'first name'),
+    );
+  }
+
+  Widget _buildLastNameField() {
+    return BuildInputField(
+      controller: _lastNameController,
+      labelText: 'Last Name',
+      hintText: 'Enter your last name',
+      prefixIcon: const Icon(Icons.person, color: AppColors.white),
+      autofillHints: const [AutofillHints.name],
+      validator: (value) =>
+          ValidateInput.validator(value: value!, item: 'last name'),
     );
   }
 
@@ -265,7 +282,8 @@ class _SignUpLayoutState extends State<SignUpLayout> {
 
   Future<void> _performRegistration() async {
     widget.onUpdate(
-      userName: _nameController.text.trim(),
+      firstName: _firstNameController.text.trim(),
+      lastName: _lastNameController.text.trim(),
       userEmail: _emailController.text.trim(),
       userPassword: _passwordController.text,
     );

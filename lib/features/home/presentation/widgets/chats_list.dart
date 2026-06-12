@@ -138,7 +138,7 @@ class ChatItem extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    lastMessageModel.userName ?? '',
+                    lastMessageModel.firstName ?? '',
                     style: AppTextStyles.textStyle_16,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
