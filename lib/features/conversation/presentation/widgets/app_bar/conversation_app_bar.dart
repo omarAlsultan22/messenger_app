@@ -7,8 +7,8 @@ import 'package:test_app/features/conversation/constants/conversation_texts.dart
 
 
 class ConversationAppBar extends StatelessWidget implements PreferredSizeWidget {
-[  final LastMessageModel lastMessageModel;
-]  final int selectedItems;
+  final LastMessageModel lastMessageModel;
+  final int selectedItems;
   final VoidCallback onClearSelection;
   final VoidCallback onRemoveSelectedMessages;
   final VoidCallback onShowChatInfo;

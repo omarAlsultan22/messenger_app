@@ -14,11 +14,11 @@ import '../../../data/models/conversation_model.dart';
 import '../controllers/conversation_audio_manager.dart';
 import 'package:test_app/core/constants/app_sizes.dart';
 import 'package:test_app/core/constants/app_colors.dart';
-import 'package:test_app/core/constants/app_strings.dart';
 import 'package:test_app/core/utils/format_duration.dart';
 import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:test_app/core/constants/app_paddings.dart';
 import '../controllers/conversation_background_manager.dart';
+import 'package:test_app/core/services/session_service.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import '../../../../../core/services/notification_service.dart';
 import '../../../../../core/services/online_status_service.dart';
@@ -85,6 +85,7 @@ class _ConversationLayoutState extends State<ConversationLayout> {
 
   // Services and utilities
   final _notificationService = NotificationService();
+  static final _currentUid = SessionService().currentUid;
 
   @override
   void initState() {
@@ -167,7 +168,7 @@ class _ConversationLayoutState extends State<ConversationLayout> {
         userId: widget.lastMessageModel.userId!,
         docId: widget.lastMessageModel.docId,
         conversation: ConversationModel(
-          senderId: AppStrings.docId,
+          senderId: _currentUid,
           text: _controller.message,
           content: 'text',
           dateTime: DateTime.now(),
@@ -197,7 +198,7 @@ class _ConversationLayoutState extends State<ConversationLayout> {
         userId: widget.lastMessageModel.userId!,
         docId: widget.lastMessageModel.docId,
         conversation: ConversationModel(
-          senderId: AppStrings.docId,
+          senderId: _currentUid,
           content: type.name,
           url: url,
           type: type,
@@ -243,7 +244,7 @@ class _ConversationLayoutState extends State<ConversationLayout> {
         userId: widget.lastMessageModel.userId!,
         docId: widget.lastMessageModel.docId,
         conversation: ConversationModel(
-          senderId: AppStrings.docId,
+          senderId: _currentUid,
           content: 'audio',
           url: audioPath,
           dateTime: DateTime.now(),

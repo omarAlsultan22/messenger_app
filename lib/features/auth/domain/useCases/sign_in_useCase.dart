@@ -1,9 +1,9 @@
 import '../repositories/auth_repository.dart';
+import 'package:test_app/core/services/session_service.dart';
 import '../../../../core/data/data_sources/local/shared_preferences.dart';
 
 
 class SignInUseCase {
-  final CacheHelper _cacheHelper;
   final AuthRepository _authRepository;
 
   SignInUseCase({
@@ -11,7 +11,6 @@ class SignInUseCase {
     required AuthRepository authRepository
   })
       :
-        _cacheHelper = cacheHelper,
         _authRepository = authRepository;
 
   Future<void> signInExecute({
@@ -23,7 +22,11 @@ class SignInUseCase {
           userEmail: userEmail,
           userPassword: userPassword
       );
-      _cacheHelper.setString(key: 'uId', value: userCredential.user!.uid);
+      final user = userCredential.user;
+      // التحقق من وجود بريد إلكتروني وليس مستخدم مجهول
+      if (user != null && user.email != null && !user.isAnonymous) {
+        SessionService().login('NCSa42aEicXZF3JSq1JHzphgQZs2');
+      }
     } catch (e) {
       rethrow;
     }

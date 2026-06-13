@@ -8,6 +8,7 @@ import '../../../../../core/constants/app_spaces.dart';
 import 'package:test_app/core/constants/app_sizes.dart';
 import '../../../../../core/constants/app_paddings.dart';
 import 'package:test_app/core/constants/app_borders.dart';
+import 'package:test_app/core/services/session_service.dart';
 import '../../../../home/presentation/screens/home_screen.dart';
 import '../../../../../core/data/models/message_result_model.dart';
 import 'package:test_app/features/auth/constants/auth_colors.dart';
@@ -283,8 +284,7 @@ class _SignInLayoutState extends State<SignInLayout> {
   }
 
   Future<void> _checkLoginStatus() async {
-    final value = await widget.cacheHelper.getString(key: 'uId');
-    if (value.isNotEmpty) {
+    if (SessionService().isLoggedIn) {
       _navigateToHome();
     }
   }

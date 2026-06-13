@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../core/theme/theme_notifier.dart';
 import '../../../../../core/constants/app_paddings.dart';
-import 'package:test_app/core/constants/app_strings.dart';
+import 'package:test_app/core/services/session_service.dart';
 import '../../../../../core/services/notification_service.dart';
 import '../../../../../core/services/online_status_service.dart';
 import '../../../../../core/data/models/last_message_model.dart';
@@ -107,7 +107,7 @@ class _HomeLayoutState extends State<HomeLayout> {
   void _navigateToProfile() {
     BuildNavigator.build(
       context: context,
-      link: EditPersonalAccountScreen(docId: AppStrings.docId, ),
+      link: EditPersonalAccountScreen(docId: SessionService().currentUid),
     );
   }
 

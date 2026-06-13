@@ -21,64 +21,12 @@ class ChatsList extends StatelessWidget {
     super.key,
   });
 
-  Future<void> _addRandomFriend() async {
-    setState(() {
-      isAddingRandomFriend = true;
-    });
-
-    try {
-      final result = await _friendService.addRandomAIFriend(UserDetails.docId);
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('✅ تم إضافة ${result['friend']['name']} كصديق'),
-            backgroundColor: AppColors.green,
-            duration: const Duration(seconds: 2),
-          ),
-        );
-
-        // تحديث قائمة الأصدقاء (إعادة تحميل البيانات)
-        MainScreenCubit.get(context).getFriends();
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('❌ حدث خطأ، حاول مرة أخرى'),
-            backgroundColor: AppColors.redPrimaryValue,
-          ),
-        );
-      }
-    } finally {
-      if (mounted) {
-        setState(() {
-          isAddingRandomFriend = false;
-        });
-      }
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     if (filteredData.isEmpty && searchController.text.isNotEmpty) {
-      Center(
-        child: Container(
-          margin: const EdgeInsets.only(left: 8.0),
-          child: ElevatedButton(
-            onPressed: _addRandomFriend,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.bluePrimaryValue,
-              minimumSize: const Size(60, 35),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-              ),
-            ),
-            child: const Text(
-              'Add',
-              style: TextStyle(color: AppColors.white),
-            ),
-          ),
+      const Center(
+        child: Text(
+          'No result found',
         ),
       );
     }

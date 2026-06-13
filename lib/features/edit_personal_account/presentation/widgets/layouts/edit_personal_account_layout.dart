@@ -5,8 +5,8 @@ import '../../../../../core/utils/validate_input.dart';
 import '../../screens/edit_personal_account_screen.dart';
 import 'package:test_app/core/constants/app_colors.dart';
 import 'package:test_app/core/constants/app_borders.dart';
-import 'package:test_app/core/constants/app_strings.dart';
 import 'package:test_app/core/constants/app_paddings.dart';
+import '../../../../../core/services/session_service.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:test_app/core/services/media_upload_service.dart';
 import '../../../../../core/data/models/message_result_model.dart';
@@ -26,12 +26,12 @@ class EditPersonalAccountLayout extends StatefulWidget {
   required String lastName,
   required String userState,
   }) onUpdate;
-  final String docId;
+  final String userId;
   final AccountModel accountModel;
   final MessageResult messageResult;
   const EditPersonalAccountLayout({
     super.key,
-    required this.docId,
+    required this.userId,
     required this.onUpdate,
     required this.accountModel,
     required this.messageResult
@@ -50,7 +50,8 @@ class _EditPersonalAccountLayoutState extends State<EditPersonalAccountLayout> {
 
   static const double _avatarRadius = 100.0;
   static const _sizedBox = SizedBox(height: 16.0);
-  late final imageUrl = widget.accountModel.userImage;
+  late final _imageUrl = widget.accountModel.userImage;
+  static final _currentUid = SessionService().currentUid;
 
   String _mediaUrl = '';
   String? _image;
@@ -102,13 +103,13 @@ class _EditPersonalAccountLayoutState extends State<EditPersonalAccountLayout> {
   }
 
   Widget _buildAppBarTitle() {
-    return widget.docId == AppStrings.docId
+    return widget.userId == _currentUid
         ? const Text('Edit Profile')
         : const Text('Friend Profile');
   }
 
   Widget _buildSaveButton() {
-    if (widget.docId != AppStrings.docId) {
+    if (widget.userId != _currentUid) {
       return const SizedBox();
     }
 
@@ -159,7 +160,7 @@ class _EditPersonalAccountLayoutState extends State<EditPersonalAccountLayout> {
       child: GestureDetector(
         onTap: () => _viewImage(context),
         child: CachedNetworkImage(
-          imageUrl: imageUrl ?? '',
+          imageUrl: _imageUrl ?? '',
           imageBuilder: (context, imageProvider) =>
               CircleAvatar(
                 radius: _avatarRadius,
@@ -177,7 +178,7 @@ class _EditPersonalAccountLayoutState extends State<EditPersonalAccountLayout> {
   }
 
   Widget _buildCameraButton() {
-    if (widget.docId != AppStrings.docId) {
+    if (widget.userId != _currentUid) {
       return const SizedBox();
     }
 
@@ -256,7 +257,7 @@ class _EditPersonalAccountLayoutState extends State<EditPersonalAccountLayout> {
 
   Future<void> _onSavePressed() async {
     await widget.onUpdate(
-      userId: widget.docId,
+      userId: widget.userId,
       userImage: _mediaUrl,
       firstName: _firstNameController.text,
       lastName: _lastNameController.text,
@@ -270,7 +271,7 @@ class _EditPersonalAccountLayoutState extends State<EditPersonalAccountLayout> {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-          builder: (context) => EditPersonalAccountScreen(docId: widget.docId)
+          builder: (context) => EditPersonalAccountScreen(docId: widget.userId)
       ),
     );
   }
@@ -278,7 +279,7 @@ class _EditPersonalAccountLayoutState extends State<EditPersonalAccountLayout> {
   void _viewImage(BuildContext context) {
     BuildNavigator.build(
       context: context,
-      link: ViewImageLayout(userImage: imageUrl ?? ''),
+      link: ViewImageLayout(userImage: _imageUrl ?? ''),
     );
   }
 
@@ -290,7 +291,7 @@ class _EditPersonalAccountLayoutState extends State<EditPersonalAccountLayout> {
   }
 
   bool _isFieldEnabled() {
-    return widget.accountModel.userId == AppStrings.docId;
+    return widget.accountModel.userId == _currentUid;
   }
 
   void _navigateToChangePassword() {

@@ -1,3 +1,5 @@
+import 'package:test_app/core/services/session_service.dart';
+
 import '../repositories/auth_repository.dart';
 import '../repositories/sign_up_repository.dart';
 import '../../../../core/data/models/user_model.dart';
@@ -29,14 +31,18 @@ class SignUpUseCase {
         userPassword: userPassword,
       );
 
-      UserModel userModel = UserModel(
-        firstName: firstName,
-        lastName: lastName,
-        fullName: '$firstName''$lastName'
-      );
+      final user = userCredential.user;
+      if (user != null && user.email != null && !user.isAnonymous) {
+        UserModel userModel = UserModel(
+            userId: SessionService().currentUid,
+            firstName: firstName,
+            lastName: lastName,
+            fullName: '$firstName''$lastName'
+        );
 
-      await _signUpRepository.createUserInfo(
-          userModel: userModel, userCredential: userCredential);
+        await _signUpRepository.createUserInfo(
+            userModel: userModel);
+      }
 
     } catch (e) {
     rethrow;

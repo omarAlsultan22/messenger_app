@@ -39,7 +39,7 @@ dependencies:
   flutter_bloc: ^9.1.1
   firebase_core: ^4.2.0
   firebase_auth: ^6.1.1
-  cloud_firestore: ^6.0.3
+  cloud_firestore: ^6.5.0
   shared_preferences: ^2.5.3
   firebase_storage: ^13.0.3
   firebase_auth_web: ^6.0.4
@@ -64,8 +64,8 @@ dependencies:
   firebase_messaging: ^16.0.3
   flex_color_picker: ^3.7.1
   rxdart: ^0.28.0
-  just_audio: ^0.9.34 #
-  audio_session: ^0.1.25 # لتحسين تجربة الصوت
+  just_audio: ^0.10.5 #
+  audio_session: ^0.2.3 # لتحسين تجربة الصوت
   connectivity_plus: ^7.1.1
 
   #jitsi_meet_wrapper: ^0.2.0+1

@@ -58,7 +58,7 @@ class ExceptionMapper {
     ),
   };
 
-  static final Map<Type, AppException Function(dynamic)> _typePatterns = {
+  static final Map<Object, AppException Function(dynamic)> _typePatterns = {
     FirebaseException: (error) {
       final firebaseException = FirebaseAppException(
         message: (error as FirebaseException).message ?? 'خطأ في Firebase',

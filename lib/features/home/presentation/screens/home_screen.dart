@@ -6,7 +6,7 @@ import 'package:test_app/core/data/data_sources/local/shared_preferences.dart';
 import '../../../../core/presentation/widgets/states/initial_state.dart';
 import '../../../../core/presentation/widgets/states/loading_state.dart';
 import 'package:test_app/core/presentation/states/loaded_states.dart';
-import 'package:test_app/core/constants/app_strings.dart';
+import 'package:test_app/core/services/session_service.dart';
 import '../../domain/useCases/get_friends_use_case.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
@@ -29,13 +29,14 @@ class HomeScreen extends StatelessWidget {
     final getFriendsUseCase = GetFriendsUseCase(
         repository: firestoreHomeRepository);
     final cacheHelper = CacheHelper();
+    final currentUid = SessionService().currentUid;
     return BlocProvider(
         create: (context) =>
         HomeCubit(
             getProfileUseCase: getProfileUseCase,
             getFriendsUseCase: getFriendsUseCase)
-          ..getProfileImage(docId: AppStrings.docId)
-          ..getFriends(docId: AppStrings.docId),
+          ..getProfileImage(docId: currentUid)
+          ..getFriends(docId: currentUid),
         child: BlocBuilder<HomeCubit, HomeState>(
             builder: (context, state) {
               final cubit = HomeCubit.get(context);
@@ -59,8 +60,8 @@ class HomeScreen extends StatelessWidget {
                     error.buildErrorWidget(
                         onRetry: () =>
                         cubit
-                          ..getProfileImage(docId: AppStrings.docId)
-                          ..getFriends(docId: AppStrings.docId)
+                          ..getProfileImage(docId: currentUid)
+                          ..getFriends(docId: currentUid)
                     ),
               );
             }

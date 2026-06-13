@@ -7,8 +7,8 @@ import 'package:test_app/core/constants/app_sizes.dart';
 import 'package:test_app/core/constants/app_spaces.dart';
 import 'package:test_app/core/constants/app_borders.dart';
 import 'package:test_app/core/utils/format_duration.dart';
-import 'package:test_app/core/constants/app_strings.dart';
 import 'package:test_app/core/constants/app_paddings.dart';
+import 'package:test_app/core/services/session_service.dart';
 import '../../../../../core/data/models/last_message_model.dart';
 import 'package:test_app/features/conversation/utils/format_time.dart';
 import 'package:test_app/features/conversation/constants/conversation_borders.dart';
@@ -44,6 +44,8 @@ class ConversationMessagesList extends StatelessWidget {
   static const _textStyle = TextStyle(
       color: AppColors.white, fontSize: AppSizes.xs);
 
+  static final _currentUid = SessionService().currentUid;
+
   @override
   Widget build(BuildContext context) {
     final isTyping = lastMessageModel.isTyping ?? false;
@@ -73,8 +75,12 @@ class ConversationMessagesList extends StatelessWidget {
                         .size
                         .width * 0.7,
                   ),
-                  child: const Icon(Icons.message)
-              ));
+                  child: const Icon(
+                      Icons.messenger_outlined,
+                      color: AppColors.grey_300
+                  )
+              )
+          );
         }
       },
     );
@@ -103,7 +109,7 @@ class ConversationMessagesList extends StatelessWidget {
   }
 
   Widget _buildMessageItem(ConversationModel message, BuildContext context) {
-    final isMe = message.senderId == AppStrings.docId;
+    final isMe = message.senderId == _currentUid;
 
     return GestureDetector(
       onTap: () => onToggleMessageSelection(message, false),
@@ -181,7 +187,7 @@ class ConversationMessagesList extends StatelessWidget {
   }
 
   Widget _buildImageMessage(ConversationModel message, BuildContext context) {
-    final isMe = message.senderId == AppStrings.docId;
+    final isMe = message.senderId == _currentUid;
     final url = message.url;
 
     if (url == null) return const SizedBox();
@@ -238,7 +244,7 @@ class ConversationMessagesList extends StatelessWidget {
       return const Center(child: CircularProgressIndicator());
     }
 
-    final isMe = message.senderId == AppStrings.docId;
+    final isMe = message.senderId == _currentUid;
 
     return GestureDetector(
       onTap: () => onShowFullVideo(message, context),
@@ -390,7 +396,7 @@ class ConversationMessagesList extends StatelessWidget {
                 fontSize: AppSizes.xs,
               ),
             ),
-            if (message.senderId == AppStrings.docId) ...[
+            if (message.senderId == _currentUid) ...[
               const SizedBox(width: 4.0),
               const Icon(Icons.done_all, size: 16.0),
             ],
