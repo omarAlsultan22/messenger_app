@@ -66,7 +66,9 @@ class _SignInLayoutState extends State<SignInLayout> {
     super.didUpdateWidget(oldWidget);
     if (widget.messageResult.message != null) {
       _showMessageResult(widget.messageResult);
-      _navigateToHome();
+      if (widget.messageResult.error == null) {
+        _navigateToHome();
+      }
     }
     setState(() {});
   }
@@ -284,7 +286,7 @@ class _SignInLayoutState extends State<SignInLayout> {
   }
 
   Future<void> _checkLoginStatus() async {
-    if (SessionService().isLoggedIn) {
+    if (SessionService().isLoggedIn && widget.messageResult.error == null) {
       _navigateToHome();
     }
   }

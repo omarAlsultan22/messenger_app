@@ -1,10 +1,16 @@
-plugins {
-    // ...
-    // Add the dependency for the Google services Gradle plugin
-    id("com.google.gms.google-services") version "4.4.2" apply false
+buildscript {
+    ext.kotlin_version = '2.2.20'
+    repositories {
+        google()
+        mavenCentral()
+    }
 
+    dependencies {
+        classpath 'com.android.tools.build:gradle:8.3.2'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath 'com.google.gms:google-services:4.5.0'
+    }
 }
-
 
 allprojects {
     repositories {

@@ -67,9 +67,11 @@ class _ChangeEmailAndPasswordLayoutState extends State<ChangeEmailAndPasswordLay
     if (widget.messageResult.message != null) {
       _clearUserData();
       _showMessageResult();
-      _navigateToHome();
+      if (widget.messageResult.error == null) {
+        _navigateToHome();
+      }
+      setState(() {});
     }
-    setState(() {});
   }
 
   @override

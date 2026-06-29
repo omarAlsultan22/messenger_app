@@ -55,7 +55,7 @@ class ConversationModel implements JsonModel{
   }){
     return ConversationModel(
         senderId: json['senderId'] ?? '',
-        messageId: json['docId'] ?? '',
+        messageId: json['messageId'] ?? '',
         content: json['content'] ?? '',
         text: json['text'] ?? '',
         url: json['url'] ?? '',
@@ -68,7 +68,7 @@ class ConversationModel implements JsonModel{
   Map<String, dynamic> toJson() {
     return {
       'senderId': senderId,
-      'docId': messageId,
+      'messageId': messageId,
       'content': content,
       'text': text,
       'url': url,

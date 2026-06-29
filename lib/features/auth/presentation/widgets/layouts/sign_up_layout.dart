@@ -62,9 +62,11 @@ class _SignUpLayoutState extends State<SignUpLayout> {
     super.didUpdateWidget(oldWidget);
     if (widget.messageResult.message != null) {
       _showMessageResult(widget.messageResult);
-      _navigateToHome();
+      if (widget.messageResult.error == null) {
+        _navigateToHome();
+      }
+      setState(() {});
     }
-    setState(() {});
   }
 
   void _showMessageResult(MessageResult messageResult) {

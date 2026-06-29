@@ -39,8 +39,11 @@ class _ForgotPasswordScreenState extends State<ForgetPasswordLayout> {
     super.didUpdateWidget(oldWidget);
     if (widget.messageResult.message != null) {
       _showMessageResult(widget.messageResult);
+      if (widget.messageResult.error == null) {
+        Navigator.pop(context);
+      }
+      setState(() {});
     }
-    setState(() {});
   }
 
   void _showMessageResult(MessageResult messageResult) {
