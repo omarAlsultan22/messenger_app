@@ -1,15 +1,15 @@
 import '../models/post_model.dart';
 import '../../../../core/data/models/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:test_app/core/data/data_sources/remote/firestore/firestore_base_service.dart';
+import 'package:test_app/core/data/data_sources/remote/firestore/firestore_service.dart';
 import 'package:test_app/features/edit_personal_account/domain/repositories/edit_personal_account_repository.dart';
 
 
 class FirestoreEditPersonalAccountRepository implements EditPersonalAccountRepository {
-  final FirestoreBaseService _service;
+  final FirestoreService _service;
 
   FirestoreEditPersonalAccountRepository({
-    required FirestoreBaseService service}) : _service = service;
+    required FirestoreService service}) : _service = service;
 
   @override
   Future<List<DocumentSnapshot<Map<String, dynamic>>>> getAccountData({

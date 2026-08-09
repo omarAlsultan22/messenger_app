@@ -1,7 +1,5 @@
-import '../../../../core/data/data_sources/remote/firebase_auth_service.dart';
-import '../../data/repositories_impl/firebase_auth_repository.dart';
-import '../../../../core/data/network/connectivity_service.dart';
 import '../widgets/layouts/forget_password_layout.dart';
+import '../../../../core/di/service _locator.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../cubits/forget_password_cubit.dart';
 import 'package:flutter/material.dart';
@@ -13,25 +11,22 @@ class ForgetPasswordScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final auth = FirebaseAuthService();
-    final authRepository = FirebaseAuthRepository(auth: auth);
-    final connectivityService = ConnectivityService();
-    final cubit = ForgetPasswordCubit(
-      repository: authRepository,
-      connectivityService: connectivityService,
-    );
-    return BlocBuilder<ForgetPasswordCubit, AuthState>(
-        builder: (context, state) {
-          return ForgetPasswordLayout(
-              messageResult: state.messageResult!,
-              onUpdate: ({
-                required String userEmail,
-              }) =>
-                  cubit.sendResetEmail(
-                      userEmail: userEmail
-                  )
-          );
-        }
+    return BlocProvider(
+        create: (context) => sl<ForgetPasswordCubit>(),
+        child: BlocBuilder<ForgetPasswordCubit, AuthState>(
+            builder: (context, state) {
+              final cubit = ForgetPasswordCubit.get(context);
+              return ForgetPasswordLayout(
+                  messageResult: state.messageResult!,
+                  onUpdate: ({
+                    required String userEmail,
+                  }) =>
+                      cubit.sendResetEmail(
+                          userEmail: userEmail
+                      )
+              );
+            }
+        )
     );
   }
 }

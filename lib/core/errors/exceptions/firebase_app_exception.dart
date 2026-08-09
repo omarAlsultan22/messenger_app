@@ -76,7 +76,8 @@ class FirebaseAppException extends AppException implements ExceptionHandler {
         return exception;
       }
     }
-    return FirebaseAppException(message: 'Firebase error');
+    return FirebaseAppException(message: message ??
+        "An unexpected Firebase error occurred. Please try again.");
   }
 }
 

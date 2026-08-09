@@ -1,13 +1,13 @@
 import '../../../../core/data/models/user_model.dart';
 import '../../domain/repositories/sign_up_repository.dart';
-import '../../../../core/data/data_sources/remote/firestore/firestore_base_service.dart';
+import '../../../../core/data/data_sources/remote/firestore/firestore_service.dart';
 
 
 class FirebaseSignUpRepository implements SignUpRepository {
-  final FirestoreBaseService _repository;
+  final FirestoreService _repository;
 
   FirebaseSignUpRepository({
-    required FirestoreBaseService repository
+    required FirestoreService repository
   }) : _repository = repository;
 
   @override

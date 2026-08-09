@@ -2,6 +2,7 @@ import 'package:test_app/core/data/data_sources/local/shared_preferences.dart';
 
 
 class SessionService {
+
   static final SessionService _instance = SessionService._internal();
 
   factory SessionService() => _instance;

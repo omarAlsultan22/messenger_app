@@ -67,6 +67,8 @@ dependencies:
   just_audio: ^0.10.5 #
   audio_session: ^0.2.3 # لتحسين تجربة الصوت
   connectivity_plus: ^7.1.1
+  firebase_ai: ^3.13.1
+  get_it: ^9.2.1
 
   #jitsi_meet_wrapper: ^0.2.0+1
   #agora_rtc_engine: ^6.3.0 # لمكالمات الفيديو/الصوت

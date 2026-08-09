@@ -1,13 +1,9 @@
-import 'package:test_app/features/home/data/repositories_impl/firestore_home_repository.dart';
 import 'package:test_app/features/home/presentation/widgets/layouts/home_layout.dart';
-import 'package:test_app/features/home/data/data_source/firestore_home_service.dart';
-import 'package:test_app/features/home/domain/useCases/get_profile_use_case.dart';
 import 'package:test_app/core/data/data_sources/local/shared_preferences.dart';
 import '../../../../core/presentation/widgets/states/initial_state.dart';
 import '../../../../core/presentation/widgets/states/loading_state.dart';
-import 'package:test_app/core/presentation/states/loaded_states.dart';
 import 'package:test_app/core/services/session_service.dart';
-import '../../domain/useCases/get_friends_use_case.dart';
+import '../../../../core/di/service _locator.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
 import '../states/home_state.dart';
@@ -22,19 +18,12 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final service = FirestoreHomeService();
-    final firestoreHomeRepository = FirestoreHomeRepository(service: service);
-    final getProfileUseCase = GetProfileUseCase(
-        repository: firestoreHomeRepository);
-    final getFriendsUseCase = GetFriendsUseCase(
-        repository: firestoreHomeRepository);
-    final cacheHelper = CacheHelper();
-    final currentUid = SessionService().currentUid;
+    final sessionService = sl<SessionService>();
+    final currentUid = sessionService.currentUid;
+
     return BlocProvider(
         create: (context) =>
-        HomeCubit(
-            getProfileUseCase: getProfileUseCase,
-            getFriendsUseCase: getFriendsUseCase)
+        sl<HomeCubit>()
           ..getProfileImage(docId: currentUid)
           ..getFriends(docId: currentUid),
         child: BlocBuilder<HomeCubit, HomeState>(
@@ -45,16 +34,12 @@ class HomeScreen extends StatelessWidget {
                 const InitialStateWidget(
                     text: _defaultInfoText, icon: _defaultInfoIcon),
                 onLoading: () => const LoadingStateWidget(),
-                onLoaded: (loadedState) {
-                  if (loadedState is DoubleModelSuccessState) {
-                    HomeLayout(
-                        cacheHelper: cacheHelper,
-                        profileImage: loadedState.firstModel,
-                        friendList: loadedState.secondModel
-                    );
-                  }
-                  return const InitialStateWidget(
-                      text: _defaultInfoText, icon: _defaultInfoIcon);
+                onLoaded: (data) {
+                  return HomeLayout(
+                      cacheHelper: sl<CacheHelper>(),
+                      profileImage: data.firstModel,
+                      friendList: data.secondModel
+                  );
                 },
                 onError: (error) =>
                     error.buildErrorWidget(

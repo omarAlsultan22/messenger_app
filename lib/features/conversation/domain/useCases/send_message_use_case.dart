@@ -12,7 +12,6 @@ class SendMessageUseCase {
   Future<void> execute({
     required String docId,
     required ConversationModel conversation,
-    required List<MessageGroup> conversationsList,
     required Function(List<ConversationModel>) organizeMessages,
   }) async {
     await _repository.sendMessage(

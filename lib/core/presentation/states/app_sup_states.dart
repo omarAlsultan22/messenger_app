@@ -1,6 +1,5 @@
 import 'base/main_app_sup_state.dart';
 import 'base/main_app_sub_state.dart';
-import 'base/main_loaded_state.dart';
 import 'loaded_states.dart';
 
 
@@ -15,7 +14,7 @@ abstract class DoubleModelAppState<T, U> extends MainAppSupState {
   });
 
   @override
-  LoadedState get dataModels =>
+  DoubleModelSuccessState get dataModels =>
       DoubleModelSuccessState(
           firstModel: firstModel,
           secondModel: secondModel
@@ -42,7 +41,7 @@ abstract class TripleModelAppState<T, U, S> extends MainAppSupState {
   });
 
   @override
-  LoadedState get dataModels =>
+  TripleModelSuccessState get dataModels =>
       TripleModelSuccessState(
           firstModel: firstModel,
           secondModel: secondModel,

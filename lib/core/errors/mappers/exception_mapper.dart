@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:async';
+import 'package:firebase_ai/firebase_ai.dart';
 import '../exceptions/base/app_exception.dart';
 import '../exceptions/client_app_exception.dart';
 import '../exceptions/network_app_exception.dart';
@@ -7,6 +8,7 @@ import '../exceptions/firebase_app_exception.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../data/network/connectivity_service.dart';
 import '../exceptions/cache_exceptions/shared_prefs_app_exceptions.dart';
+import 'package:test_app/core/errors/exceptions/firebase_ai_app_exception.dart';
 
 
 class ExceptionMapper {
@@ -61,7 +63,14 @@ class ExceptionMapper {
   static final Map<Object, AppException Function(dynamic)> _typePatterns = {
     FirebaseException: (error) {
       final firebaseException = FirebaseAppException(
-        message: (error as FirebaseException).message ?? 'خطأ في Firebase',
+        message: (error as FirebaseException).message ?? 'Error in Firebase',
+        error: error,
+      );
+      return firebaseException.handle();
+    },
+    FirebaseAIException: (error) {
+      final firebaseException = FirebaseAIAppException(
+        message: (error as FirebaseAIException).message,
         error: error,
       );
       return firebaseException.handle();

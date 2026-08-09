@@ -4,11 +4,11 @@ import '../../data/models/user_status.dart';
 import '../../data/models/message_group.dart';
 import '../../data/models/conversation_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../../../../core/presentation/states/loaded_states.dart';
 import 'package:test_app/core/data/models/message_result_model.dart';
 import 'package:test_app/core/presentation/states/app_sup_states.dart';
 import 'package:test_app/core/presentation/states/app_sub_states.dart';
 import 'package:test_app/core/errors/exceptions/base/app_exception.dart';
-import 'package:test_app/core/presentation/states/base/main_loaded_state.dart';
 import 'package:test_app/core/presentation/states/base/main_app_sub_state.dart';
 
 
@@ -22,13 +22,16 @@ class ConversationState extends TripleModelAppState<UserStatus, DataModel, Messa
 
   factory ConversationState.initial(){
     return ConversationState(
-        firstModel: null,
-        secondModel: DataModel(),
-        thirdModel: MessageResult.initial(),
-        subState: InitialState());
+      subState: InitialState(),
+      firstModel: UserStatus(),
+      secondModel: DataModel(),
+      thirdModel: MessageResult.initial(),
+    );
   }
 
   bool get listISEmpty => secondModel!.listISEmpty;
+
+  bool get hasMessages => secondModel!.hasMessages;
 
   DocumentSnapshot? get firstDocument => secondModel!.firstDocument;
 
@@ -113,7 +116,7 @@ class ConversationState extends TripleModelAppState<UserStatus, DataModel, Messa
       subState: subState ?? this.subState,
       firstModel: firstModel ?? this.firstModel,
       secondModel: secondModel ?? this.secondModel,
-      thirdModel: thirdModel ?? this.thirdModel,
+      thirdModel: thirdModel ?? MessageResult.initial(),
     );
   }
 
@@ -121,7 +124,7 @@ class ConversationState extends TripleModelAppState<UserStatus, DataModel, Messa
   R when<R>({
     required R Function() onInitial,
     required R Function() onLoading,
-    required R Function(LoadedState) onLoaded,
+    required R Function(TripleModelSuccessState) onLoaded,
     required R Function(AppException) onError
   }) {
     return subState!.when(

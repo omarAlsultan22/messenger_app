@@ -132,7 +132,6 @@ class GetFriendsUseCase {
         },
       );
     }).handleError((e) {
-      print('Error with friend $friendId: $e');
       return Stream.value(LastMessageModel.createEmptyLastMessage(friendId));
     });
   }

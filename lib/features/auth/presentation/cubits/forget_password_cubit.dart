@@ -15,10 +15,10 @@ class ForgetPasswordCubit extends Cubit<AuthState> with ErrorHandlerMixin<AuthSt
   final ConnectivityService _connectivityService;
 
   ForgetPasswordCubit({
-    required AuthRepository repository,
+    required AuthRepository authRepository,
     required ConnectivityService connectivityService
   })
-      : _repository = repository,
+      : _repository = authRepository,
         _connectivityService = connectivityService,
         super(AuthState.initial());
 

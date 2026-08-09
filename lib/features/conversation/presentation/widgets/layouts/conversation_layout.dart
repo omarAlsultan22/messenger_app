@@ -24,7 +24,9 @@ import '../../../../../core/services/notification_service.dart';
 import '../../../../../core/services/online_status_service.dart';
 import '../../../../../core/data/models/last_message_model.dart';
 import 'package:test_app/core/services/media_upload_service.dart';
+import 'package:test_app/core/data/models/message_result_model.dart';
 import 'package:test_app/features/conversation/utils/show_toast.dart';
+import '../../../../../core/presentation/widgets/build_snack_bar.dart';
 import 'package:test_app/core/presentation/widgets/navigation/navigator.dart';
 import 'package:test_app/core/data/data_sources/local/shared_preferences.dart';
 import '../../../../edit_personal_account/presentation/screens/edit_personal_account_screen.dart';
@@ -45,6 +47,7 @@ class ConversationLayout extends StatefulWidget {
   final DataModel dataModel;
   final UserStatus userStatus;
   final CacheHelper cacheHelper;
+  final MessageResult messageResult;
   final LastMessageModel lastMessageModel;
   final OnlineStatusService onlineStatusService;
 
@@ -55,6 +58,7 @@ class ConversationLayout extends StatefulWidget {
     required this.cacheHelper,
     required this.sendMessage,
     required this.updateTyping,
+    required this.messageResult,
     required this.getOldMessages,
     required this.deleteMessages,
     required this.lastMessageModel,
@@ -91,6 +95,23 @@ class _ConversationLayoutState extends State<ConversationLayout> {
   void initState() {
     super.initState();
     _initializeManagers();
+  }
+
+  @override
+  void didUpdateWidget(covariant ConversationLayout oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.messageResult!.message != null) {
+      _showMessageResult(widget.messageResult);
+    }
+    setState((){});
+  }
+
+  void _showMessageResult(MessageResult? messageResult) {
+    BuildSnackBar.show(
+        message: messageResult!.message!,
+        backgroundColor: messageResult.color!,
+        context: context
+    );
   }
 
   void _initializeManagers() async {

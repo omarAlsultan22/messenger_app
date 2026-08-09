@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/constants/app_spaces.dart';
-import 'package:test_app/core/constants/app_sizes.dart';
 import '../../../../../core/utils/validate_input.dart';
+import 'package:test_app/core/constants/app_sizes.dart';
 import '../../screens/edit_personal_account_screen.dart';
 import 'package:test_app/core/constants/app_colors.dart';
 import 'package:test_app/core/constants/app_borders.dart';
@@ -53,6 +53,7 @@ class _EditPersonalAccountLayoutState extends State<EditPersonalAccountLayout> {
   late final _imageUrl = widget.accountModel.userImage;
   static final _currentUid = SessionService().currentUid;
 
+  bool isPressed = true;
   String _mediaUrl = '';
   String? _image;
 
@@ -114,8 +115,12 @@ class _EditPersonalAccountLayoutState extends State<EditPersonalAccountLayout> {
     }
 
     return IconButton(
-      icon: const Icon(Icons.save),
-      onPressed: () => _onSavePressed(),
+      icon: widget.messageResult.isLoading
+          ? const CircularProgressIndicator()
+          : const Icon(Icons.save),
+      onPressed: widget.messageResult.isLoading && isPressed
+          ? () => _onSavePressed()
+          : null,
     );
   }
 
@@ -255,7 +260,12 @@ class _EditPersonalAccountLayoutState extends State<EditPersonalAccountLayout> {
     _stateController.text = widget.accountModel.userState ?? '';
   }
 
+  void updateLockButton(bool value) {
+    setState(() => isPressed = value);
+  }
+
   Future<void> _onSavePressed() async {
+    updateLockButton(false);
     await widget.onUpdate(
       userId: widget.userId,
       userImage: _mediaUrl,
@@ -264,7 +274,7 @@ class _EditPersonalAccountLayoutState extends State<EditPersonalAccountLayout> {
       userState: _stateController.text,
     ).then((_) {
       _refreshPage();
-    });
+    }).whenComplete(() => updateLockButton(true));
   }
 
   void _refreshPage() {

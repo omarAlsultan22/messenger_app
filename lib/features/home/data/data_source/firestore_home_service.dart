@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../../../../core/data/data_sources/remote/firestore/firestore_base_operations.dart';
+import '../../../../core/data/data_sources/remote/firestore/firestore_operations.dart';
 
 
-class FirestoreHomeService extends FirestoreBaseOperations{
+class FirestoreHomeService extends FirestoreOperations{
   static final _firestore = FirebaseFirestore.instance;
 
   Stream<QuerySnapshot> getFriendsListStream({

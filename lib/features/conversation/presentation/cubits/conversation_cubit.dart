@@ -69,7 +69,7 @@ class ConversationCubit extends Cubit<ConversationState> with ErrorHandlerMixin<
           bgImage: result['bgImage'], bgColor: result['bgColor']);
       emit(state.copyWith(firstModel: userStatus));
     }
-    catch(e, stackTrace){
+    catch (e, stackTrace) {
       handleError(e, stackTrace,
           onError: (failure) =>
               state.copyWith(thirdModel: MessageResult.error(error: failure)
@@ -82,7 +82,8 @@ class ConversationCubit extends Cubit<ConversationState> with ErrorHandlerMixin<
     emit(state.copyWith(subState: LoadingState()));
     try {
       await _updateUnreadMessagesUseCase.execute(docId: docId);
-      emit(state.copyWith(subState: SuccessState(), thirdModel: MessageResult.success()));
+      emit(state.copyWith(
+          subState: SuccessState(), thirdModel: MessageResult.success()));
     } catch (e, stackTrace) {
       handleError(e, stackTrace,
           onError: (failure) =>
@@ -96,7 +97,9 @@ class ConversationCubit extends Cubit<ConversationState> with ErrorHandlerMixin<
     required String docId,
     required String? senderId
   }) async {
-    emit(state.copyWith(subState: LoadingState()));
+    if (state.listISEmpty) {
+      emit(state.copyWith(subState: LoadingState()));
+    }
     _conversationsSubscription?.cancel();
 
     _conversationsSubscription = _getConversationsUseCase.execute(
@@ -176,8 +179,8 @@ class ConversationCubit extends Cubit<ConversationState> with ErrorHandlerMixin<
     } catch (e, stackTrace) {
       handleError(e, stackTrace,
           onError: (failure) =>
-          state.copyWith(thirdModel: MessageResult.error(error: failure)
-          )
+              state.copyWith(thirdModel: MessageResult.error(error: failure)
+              )
       );
     }
   }
@@ -191,7 +194,6 @@ class ConversationCubit extends Cubit<ConversationState> with ErrorHandlerMixin<
       await _sendMessageUseCase.execute(
         docId: docId,
         conversation: conversation,
-        conversationsList: state.conversationList,
         organizeMessages: (messages) => _organizeMessagesByDate(messages),
       );
       emit(state.copyWith(subState: SuccessState()));
@@ -227,42 +229,41 @@ class ConversationCubit extends Cubit<ConversationState> with ErrorHandlerMixin<
   }
 
   Future<void> getOldMessages({required String docId}) async {
-      emit(state.copyWith(subState: LoadingState()));
+    if(!state.hasMessages) return;
+    final dataModel = await _getOldMessagesUseCase.execute(
+      docId: docId,
+      lastDocument: state.lastDocument,
+    );
 
-      final dataModel = await _getOldMessagesUseCase.execute(
-        docId: docId,
-        lastDocument: state.lastDocument,
-      );
+    if (dataModel.listISEmpty) {
+      final dataModel = state.updateSecondModel(hasMessages: false);
+      emit(state.copyWith(
+          subState: SuccessState(), secondModel: dataModel));
+      return;
+    }
 
-      if (dataModel.listISEmpty) {
-        final dataModel = state.updateSecondModel(hasMessages: false);
-        emit(state.copyWith(
-            subState: SuccessState(), secondModel: dataModel));
-        return;
+    for (var group in dataModel.conversationList) {
+      final existingIndex = state.existingIndex(group.date);
+      if (existingIndex != -1) {
+        state.insertAllMessages(
+            existingIndex: existingIndex, messages: group.messages);
+      } else {
+        state.insertMessages(
+            title: group.date,
+            sortDate: group.sortDate,
+            messages: group.messages
+        );
       }
-
-      for (var group in dataModel.conversationList) {
-        final existingIndex = state.existingIndex(group.date);
-        if (existingIndex != -1) {
-          state.insertAllMessages(
-              existingIndex: existingIndex, messages: group.messages);
-        } else {
-          state.insertMessages(
-              title: group.date,
-              sortDate: group.sortDate,
-              messages: group.messages
-          );
-        }
       emit(state.copyWith(subState: SuccessState()));
     }
   }
 
   @override
   Future<void> close() async {
-    _conversationsSubscription?.cancel();
-    _onlineSubscription?.cancel();
-    _typingSubscription?.cancel();
-    _lastSeenSubscription?.cancel();
+    await _onlineSubscription?.cancel();
+    await _typingSubscription?.cancel();
+    await _lastSeenSubscription?.cancel();
+    await _conversationsSubscription?.cancel();
     await _interactionsSubscription?.cancel();
     return super.close();
   }

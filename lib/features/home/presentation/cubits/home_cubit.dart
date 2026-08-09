@@ -8,7 +8,7 @@ import 'package:test_app/core/data/models/last_message_model.dart';
 import '../../../../core/presentation/mixins/error_handler_mixin.dart';
 
 
-class HomeCubit extends Cubit<HomeState> with ErrorHandlerMixin<HomeState>{
+class HomeCubit extends Cubit<HomeState> with ErrorHandlerMixin<HomeState> {
   final GetProfileUseCase _getProfileUseCase;
   final GetFriendsUseCase _getFriendsUseCase;
 
@@ -53,6 +53,7 @@ class HomeCubit extends Cubit<HomeState> with ErrorHandlerMixin<HomeState>{
             (updatedFriendsList) {
           if (updatedFriendsList.isEmpty && state.isEmpty) {
             state.copyWith(subState: InitialState());
+            return;
           }
           emit(state.copyWith(
               subState: SuccessState(), secondModel: updatedFriendsList));
