@@ -9,6 +9,7 @@ import '../../../../../core/constants/app_spaces.dart';
 import 'package:test_app/core/constants/app_sizes.dart';
 import '../../../../../core/constants/app_paddings.dart';
 import 'package:test_app/core/services/session_service.dart';
+import '../../../../../core/presentation/utils/ui_utils.dart';
 import '../../../../home/presentation/screens/home_screen.dart';
 import '../../../../../core/data/models/message_result_model.dart';
 import 'package:test_app/features/auth/constants/auth_strings.dart';
@@ -267,7 +268,7 @@ class _SignInLayoutState extends State<SignInLayout> with AuthMixin<SignInLayout
   Future<void> _submitForm() async {
     if (FormValidation.validator(_formKey)) {
       _updateLockButton(false);
-      hideKeyboard();
+      UiUtils.hideKeyboard(context);
       widget.onUpdate(
           userEmail: _emailController.text.trim(),
           userPassword: _passwordController.text

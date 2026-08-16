@@ -1,11 +1,12 @@
 import '../../mixins/auth_mixin.dart';
 import 'package:flutter/material.dart';
 import '../../utils/validate/email_validation.dart';
-import '../../utils/validate/password_validation.dart';
 import '../../../../../core/constants/app_sizes.dart';
+import '../../utils/validate/password_validation.dart';
 import '../../../../../core/constants/app_spaces.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/app_paddings.dart';
+import 'package:test_app/core/presentation/utils/ui_utils.dart';
 import '../../../../../core/data/models/message_result_model.dart';
 import '../../../../../core/presentation/widgets/text_form_field.dart';
 import '../../../../../core/presentation/widgets/build_snack_bar.dart';
@@ -211,7 +212,7 @@ class _ChangeEmailAndPasswordLayoutState extends State<ChangeEmailAndPasswordLay
   Future<void> _onSavePressed() async {
     if (!_validateForm()) return;
     _updateLockButton(false);
-    hideKeyboard();
+    UiUtils.hideKeyboard(context);
     widget.onUpdate(
         newEmail: _newEmailController.text.trim(),
         currentPassword: _currentPasswordController.text,

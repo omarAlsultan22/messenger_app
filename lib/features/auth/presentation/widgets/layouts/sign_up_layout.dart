@@ -3,6 +3,7 @@ import '../../../../../core/presentation/widgets/icon_button_widget.dart';
 import '../../../../../core/presentation/widgets/text_form_field.dart';
 import 'package:test_app/features/auth/constants/auth_strings.dart';
 import '../../../../../core/data/models/message_result_model.dart';
+import '../../../../../core/presentation/utils/ui_utils.dart';
 import '../../../../../core/constants/app_paddings.dart';
 import 'package:test_app/core/constants/app_colors.dart';
 import 'package:test_app/core/constants/app_spaces.dart';
@@ -235,7 +236,7 @@ class _SignUpLayoutState extends State<SignUpLayout> with AuthMixin<SignUpLayout
   Future<void> _submitForm() async {
     if (FormValidation.validator(_formKey)) {
       _updateLockButton(false);
-      hideKeyboard();
+      UiUtils.hideKeyboard(context);
       await _performRegistration().whenComplete(() => _updateLockButton(true));
     }
   }

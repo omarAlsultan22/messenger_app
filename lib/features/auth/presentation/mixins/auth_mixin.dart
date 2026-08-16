@@ -11,9 +11,6 @@ import '../../../../core/presentation/widgets/build_snack_bar.dart';
 
 
 mixin AuthMixin<T extends StatefulWidget> on State<T> {
-  void hideKeyboard() {
-    FocusScope.of(context).unfocus();
-  }
 
   static bool validateForm(GlobalKey<FormState> formKey) {
     return formKey.currentState?.validate() ?? false;

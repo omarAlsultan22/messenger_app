@@ -6,6 +6,7 @@ import 'package:test_app/core/constants/app_colors.dart';
 import 'package:test_app/core/constants/app_borders.dart';
 import 'package:test_app/core/constants/app_paddings.dart';
 import '../../../../../core/services/session_service.dart';
+import 'package:test_app/core/presentation/utils/ui_utils.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:test_app/core/services/media_upload_service.dart';
 import '../../../../../core/data/models/message_result_model.dart';
@@ -274,6 +275,7 @@ class _EditPersonalAccountLayoutState extends State<EditPersonalAccountLayout> {
   Future<void> _onSavePressed() async {
     if (!FormValidation.validator(_formKey)) return;
     _updateLockButton(false);
+    UiUtils.hideKeyboard(context);
     await widget.onUpdate(
       userId: widget.userId,
       userImage: _mediaUrl,

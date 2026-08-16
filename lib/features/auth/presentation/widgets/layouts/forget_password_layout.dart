@@ -5,6 +5,7 @@ import '../../utils/validate/email_validation.dart';
 import '../../../../../core/constants/app_spaces.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/app_paddings.dart';
+import '../../../../../core/presentation/utils/ui_utils.dart';
 import '../../../../../core/data/models/message_result_model.dart';
 import 'package:test_app/features/auth/constants/auth_strings.dart';
 import '../../../../../core/presentation/widgets/text_form_field.dart';
@@ -112,7 +113,7 @@ class _ForgotPasswordScreenState extends State<ForgetPasswordLayout> with AuthMi
   Future<void> _submitForm() async {
     if (FormValidation.validator(_formKey)) {
       _updateLockButton(false);
-      hideKeyboard();
+      UiUtils.hideKeyboard(context);
       final email = _emailController.text.trim();
       widget.onUpdate(
         userEmail: email,
