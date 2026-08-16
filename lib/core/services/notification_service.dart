@@ -88,7 +88,7 @@ class NotificationService {
       );
 
       await _flutterLocalNotificationsPlugin.initialize(
-        initializationSettings,
+        settings: initializationSettings,
         onDidReceiveNotificationResponse: (NotificationResponse details) {
           if (details.payload != null) {
             handleNotification(jsonDecode(details.payload!));
@@ -186,10 +186,10 @@ class NotificationService {
       );
 
       await _flutterLocalNotificationsPlugin.show(
-        message.hashCode,
-        message.notification?.title ?? 'New Notification',
-        message.notification?.body ?? 'You have a new notification',
-        notificationDetails,
+        id: message.hashCode,
+        title: message.notification?.title ?? 'New Notification',
+        body: message.notification?.body ?? 'You have a new notification',
+        notificationDetails: notificationDetails,
         payload: jsonEncode(message.data),
       );
     } catch (e) {
@@ -261,12 +261,12 @@ class NotificationService {
       );
 
       await _flutterLocalNotificationsPlugin.show(
-        DateTime
+        id: DateTime
             .now()
             .millisecondsSinceEpoch ~/ 1000,
-        title,
-        body,
-        notificationDetails,
+        title: title,
+        body: body,
+        notificationDetails: notificationDetails,
         payload: jsonEncode(processedPayload),
       );
     } catch (e) {
@@ -339,6 +339,7 @@ class NotificationService {
       iOS: initializationSettingsIOS,
     );
 
-    await FlutterLocalNotificationsPlugin().initialize(initializationSettings);
+    await FlutterLocalNotificationsPlugin().initialize(
+        settings: initializationSettings);
   }
 }

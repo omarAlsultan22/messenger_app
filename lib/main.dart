@@ -1,3 +1,4 @@
+import 'app/my_app.dart';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'core/config/bloc_observer.dart';
@@ -5,12 +6,13 @@ import 'core/constants/app_colors.dart';
 import 'core/errors/mappers/error_handler.dart';
 import 'core/config/initialization_controller.dart';
 import 'core/presentation/widgets/build_snack_bar.dart';
-import 'package:conditional_builder_null_safety/example/example.dart';
+import 'package:test_app/core/di/service%20_locator.dart';
 
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Bloc.observer = MyBlocObserver();
+  setupServiceLocator();
   final initializationController = InitializationController();
 
   try {

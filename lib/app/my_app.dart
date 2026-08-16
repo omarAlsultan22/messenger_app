@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:test_app/features/home/presentation/screens/home_screen.dart';
 import '../core/theme/theme_notifier.dart';
 import '../core/services/navigation_service.dart';
 import 'package:test_app/core/constants/app_colors.dart';
@@ -96,7 +97,7 @@ class MyApp extends StatelessWidget {
                 darkTheme: _getDarkTheme(),
                 themeMode: themeNotifier.themeMode,
                 debugShowCheckedModeBanner: false,
-                home: const SignInScreen(),
+                home: const HomeScreen(),
               );
             }
         )

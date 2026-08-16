@@ -16,21 +16,19 @@ class ErrorStateWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 50.0),
-            child: Text('Error: $message'),
-          ),
-          AppSpaces.vertical_30,
-          ElevatedButton(
-            onPressed: onRetry,
-            child: Text(buttonText!),
-          ),
-        ],
-      ),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 50.0),
+          child: Text('Error: $message'),
+        ),
+        AppSpaces.vertical_30,
+        ElevatedButton(
+          onPressed: onRetry,
+          child: Text(buttonText!),
+        ),
+      ],
     );
   }
 }

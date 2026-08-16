@@ -1,4 +1,4 @@
-class ValidatePassword {
+class PasswordValidation {
   static String? validator(String? value) {
     if (value == null || value.isEmpty) {
       return 'Please enter your password';

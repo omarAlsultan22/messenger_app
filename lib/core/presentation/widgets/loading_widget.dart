@@ -8,7 +8,7 @@ class LoadingWidget {
     height: _spacing,
     width: _spacing,
     child: CircularProgressIndicator(
-      color: AppColors.black,
+      color: AppColors.white,
       strokeWidth: 3,
     ),
   );

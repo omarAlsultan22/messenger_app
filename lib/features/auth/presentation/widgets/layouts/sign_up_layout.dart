@@ -1,21 +1,16 @@
-import 'package:test_app/features/auth/presentation/utils/validate/validate_email.dart';
+import 'package:test_app/features/auth/presentation/utils/validate/email_validation.dart';
 import '../../../../../core/presentation/widgets/icon_button_widget.dart';
-import '../../../../../core/presentation/widgets/build_snack_bar.dart';
 import '../../../../../core/presentation/widgets/text_form_field.dart';
-import '../../../../../core/presentation/widgets/loading_widget.dart';
 import 'package:test_app/features/auth/constants/auth_strings.dart';
 import '../../../../../core/data/models/message_result_model.dart';
-import 'package:test_app/features/auth/constants/auth_colors.dart';
-import 'package:test_app/core/constants/app_text_styles.dart';
 import '../../../../../core/constants/app_paddings.dart';
 import 'package:test_app/core/constants/app_colors.dart';
 import 'package:test_app/core/constants/app_spaces.dart';
 import '../../../../../core/utils/validate_input.dart';
-import '../../../../../core/constants/app_sizes.dart';
-import '../../utils/validate/validate_password.dart';
-import '../../screens/sign_in_screen.dart';
+import '../../utils/validate/password_validation.dart';
+import '../../utils/validate/form_validation.dart';
 import 'package:flutter/material.dart';
-import '../navigator_with_delay.dart';
+import '../../mixins/auth_mixin.dart';
 import '../build_app_icon.dart';
 
 
@@ -38,7 +33,8 @@ class SignUpLayout extends StatefulWidget {
   State<SignUpLayout> createState() => _SignUpLayoutState();
 }
 
-class _SignUpLayoutState extends State<SignUpLayout> {
+class _SignUpLayoutState extends State<SignUpLayout> with AuthMixin<SignUpLayout> {
+  bool _isPressed = true;
   bool _isObscure = true;
   final _formKey = GlobalKey<FormState>();
 
@@ -60,25 +56,14 @@ class _SignUpLayoutState extends State<SignUpLayout> {
   @override
   void didUpdateWidget(covariant SignUpLayout oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.messageResult.message != null) {
-      _showMessageResult(widget.messageResult);
-      if (widget.messageResult.error == null) {
-        _navigateToHome();
-      }
-      setState(() {});
-    }
-  }
-
-  void _showMessageResult(MessageResult messageResult) {
-    BuildSnackBar.show(
-        context: context,
-        message: messageResult.message!,
-        backgroundColor: messageResult.color!
+    handleMessageResult(
+      messageResult: widget.messageResult,
+      onNavigate: _navigateToBack,
     );
   }
 
-  void _navigateToHome() {
-    NavigatorWithDelay.build(link: const SignInScreen(), context: context);
+  void _navigateToBack() {
+    Navigator.pop(context);
   }
 
   @override
@@ -88,54 +73,38 @@ class _SignUpLayoutState extends State<SignUpLayout> {
 
   Widget _buildMainContent() {
     return Scaffold(
-      appBar: _buildAppBar(),
       body: SafeArea(
         child: Container(
           width: double.infinity,
           height: double.infinity,
-          decoration: _buildBackgroundDecoration(),
-          child: Center(
-            child: SingleChildScrollView(
-              padding: AppPaddings.large,
-              child: RepaintBoundary(
-                child: Form(
-                  key: _formKey,
-                  child: AutofillGroup(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const BuildAppIcon(),
-                        const SizedBox(height: 30),
-                        _buildHeader(context),
-                        AppSpaces.vertical_24,
-                        _buildInputFields(),
-                        AppSpaces.vertical_24,
-                        _buildRegisterButton(),
-                      ],
-                    ),
+          decoration: buildBackgroundDecoration(),
+          child: SingleChildScrollView(
+            padding: AppPaddings.large,
+            child: RepaintBoundary(
+              child: Form(
+                key: _formKey,
+                child: AutofillGroup(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      const Align(
+                          alignment: Alignment(-1.1, 0),
+                          child: IconButtonWidget()
+                      ),
+                      const BuildAppIcon(),
+                      const SizedBox(height: 30),
+                      _buildHeader(context),
+                      AppSpaces.vertical_24,
+                      _buildInputFields(),
+                      AppSpaces.vertical_24,
+                      _buildRegisterButton(),
+                    ],
                   ),
                 ),
               ),
             ),
           ),
         ),
-      ),
-    );
-  }
-
-  PreferredSizeWidget _buildAppBar() {
-    return AppBar(
-        backgroundColor: AuthColors.brown_900,
-        scrolledUnderElevation: AppSizes.none,
-        leading: const IconButtonWidget()
-    );
-  }
-
-  BoxDecoration _buildBackgroundDecoration() {
-    return const BoxDecoration(
-      image: DecorationImage(
-        image: NetworkImage(AuthStrings.backgroundCover),
-        fit: BoxFit.cover,
       ),
     );
   }
@@ -221,7 +190,7 @@ class _SignUpLayoutState extends State<SignUpLayout> {
       prefixIcon: const Icon(Icons.email, color: AppColors.white),
       keyboardType: TextInputType.emailAddress,
       autofillHints: const [AutofillHints.email],
-      validator: (value) => ValidateEmail.validator(value!),
+      validator: (value) => EmailValidation.validator(value!),
     );
   }
 
@@ -232,19 +201,10 @@ class _SignUpLayoutState extends State<SignUpLayout> {
       hintText: AuthStrings.passwordHint,
       prefixIcon: const Icon(Icons.lock, color: AppColors.white),
       obscureText: _isObscure,
-      suffixIcon: _buildPasswordVisibilityToggle(),
+      suffixIcon: buildPasswordVisibilityToggle(
+          isObscure: _isObscure, onToggle: _togglePasswordVisibility),
       autofillHints: const [AutofillHints.newPassword],
-      validator: (value) => ValidatePassword.validator(value!),
-    );
-  }
-
-  Widget _buildPasswordVisibilityToggle() {
-    return IconButton(
-      icon: Icon(
-        _isObscure ? Icons.visibility_off : Icons.visibility,
-        color: AppColors.white,
-      ),
-      onPressed: _togglePasswordVisibility,
+      validator: (value) => PasswordValidation.validator(value!),
     );
   }
 
@@ -252,22 +212,15 @@ class _SignUpLayoutState extends State<SignUpLayout> {
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
-        style: _registerButtonStyle(),
+        style: buttonStyle(),
         onPressed: widget.messageResult.isLoading ? _submitForm : null,
-        child: _buildRegisterButtonContent(),
+        child: buildButtonContent(
+            text: 'REGISTER',
+            isLoading: widget.messageResult.isLoading
+        ),
       ),
     );
   }
-
-  Widget _buildRegisterButtonContent() {
-    return widget.messageResult.isLoading
-        ? LoadingWidget.sizedBox
-        : const Text(
-      "REGISTER",
-      style: AppTextStyles.textStyle_18,
-    );
-  }
-
 
   void _togglePasswordVisibility() {
     setState(() {
@@ -275,10 +228,15 @@ class _SignUpLayoutState extends State<SignUpLayout> {
     });
   }
 
+  void _updateLockButton(bool value) {
+    setState(() => _isPressed = value);
+  }
+
   Future<void> _submitForm() async {
-    if (_formKey.currentState!.validate()) {
-      _hideKeyboard();
-      await _performRegistration();
+    if (FormValidation.validator(_formKey)) {
+      _updateLockButton(false);
+      hideKeyboard();
+      await _performRegistration().whenComplete(() => _updateLockButton(true));
     }
   }
 
@@ -288,22 +246,6 @@ class _SignUpLayoutState extends State<SignUpLayout> {
       lastName: _lastNameController.text.trim(),
       userEmail: _emailController.text.trim(),
       userPassword: _passwordController.text,
-    );
-  }
-
-  void _hideKeyboard() {
-    FocusScope.of(context).unfocus();
-  }
-
-  ButtonStyle _registerButtonStyle() {
-    return ElevatedButton.styleFrom(
-      backgroundColor: AuthColors.amber_500,
-      foregroundColor: AppColors.black,
-      padding: AppPaddings.verticalSymmetric,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppSizes.xl),
-      ),
-      elevation: 2.0,
     );
   }
 }

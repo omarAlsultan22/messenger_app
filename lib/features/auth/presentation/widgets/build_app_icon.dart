@@ -7,10 +7,13 @@ class BuildAppIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Icon(
-      CupertinoIcons.chat_bubble_2_fill,
-      size: 150,
-      color: AppColors.white,
+    return const Align(
+      alignment: Alignment.topCenter,
+      child: Icon(
+        CupertinoIcons.chat_bubble_2_fill,
+        size: 150,
+        color: AppColors.white,
+      ),
     );
   }
 }

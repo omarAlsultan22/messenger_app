@@ -1,24 +1,22 @@
-import '../navigator_with_delay.dart';
+import '../../mixins/auth_mixin.dart';
 import 'package:flutter/material.dart';
 import '../../screens/sign_up_screen.dart';
 import '../../screens/forget_password_screen.dart';
-import '../../utils/validate/validate_password.dart';
+import '../../utils/validate/form_validation.dart';
+import '../../utils/validate/password_validation.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/app_spaces.dart';
 import 'package:test_app/core/constants/app_sizes.dart';
 import '../../../../../core/constants/app_paddings.dart';
-import 'package:test_app/core/constants/app_borders.dart';
 import 'package:test_app/core/services/session_service.dart';
 import '../../../../home/presentation/screens/home_screen.dart';
 import '../../../../../core/data/models/message_result_model.dart';
-import 'package:test_app/features/auth/constants/auth_colors.dart';
 import 'package:test_app/features/auth/constants/auth_strings.dart';
-import '../../../../../core/presentation/widgets/loading_widget.dart';
 import '../../../../../core/presentation/widgets/text_form_field.dart';
-import '../../../../../core/presentation/widgets/build_snack_bar.dart';
+import '../../../../../core/presentation/widgets/navigation/navigator.dart';
 import '../../../../../core/data/data_sources/local/shared_preferences.dart';
 import 'package:test_app/features/auth/presentation/widgets/build_app_icon.dart';
-import 'package:test_app/features/auth/presentation/utils/validate/validate_email.dart';
+import 'package:test_app/features/auth/presentation/utils/validate/email_validation.dart';
 
 
 class SignInLayout extends StatefulWidget {
@@ -39,7 +37,8 @@ class SignInLayout extends StatefulWidget {
   State<SignInLayout> createState() => _SignInLayoutState();
 }
 
-class _SignInLayoutState extends State<SignInLayout> {
+class _SignInLayoutState extends State<SignInLayout> with AuthMixin<SignInLayout> {
+  bool _isPressed = true;
   bool _isObscure = true;
 
   final _formKey = GlobalKey<FormState>();
@@ -64,20 +63,11 @@ class _SignInLayoutState extends State<SignInLayout> {
   @override
   void didUpdateWidget(covariant SignInLayout oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.messageResult.message != null) {
-      _showMessageResult(widget.messageResult);
-      if (widget.messageResult.error == null) {
-        _navigateToHome();
-      }
-    }
-    setState(() {});
-  }
-
-  void _showMessageResult(MessageResult messageResult) {
-    BuildSnackBar.show(
-        context: context,
-        message: messageResult.message!,
-        backgroundColor: messageResult.color!
+    handleMessageResult(
+      messageResult: widget.messageResult,
+      onNavigate: () =>
+          navigateToScreen(const HomeScreen()
+          ),
     );
   }
 
@@ -88,12 +78,11 @@ class _SignInLayoutState extends State<SignInLayout> {
 
   Widget _buildMainContent() {
     return Scaffold(
-      backgroundColor: AuthColors.brown_900,
       body: SafeArea(
         child: Container(
           width: double.infinity,
           height: double.infinity,
-          decoration: _buildBackgroundDecoration(),
+          decoration: buildBackgroundDecoration(),
           child: Center(
             child: SingleChildScrollView(
               padding: AppPaddings.xLarge,
@@ -119,15 +108,6 @@ class _SignInLayoutState extends State<SignInLayout> {
             ),
           ),
         ),
-      ),
-    );
-  }
-
-  BoxDecoration _buildBackgroundDecoration() {
-    return const BoxDecoration(
-      image: DecorationImage(
-        image: NetworkImage(AuthStrings.backgroundCover),
-        fit: BoxFit.cover,
       ),
     );
   }
@@ -185,7 +165,7 @@ class _SignInLayoutState extends State<SignInLayout> {
       prefixIcon: const Icon(Icons.email, color: AppColors.white),
       keyboardType: TextInputType.emailAddress,
       autofillHints: const [AutofillHints.email],
-      validator: (value) => ValidateEmail.validator(value),
+      validator: (value) => EmailValidation.validator(value),
     );
   }
 
@@ -194,21 +174,12 @@ class _SignInLayoutState extends State<SignInLayout> {
       controller: _passwordController,
       labelText: AuthStrings.passwordLabel,
       hintText: AuthStrings.passwordHint,
-      prefixIcon: Icon(Icons.lock, color: AppColors.white),
+      prefixIcon: const Icon(Icons.lock, color: AppColors.white),
       obscureText: _isObscure,
-      suffixIcon: _buildPasswordVisibilityToggle(),
+      suffixIcon: buildPasswordVisibilityToggle(
+          isObscure: _isObscure, onToggle: _togglePasswordVisibility),
       autofillHints: const [AutofillHints.password],
-      validator: (value) => ValidatePassword.validator(value),
-    );
-  }
-
-  Widget _buildPasswordVisibilityToggle() {
-    return IconButton(
-      icon: Icon(
-        _isObscure ? Icons.visibility_off : Icons.visibility,
-        color: AuthColors.amber_500,
-      ),
-      onPressed: _togglePasswordVisibility,
+      validator: (value) => PasswordValidation.validator(value),
     );
   }
 
@@ -216,24 +187,13 @@ class _SignInLayoutState extends State<SignInLayout> {
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
-        style: _loginButtonStyle(),
+        style: buttonStyle(),
         onPressed: widget.messageResult.isLoading ? () => _submitForm() : null,
-        child: _buildLoginButtonContent(),
+        child: buildButtonContent(
+            text: 'SIGN IN',
+            isLoading: widget.messageResult.isLoading
+        ),
       ),
-    );
-  }
-
-  Widget _buildLoginButtonContent() {
-    return widget.messageResult.isLoading
-        ? LoadingWidget.sizedBox
-        : const Text(
-        "SIGN IN",
-        style: TextStyle(
-          fontSize: AppSizes.sm,
-          letterSpacing: 1.2,
-          color: Colors.white,
-          fontWeight: FontWeight.bold,
-        )
     );
   }
 
@@ -252,7 +212,7 @@ class _SignInLayoutState extends State<SignInLayout> {
               TextSpan(
                 text: "SIGN UP",
                 style: TextStyle(
-                  color: AuthColors.amber_500,
+                  color: AppColors.amber,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -267,11 +227,8 @@ class _SignInLayoutState extends State<SignInLayout> {
     return Center(
       child: TextButton(
         onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const ForgetPasswordScreen(),
-            ),
+          BuildNavigator.build(
+            link: const ForgetPasswordScreen(), context: context,
           );
         },
         child: const Text(
@@ -287,7 +244,8 @@ class _SignInLayoutState extends State<SignInLayout> {
 
   Future<void> _checkLoginStatus() async {
     if (SessionService().isLoggedIn && widget.messageResult.error == null) {
-      _navigateToHome();
+      navigateToScreen(const HomeScreen()
+      );
     }
   }
 
@@ -299,39 +257,22 @@ class _SignInLayoutState extends State<SignInLayout> {
   }
 
   void _navigateToRegister() {
-    NavigatorWithDelay.build(link: const SignUpScreen(), context: context);
+    BuildNavigator.build(link: const SignUpScreen(), context: context);
   }
 
-  void _navigateToHome() {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => const HomeScreen()),
-    );
+  void _updateLockButton(bool value) {
+    setState(() => _isPressed = value);
   }
 
   Future<void> _submitForm() async {
-    if (_formKey.currentState!.validate()) {
-      _hideKeyboard();
+    if (FormValidation.validator(_formKey)) {
+      _updateLockButton(false);
+      hideKeyboard();
       widget.onUpdate(
           userEmail: _emailController.text.trim(),
           userPassword: _passwordController.text
       );
+      _updateLockButton(true);
     }
-  }
-
-  void _hideKeyboard() {
-    FocusScope.of(context).unfocus();
-  }
-
-  ButtonStyle _loginButtonStyle() {
-    return ElevatedButton.styleFrom(
-      backgroundColor: AuthColors.amber_500,
-      foregroundColor: AppColors.black,
-      padding: AppPaddings.verticalSymmetric,
-      shape: const RoundedRectangleBorder(
-        borderRadius: AppBorders.borderRadius_16,
-      ),
-      elevation: 2.0,
-    );
   }
 }

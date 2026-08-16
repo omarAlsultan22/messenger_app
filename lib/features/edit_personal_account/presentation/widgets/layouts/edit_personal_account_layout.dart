@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../../../../../core/constants/app_spaces.dart';
 import '../../../../../core/utils/validate_input.dart';
 import 'package:test_app/core/constants/app_sizes.dart';
-import '../../screens/edit_personal_account_screen.dart';
 import 'package:test_app/core/constants/app_colors.dart';
 import 'package:test_app/core/constants/app_borders.dart';
 import 'package:test_app/core/constants/app_paddings.dart';
@@ -12,6 +11,7 @@ import 'package:test_app/core/services/media_upload_service.dart';
 import '../../../../../core/data/models/message_result_model.dart';
 import 'package:test_app/core/presentation/widgets/build_snack_bar.dart';
 import 'package:test_app/core/presentation/widgets/text_form_field.dart';
+import '../../../../auth/presentation/utils/validate/form_validation.dart';
 import 'package:test_app/core/presentation/widgets/navigation/navigator.dart';
 import '../../../../auth/presentation/screens/change_email_and_password_screen.dart';
 import 'package:test_app/features/edit_personal_account/data/models/account_model.dart';
@@ -43,17 +43,21 @@ class EditPersonalAccountLayout extends StatefulWidget {
 
 class _EditPersonalAccountLayoutState extends State<EditPersonalAccountLayout> {
 
+  final _formKey = GlobalKey<FormState>();
+
   //controllers
   late final TextEditingController _firstNameController;
   late final TextEditingController _lastNameController;
   late final TextEditingController _stateController;
 
+  //values
   static const double _avatarRadius = 100.0;
   static const _sizedBox = SizedBox(height: 16.0);
   late final _imageUrl = widget.accountModel.userImage;
   static final _currentUid = SessionService().currentUid;
 
-  bool isPressed = true;
+
+  bool _isPressed = true;
   String _mediaUrl = '';
   String? _image;
 
@@ -118,7 +122,7 @@ class _EditPersonalAccountLayoutState extends State<EditPersonalAccountLayout> {
       icon: widget.messageResult.isLoading
           ? const CircularProgressIndicator()
           : const Icon(Icons.save),
-      onPressed: widget.messageResult.isLoading && isPressed
+      onPressed: widget.messageResult.isLoading && _isPressed
           ? () => _onSavePressed()
           : null,
     );
@@ -129,21 +133,24 @@ class _EditPersonalAccountLayoutState extends State<EditPersonalAccountLayout> {
       child: Padding(
         padding: AppPaddings.medium,
         child: Center(
-          child: Column(
-            children: [
-              const SizedBox(height: 50.0),
-              _buildAvatarSection(),
-              _sizedBox,
-              _sizedBox,
-              _buildFirstNameField(),
-              _sizedBox,
-              _buildLastNameField(),
-              _sizedBox,
-              _buildStateField(),
-              AppSpaces.vertical_24,
-              _buildChangePasswordButton(),
-              _sizedBox,
-            ],
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                const SizedBox(height: 50.0),
+                _buildAvatarSection(),
+                _sizedBox,
+                _sizedBox,
+                _buildFirstNameField(),
+                _sizedBox,
+                _buildLastNameField(),
+                _sizedBox,
+                _buildStateField(),
+                AppSpaces.vertical_24,
+                _buildChangePasswordButton(),
+                _sizedBox,
+              ],
+            ),
           ),
         ),
       ),);
@@ -245,7 +252,7 @@ class _EditPersonalAccountLayoutState extends State<EditPersonalAccountLayout> {
           'Change email and password',
           style: TextStyle(
             fontSize: AppSizes.md,
-            color: AppColors.amber_600,
+            color: AppColors.amber,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -260,30 +267,20 @@ class _EditPersonalAccountLayoutState extends State<EditPersonalAccountLayout> {
     _stateController.text = widget.accountModel.userState ?? '';
   }
 
-  void updateLockButton(bool value) {
-    setState(() => isPressed = value);
+  void _updateLockButton(bool value) {
+    setState(() => _isPressed = value);
   }
 
   Future<void> _onSavePressed() async {
-    updateLockButton(false);
+    if (!FormValidation.validator(_formKey)) return;
+    _updateLockButton(false);
     await widget.onUpdate(
       userId: widget.userId,
       userImage: _mediaUrl,
       firstName: _firstNameController.text,
       lastName: _lastNameController.text,
       userState: _stateController.text,
-    ).then((_) {
-      _refreshPage();
-    }).whenComplete(() => updateLockButton(true));
-  }
-
-  void _refreshPage() {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-          builder: (context) => EditPersonalAccountScreen(docId: widget.userId)
-      ),
-    );
+    ).then((_) {}).whenComplete(() => _updateLockButton(true));
   }
 
   void _viewImage(BuildContext context) {
@@ -305,18 +302,16 @@ class _EditPersonalAccountLayoutState extends State<EditPersonalAccountLayout> {
   }
 
   void _navigateToChangePassword() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const ChangeEmailAndPasswordScreen(),
-      ),
+    BuildNavigator.build(
+        context: context,
+        link: const ChangeEmailAndPasswordScreen()
     );
   }
 
   ButtonStyle _changePasswordButtonStyle() {
     return OutlinedButton.styleFrom(
         padding: AppPaddings.verticalSymmetric,
-        side: const BorderSide(color: AppColors.amber_600),
+        side: const BorderSide(color: AppColors.amber),
         shape: const RoundedRectangleBorder(
             borderRadius: AppBorders.borderRadius_12
         )

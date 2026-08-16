@@ -1,4 +1,4 @@
-class ValidateEmail {
+class EmailValidation {
   static String? validator(String? value) {
     if (value == null || value.isEmpty) {
       return 'Please enter your email';

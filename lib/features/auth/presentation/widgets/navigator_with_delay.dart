@@ -1,6 +1,5 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:test_app/core/constants/app_durations.dart';
-import 'package:test_app/core/presentation/widgets/navigation/navigator.dart';
 
 
 class NavigatorWithDelay {
@@ -9,7 +8,11 @@ class NavigatorWithDelay {
     required BuildContext context,
   }) {
     Future.delayed(const Duration(seconds: AppDurations.oneSecond), () =>
-        BuildNavigator.build(link: link, context: context)
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => link
+          ),
+        )
     );
   }
 }

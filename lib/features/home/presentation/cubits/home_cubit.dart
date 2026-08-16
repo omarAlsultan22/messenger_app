@@ -29,10 +29,9 @@ class HomeCubit extends Cubit<HomeState> with ErrorHandlerMixin<HomeState> {
   Future<void> getProfileImage({
     required String docId
   }) async {
-    emit(state.copyWith(subState: LoadingState()));
     try {
       final profileImage = await _getProfileUseCase.execute(userId: docId);
-      emit(state.copyWith(subState: SuccessState(), firstModel: profileImage));
+      emit(state.copyWith(firstModel: profileImage));
     }
     catch (e, stackTrace) {
       handleError(e, stackTrace,

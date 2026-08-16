@@ -5,7 +5,7 @@ abstract class AppColors {
   static const white = Colors.white;
   static const black = Colors.black;
   static const green = Colors.green;
-  static const amber_600 = Color(0xFFFFB300);
+  static const amber = Colors.amber;
   static const transparent = Colors.transparent;
 
 //grades of blue

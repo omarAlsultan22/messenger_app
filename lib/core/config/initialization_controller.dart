@@ -1,3 +1,4 @@
+import '../di/service _locator.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -6,8 +7,6 @@ import 'package:test_app/core/services/session_service.dart';
 import 'package:test_app/core/services/notification_service.dart';
 import 'package:test_app/core/services/online_status_service.dart';
 import 'package:test_app/core/data/data_sources/local/shared_preferences.dart';
-
-import '../di/service _locator.dart';
 
 
 class InitializationController {
@@ -34,24 +33,24 @@ class InitializationController {
   RemoteMessage? get initialMessage => _initialMessage;
 
   Future<void> _initializeServices() async {
-    // 1. تهيئة Firebase Firestore
+    // 1. تهيئة Firebase
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+
+    // 2. تهيئة Firebase Firestore
     FirebaseFirestore.instance.settings = const Settings(
       persistenceEnabled: true,
       cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED,
     );
 
-    // 2. تهيئة CacheHelper
+    // 3. تهيئة CacheHelper
     _cacheHelper = sl<CacheHelper>();
     await _cacheHelper.init();
 
-    // 3. تهيئة SessionService
+    // 4. تهيئة SessionService
     _sessionService = sl<SessionService>();
     await _sessionService.loadFromStorage();
-
-    // 4. تهيئة Firebase
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
 
     // 5. تهيئة NotificationService (للخلفية)
     await NotificationService.setupBackgroundIsolate();
