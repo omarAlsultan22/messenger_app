@@ -123,7 +123,7 @@ class _EditPersonalAccountLayoutState extends State<EditPersonalAccountLayout> {
       icon: widget.messageResult.isLoading
           ? const CircularProgressIndicator()
           : const Icon(Icons.save),
-      onPressed: widget.messageResult.isLoading && _isPressed
+      onPressed: _isPressed
           ? () => _onSavePressed()
           : null,
     );

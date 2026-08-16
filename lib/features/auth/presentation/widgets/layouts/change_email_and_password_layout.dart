@@ -103,7 +103,7 @@ class _ChangeEmailAndPasswordLayoutState extends State<ChangeEmailAndPasswordLay
       padding: _paddingHorizontal,
       child: ElevatedButton(
         style: buttonStyle(padding: _paddingHorizontal),
-        onPressed: widget.messageResult.isLoading
+        onPressed: _isPressed
             ? () => _onSavePressed()
             : null,
         child: buildButtonContent(

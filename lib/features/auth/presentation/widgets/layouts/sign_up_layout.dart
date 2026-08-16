@@ -214,7 +214,7 @@ class _SignUpLayoutState extends State<SignUpLayout> with AuthMixin<SignUpLayout
       width: double.infinity,
       child: ElevatedButton(
         style: buttonStyle(),
-        onPressed: widget.messageResult.isLoading ? _submitForm : null,
+        onPressed: _isPressed ? _submitForm : null,
         child: buildButtonContent(
             text: 'REGISTER',
             isLoading: widget.messageResult.isLoading
