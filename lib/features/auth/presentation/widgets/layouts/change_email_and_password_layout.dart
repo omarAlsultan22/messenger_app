@@ -13,7 +13,7 @@ import '../../../../../core/presentation/widgets/build_snack_bar.dart';
 import '../../../../../core/presentation/widgets/icon_button_widget.dart';
 import '../../../../../core/data/data_sources/local/shared_preferences.dart';
 import 'package:test_app/features/auth/presentation/screens/sign_in_screen.dart';
-import 'package:test_app/features/auth/presentation/utils/validate/form_validation.dart';
+import 'package:test_app/core/presentation/utils/form_validation.dart';
 
 
 class ChangeEmailAndPasswordLayout extends StatefulWidget {

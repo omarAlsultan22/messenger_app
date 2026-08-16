@@ -2,7 +2,7 @@ import '../../mixins/auth_mixin.dart';
 import 'package:flutter/material.dart';
 import '../../screens/sign_up_screen.dart';
 import '../../screens/forget_password_screen.dart';
-import '../../utils/validate/form_validation.dart';
+import '../../../../../core/presentation/utils/form_validation.dart';
 import '../../utils/validate/password_validation.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/app_spaces.dart';

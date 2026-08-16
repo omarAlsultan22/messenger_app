@@ -12,7 +12,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:test_app/core/services/media_upload_service.dart';
 import '../../../../../core/data/models/message_result_model.dart';
 import 'package:test_app/core/presentation/widgets/text_form_field.dart';
-import '../../../../auth/presentation/utils/validate/form_validation.dart';
+import '../../../../../core/presentation/utils/form_validation.dart';
 import 'package:test_app/core/presentation/widgets/navigation/navigator.dart';
 import '../../../../auth/presentation/screens/change_email_and_password_screen.dart';
 import 'package:test_app/features/edit_personal_account/data/models/account_model.dart';

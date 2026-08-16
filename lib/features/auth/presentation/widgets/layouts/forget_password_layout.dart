@@ -1,6 +1,6 @@
 import '../../mixins/auth_mixin.dart';
 import 'package:flutter/material.dart';
-import '../../utils/validate/form_validation.dart';
+import '../../../../../core/presentation/utils/form_validation.dart';
 import '../../utils/validate/email_validation.dart';
 import '../../../../../core/constants/app_spaces.dart';
 import '../../../../../core/constants/app_colors.dart';

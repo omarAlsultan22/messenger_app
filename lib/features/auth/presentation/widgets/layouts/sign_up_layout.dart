@@ -9,7 +9,7 @@ import 'package:test_app/core/constants/app_colors.dart';
 import 'package:test_app/core/constants/app_spaces.dart';
 import '../../../../../core/utils/validate_input.dart';
 import '../../utils/validate/password_validation.dart';
-import '../../utils/validate/form_validation.dart';
+import '../../../../../core/presentation/utils/form_validation.dart';
 import 'package:flutter/material.dart';
 import '../../mixins/auth_mixin.dart';
 import '../build_app_icon.dart';
