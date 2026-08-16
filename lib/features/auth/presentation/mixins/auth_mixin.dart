@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import '../../constants/auth_strings.dart';
 import '../../constants/auth_text_style.dart';
 import '../widgets/navigator_with_delay.dart';
@@ -39,8 +40,9 @@ mixin AuthMixin<T extends StatefulWidget> on State<T> {
     VoidCallback? onClear,
   }) {
     if (messageResult.message != null) {
-      showMessageResult(messageResult);
-      if (messageResult.error == null) {
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+        showMessageResult(messageResult);
+      });      if (messageResult.error == null) {
         onClear?.call();
         onNavigate();
       }
