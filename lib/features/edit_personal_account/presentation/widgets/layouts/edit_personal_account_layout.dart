@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import '../../../../../core/constants/app_spaces.dart';
 import '../../../../../core/utils/validate_input.dart';
 import 'package:test_app/core/constants/app_sizes.dart';
@@ -10,7 +11,6 @@ import 'package:test_app/core/presentation/utils/ui_utils.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:test_app/core/services/media_upload_service.dart';
 import '../../../../../core/data/models/message_result_model.dart';
-import 'package:test_app/core/presentation/widgets/build_snack_bar.dart';
 import 'package:test_app/core/presentation/widgets/text_form_field.dart';
 import '../../../../auth/presentation/utils/validate/form_validation.dart';
 import 'package:test_app/core/presentation/widgets/navigation/navigator.dart';
@@ -74,7 +74,10 @@ class _EditPersonalAccountLayoutState extends State<EditPersonalAccountLayout> {
   void didUpdateWidget(covariant EditPersonalAccountLayout oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.messageResult.message != null) {
-      _showMessageResult(widget.messageResult);
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+        UiUtils.showMessageResult(
+            context: context, messageResult: widget.messageResult);
+      });
     }
     setState(() {});
   }
@@ -317,14 +320,6 @@ class _EditPersonalAccountLayoutState extends State<EditPersonalAccountLayout> {
         shape: const RoundedRectangleBorder(
             borderRadius: AppBorders.borderRadius_12
         )
-    );
-  }
-
-  void _showMessageResult(MessageResult messageResult) {
-    BuildSnackBar.show(
-        context: context,
-        message: messageResult.message!,
-        backgroundColor: messageResult.color!
     );
   }
 }

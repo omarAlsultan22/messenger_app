@@ -7,8 +7,8 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_paddings.dart';
 import 'package:test_app/core/constants/app_borders.dart';
 import '../../../../core/data/models/message_result_model.dart';
+import 'package:test_app/core/presentation/utils/ui_utils.dart';
 import '../../../../core/presentation/widgets/loading_widget.dart';
-import '../../../../core/presentation/widgets/build_snack_bar.dart';
 
 
 mixin AuthMixin<T extends StatefulWidget> on State<T> {
@@ -26,14 +26,6 @@ mixin AuthMixin<T extends StatefulWidget> on State<T> {
     );
   }
 
-  void showMessageResult(MessageResult messageResult) {
-    BuildSnackBar.show(
-      context: context,
-      message: messageResult.message!,
-      backgroundColor: messageResult.color!,
-    );
-  }
-
   void handleMessageResult({
     required MessageResult messageResult,
     required VoidCallback onNavigate,
@@ -41,8 +33,10 @@ mixin AuthMixin<T extends StatefulWidget> on State<T> {
   }) {
     if (messageResult.message != null) {
       SchedulerBinding.instance.addPostFrameCallback((_) {
-        showMessageResult(messageResult);
-      });      if (messageResult.error == null) {
+        UiUtils.showMessageResult(
+            context: context, messageResult: messageResult);
+      });
+      if (messageResult.error == null) {
         onClear?.call();
         onNavigate();
       }
