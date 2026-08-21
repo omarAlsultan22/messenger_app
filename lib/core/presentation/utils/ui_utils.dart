@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import '../widgets/build_snack_bar.dart';
-import '../../data/models/message_result_model.dart';
 
 
 class UiUtils {
@@ -10,12 +9,13 @@ class UiUtils {
 
   static void showMessageResult({
     required BuildContext context,
-    required MessageResult messageResult,
+    required String message,
+    required Color color,
   }) {
     BuildSnackBar.show(
         context: context,
-        message: messageResult.message!,
-        backgroundColor: messageResult.color!
+        message: message,
+        backgroundColor: color
     );
   }
 }

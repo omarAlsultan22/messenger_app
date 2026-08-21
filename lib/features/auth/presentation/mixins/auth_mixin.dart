@@ -34,7 +34,10 @@ mixin AuthMixin<T extends StatefulWidget> on State<T> {
     if (messageResult.message != null) {
       SchedulerBinding.instance.addPostFrameCallback((_) {
         UiUtils.showMessageResult(
-            context: context, messageResult: messageResult);
+            context: context,
+            color: messageResult.color!,
+            message: messageResult.message!
+        );
       });
       if (messageResult.error == null) {
         onClear?.call();

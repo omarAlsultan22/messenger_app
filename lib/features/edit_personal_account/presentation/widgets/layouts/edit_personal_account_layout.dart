@@ -76,7 +76,10 @@ class _EditPersonalAccountLayoutState extends State<EditPersonalAccountLayout> {
     if (widget.messageResult.message != null) {
       SchedulerBinding.instance.addPostFrameCallback((_) {
         UiUtils.showMessageResult(
-            context: context, messageResult: widget.messageResult);
+            context: context,
+            color: widget.messageResult.color!,
+            message: widget.messageResult.message!
+        );
       });
     }
     setState(() {});

@@ -225,10 +225,10 @@ class _ChangeEmailAndPasswordLayoutState extends State<ChangeEmailAndPasswordLay
     if (!FormValidation.validator(_formKey)) return false;
 
     if (_newPasswordController.text != _repeatNewPasswordController.text) {
-      BuildSnackBar.show(
-          context: context,
-          message: 'The new password does not match',
-          backgroundColor: AppColors.errorRed
+      UiUtils.showMessageResult(
+        context: context,
+        color: AppColors.errorRed,
+        message: 'The new password does not match',
       );
       return false;
     }
