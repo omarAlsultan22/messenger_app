@@ -6,10 +6,8 @@ import '../../utils/validate/password_validation.dart';
 import '../../../../../core/constants/app_spaces.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/app_paddings.dart';
-import 'package:test_app/core/presentation/utils/ui_utils.dart';
 import '../../../../../core/data/models/message_result_model.dart';
 import '../../../../../core/presentation/widgets/text_form_field.dart';
-import 'package:test_app/core/presentation/utils/form_validation.dart';
 import '../../../../../core/presentation/widgets/icon_button_widget.dart';
 import '../../../../../core/data/data_sources/local/shared_preferences.dart';
 import 'package:test_app/features/auth/presentation/screens/sign_in_screen.dart';
@@ -211,7 +209,7 @@ class _ChangeEmailAndPasswordLayoutState extends State<ChangeEmailAndPasswordLay
   Future<void> _onSavePressed() async {
     if (!_validateForm()) return;
     _updateLockButton(false);
-    UiUtils.hideKeyboard(context);
+    hideKeyboard(context);
     widget.onUpdate(
         newEmail: _newEmailController.text.trim(),
         currentPassword: _currentPasswordController.text,
@@ -221,10 +219,10 @@ class _ChangeEmailAndPasswordLayoutState extends State<ChangeEmailAndPasswordLay
   }
 
   bool _validateForm() {
-    if (!FormValidation.validator(_formKey)) return false;
+    if (!validateForm(_formKey)) return false;
 
     if (_newPasswordController.text != _repeatNewPasswordController.text) {
-      UiUtils.showMessageResult(
+      showMessageResult(
         context: context,
         color: AppColors.errorRed,
         message: 'The new password does not match',

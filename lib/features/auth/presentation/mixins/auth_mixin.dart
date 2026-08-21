@@ -7,13 +7,17 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_paddings.dart';
 import 'package:test_app/core/constants/app_borders.dart';
 import '../../../../core/data/models/message_result_model.dart';
-import 'package:test_app/core/presentation/utils/ui_utils.dart';
 import '../../../../core/presentation/widgets/loading_widget.dart';
+import '../../../../core/presentation/widgets/build_snack_bar.dart';
 
 
 mixin AuthMixin<T extends StatefulWidget> on State<T> {
 
-  static bool validateForm(GlobalKey<FormState> formKey) {
+  void hideKeyboard(BuildContext context) {
+    FocusScope.of(context).unfocus();
+  }
+
+  bool validateForm(GlobalKey<FormState> formKey) {
     return formKey.currentState?.validate() ?? false;
   }
 
@@ -43,7 +47,7 @@ mixin AuthMixin<T extends StatefulWidget> on State<T> {
   }) {
     if (messageResult.message != null) {
       SchedulerBinding.instance.addPostFrameCallback((_) {
-        UiUtils.showMessageResult(
+        showMessageResult(
             context: context,
             color: messageResult.color!,
             message: messageResult.message!
@@ -51,6 +55,18 @@ mixin AuthMixin<T extends StatefulWidget> on State<T> {
       });
       setState(() {});
     }
+  }
+
+  void showMessageResult({
+    required BuildContext context,
+    required String message,
+    required Color color,
+  }) {
+    BuildSnackBar.show(
+        context: context,
+        message: message,
+        backgroundColor: color
+    );
   }
 
   Widget buildPasswordVisibilityToggle({

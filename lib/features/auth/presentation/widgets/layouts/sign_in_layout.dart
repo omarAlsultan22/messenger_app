@@ -8,11 +8,9 @@ import '../../../../../core/constants/app_spaces.dart';
 import 'package:test_app/core/constants/app_sizes.dart';
 import '../../../../../core/constants/app_paddings.dart';
 import 'package:test_app/core/services/session_service.dart';
-import '../../../../../core/presentation/utils/ui_utils.dart';
 import '../../../../home/presentation/screens/home_screen.dart';
 import '../../../../../core/data/models/message_result_model.dart';
 import 'package:test_app/features/auth/constants/auth_strings.dart';
-import '../../../../../core/presentation/utils/form_validation.dart';
 import '../../../../../core/presentation/widgets/text_form_field.dart';
 import '../../../../../core/presentation/widgets/navigation/navigator.dart';
 import '../../../../../core/data/data_sources/local/shared_preferences.dart';
@@ -266,9 +264,9 @@ class _SignInLayoutState extends State<SignInLayout> with AuthMixin<SignInLayout
   }
 
   Future<void> _submitForm() async {
-    if (FormValidation.validator(_formKey)) {
+    if (validateForm(_formKey)) {
       _updateLockButton(false);
-      UiUtils.hideKeyboard(context);
+      hideKeyboard(context);
       widget.onUpdate(
           userEmail: _emailController.text.trim(),
           userPassword: _passwordController.text
