@@ -26,10 +26,20 @@ mixin AuthMixin<T extends StatefulWidget> on State<T> {
     );
   }
 
-  void handleMessageResult({
+  void handleMessageResultAndNavigate({
     required MessageResult messageResult,
     required VoidCallback onNavigate,
     VoidCallback? onClear,
+  }) {
+    handleMessageResult(messageResult: messageResult);
+    if (messageResult.error == null) {
+      onClear?.call();
+      onNavigate();
+    }
+  }
+
+  void handleMessageResult({
+    required MessageResult messageResult,
   }) {
     if (messageResult.message != null) {
       SchedulerBinding.instance.addPostFrameCallback((_) {
@@ -39,10 +49,6 @@ mixin AuthMixin<T extends StatefulWidget> on State<T> {
             message: messageResult.message!
         );
       });
-      if (messageResult.error == null) {
-        onClear?.call();
-        onNavigate();
-      }
       setState(() {});
     }
   }

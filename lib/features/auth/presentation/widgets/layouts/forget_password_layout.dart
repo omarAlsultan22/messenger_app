@@ -48,7 +48,7 @@ class _ForgotPasswordScreenState extends State<ForgetPasswordLayout> with AuthMi
   @override
   void didUpdateWidget(covariant ForgetPasswordLayout oldWidget) {
     super.didUpdateWidget(oldWidget);
-    handleMessageResult(
+    handleMessageResultAndNavigate(
       messageResult: widget.messageResult,
       onNavigate: () => Navigator.pop(context),
     );

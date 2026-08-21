@@ -2,7 +2,6 @@ import '../../mixins/auth_mixin.dart';
 import 'package:flutter/material.dart';
 import '../../screens/sign_up_screen.dart';
 import '../../screens/forget_password_screen.dart';
-import '../../../../../core/presentation/utils/form_validation.dart';
 import '../../utils/validate/password_validation.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/app_spaces.dart';
@@ -13,6 +12,7 @@ import '../../../../../core/presentation/utils/ui_utils.dart';
 import '../../../../home/presentation/screens/home_screen.dart';
 import '../../../../../core/data/models/message_result_model.dart';
 import 'package:test_app/features/auth/constants/auth_strings.dart';
+import '../../../../../core/presentation/utils/form_validation.dart';
 import '../../../../../core/presentation/widgets/text_form_field.dart';
 import '../../../../../core/presentation/widgets/navigation/navigator.dart';
 import '../../../../../core/data/data_sources/local/shared_preferences.dart';
@@ -64,7 +64,7 @@ class _SignInLayoutState extends State<SignInLayout> with AuthMixin<SignInLayout
   @override
   void didUpdateWidget(covariant SignInLayout oldWidget) {
     super.didUpdateWidget(oldWidget);
-    handleMessageResult(
+    handleMessageResultAndNavigate(
       messageResult: widget.messageResult,
       onNavigate: () =>
           navigateToScreen(const HomeScreen()

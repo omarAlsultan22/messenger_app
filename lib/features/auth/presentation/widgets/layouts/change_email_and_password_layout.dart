@@ -9,11 +9,10 @@ import '../../../../../core/constants/app_paddings.dart';
 import 'package:test_app/core/presentation/utils/ui_utils.dart';
 import '../../../../../core/data/models/message_result_model.dart';
 import '../../../../../core/presentation/widgets/text_form_field.dart';
-import '../../../../../core/presentation/widgets/build_snack_bar.dart';
+import 'package:test_app/core/presentation/utils/form_validation.dart';
 import '../../../../../core/presentation/widgets/icon_button_widget.dart';
 import '../../../../../core/data/data_sources/local/shared_preferences.dart';
 import 'package:test_app/features/auth/presentation/screens/sign_in_screen.dart';
-import 'package:test_app/core/presentation/utils/form_validation.dart';
 
 
 class ChangeEmailAndPasswordLayout extends StatefulWidget {
@@ -63,7 +62,7 @@ class _ChangeEmailAndPasswordLayoutState extends State<ChangeEmailAndPasswordLay
   @override
   void didUpdateWidget(covariant ChangeEmailAndPasswordLayout oldWidget) {
     super.didUpdateWidget(oldWidget);
-    handleMessageResult(
+    handleMessageResultAndNavigate(
         messageResult: widget.messageResult,
         onNavigate: () => navigateToScreen(const SignInScreen()),
         onClear: _clearUserData
