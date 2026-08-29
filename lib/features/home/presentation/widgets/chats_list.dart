@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import '../../../../core/themes/app_theme.dart';
 import 'package:test_app/core/constants/app_sizes.dart';
 import 'package:test_app/core/constants/app_colors.dart';
 import 'package:test_app/core/constants/app_borders.dart';
 import 'package:test_app/core/constants/app_paddings.dart';
 import 'package:test_app/core/constants/app_text_styles.dart';
 import '../../../../core/data/models/last_message_model.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:test_app/features/home/utils/helpers/date_formatter.dart';
 
 
@@ -129,9 +131,25 @@ class ChatItem extends StatelessWidget {
     return Stack(
       alignment: AlignmentDirectional.bottomEnd,
       children: [
-        CircleAvatar(
-          radius: 30.0,
-          backgroundImage: NetworkImage(lastMessageModel.userImage!),
+        CachedNetworkImage(
+          imageUrl: lastMessageModel.userImage ?? '',
+          imageBuilder: (context, imageProvider) =>
+              CircleAvatar(
+                radius: 30.0,
+                backgroundImage: imageProvider,
+              ),
+          placeholder: (context, url) => const CircularProgressIndicator(),
+          errorWidget: (context, url, error) =>
+              CircleAvatar(
+                radius: 30.0,
+                backgroundColor: AppTheme.getAdaptiveColor(
+                    context, firstColor: AppColors.white,
+                    secondColor: AppColors.black
+                ),
+                child: Icon(
+                    Icons.person, color: AppTheme.getAdaptiveColor(context)
+                ),
+              ),
         ),
         if (lastMessageModel.unreadMessagesCount > 0)
           Positioned(

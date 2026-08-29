@@ -1,6 +1,6 @@
 import 'package:test_app/features/auth/presentation/utils/validate/email_validation.dart';
 import '../../../../../core/presentation/widgets/icon_button_widget.dart';
-import '../../../../../core/presentation/widgets/text_form_field.dart';
+import '../../../../../core/presentation/widgets/build_input_field.dart';
 import 'package:test_app/features/auth/constants/auth_strings.dart';
 import '../../../../../core/data/models/message_result_model.dart';
 import '../../../../../core/constants/app_paddings.dart';
@@ -55,7 +55,7 @@ class _SignUpLayoutState extends State<SignUpLayout> with AuthMixin<SignUpLayout
   @override
   void didUpdateWidget(covariant SignUpLayout oldWidget) {
     super.didUpdateWidget(oldWidget);
-    handleMessageResultAndNavigate(
+    handleMessageResult(
       messageResult: widget.messageResult,
       onNavigate: _navigateToBack,
     );

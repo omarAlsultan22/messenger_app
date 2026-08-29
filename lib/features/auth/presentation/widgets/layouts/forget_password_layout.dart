@@ -6,7 +6,7 @@ import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/app_paddings.dart';
 import '../../../../../core/data/models/message_result_model.dart';
 import 'package:test_app/features/auth/constants/auth_strings.dart';
-import '../../../../../core/presentation/widgets/text_form_field.dart';
+import '../../../../../core/presentation/widgets/build_input_field.dart';
 
 
 class ForgetPasswordLayout extends StatefulWidget {
@@ -46,7 +46,7 @@ class _ForgotPasswordScreenState extends State<ForgetPasswordLayout> with AuthMi
   @override
   void didUpdateWidget(covariant ForgetPasswordLayout oldWidget) {
     super.didUpdateWidget(oldWidget);
-    handleMessageResultAndNavigate(
+    handleMessageResult(
       messageResult: widget.messageResult,
       onNavigate: () => Navigator.pop(context),
     );

@@ -3,15 +3,15 @@ import '../stories_list.dart';
 import '../chat_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../../core/theme/theme_notifier.dart';
+import '../../../../../core/themes/theme_notifier.dart';
 import '../../../../../core/constants/app_paddings.dart';
 import 'package:test_app/core/services/session_service.dart';
 import '../../../../../core/services/notification_service.dart';
 import '../../../../../core/services/online_status_service.dart';
 import '../../../../../core/data/models/last_message_model.dart';
-import '../../../../../core/presentation/widgets/text_form_field.dart';
+import '../../../../../core/presentation/widgets/build_input_field.dart';
 import 'package:test_app/core/presentation/widgets/navigation/navigator.dart';
-import 'package:test_app/core/data/data_sources/local/shared_preferences.dart';
+import 'package:test_app/core/data/data_sources/local/cache_helper.dart';
 import '../../../../conversation/presentation/screens/conversation_screen.dart';
 import '../../../../edit_personal_account/presentation/screens/edit_personal_account_screen.dart';
 
@@ -86,7 +86,7 @@ class _HomeLayoutState extends State<HomeLayout> {
     final newThemeMode = _isDarkMode ? ThemeMode.dark : ThemeMode.light;
     await widget.cacheHelper.setString(
         key: 'themeColor', value: newThemeMode.toString());
-    themeNotifier.setThemeMode(newThemeMode);
+    themeNotifier.setTheme(newThemeMode);
   }
 
   void _navigateToConversation(LastMessageModel lastMessageModel) {

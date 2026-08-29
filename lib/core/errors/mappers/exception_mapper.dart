@@ -7,7 +7,7 @@ import '../exceptions/network_app_exception.dart';
 import '../exceptions/firebase_app_exception.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../data/network/connectivity_service.dart';
-import '../exceptions/cache_exceptions/shared_prefs_app_exceptions.dart';
+import 'package:test_app/core/constants/app_strings.dart';
 import 'package:test_app/core/errors/exceptions/firebase_ai_app_exception.dart';
 
 
@@ -17,47 +17,17 @@ class ExceptionMapper {
   ExceptionMapper({required this.error});
 
   static final _connectivityService = ConnectivityService();
-  static const String _msgCastError = 'Error in stored data type';
-  static const String _msgWriteError = 'Failed to save data to local storage';
-  static const String _msgReadError = 'Failed to read data from local storage';
-  static const String _msgInitError = 'Local storage has not been initialized correctly';
+  static const _noInternetMessage = AppStrings.noInternetMessage;
+  static const String _msgServerError = 'Cannot reach the server';
 
-  static final Map<String, AppException> _stringPatterns = {
-    '_casterror': SharedPrefsCastException(
-      message: _msgCastError,
-    ),
-    'null check operator': SharedPrefsCastException(
-      message: _msgCastError,
-    ),
-    'getinstance': SharedPrefsInitException(
-      message: _msgInitError,
-    ),
-    'not initialized': SharedPrefsInitException(
-      message: _msgInitError,
-    ),
-    'binding has not been initialized': SharedPrefsInitException(
-      message: _msgInitError,
-    ),
-    'read': SharedPrefsOperationException(
-      message: _msgReadError,
-      operation: 'read',
-    ),
-    'get': SharedPrefsOperationException(
-      message: _msgReadError,
-      operation: 'read',
-    ),
-    'write': SharedPrefsOperationException(
-      message: _msgWriteError,
-      operation: 'write',
-    ),
-    'set': SharedPrefsOperationException(
-      message: _msgWriteError,
-      operation: 'write',
-    ),
-    'save': SharedPrefsOperationException(
-      message: _msgWriteError,
-      operation: 'write',
-    ),
+  static final Map<String, AppException> _networkPatterns = {
+    'socket': NetworkAppException(message: _noInternetMessage),
+    'connection': NetworkAppException(message: _noInternetMessage),
+    'network': NetworkAppException(message: _noInternetMessage),
+    'timeout': NetworkAppException(message: _noInternetMessage),
+    'host': NetworkAppException(message: _msgServerError),
+    'dns': NetworkAppException(message: _msgServerError),
+    'unable to resolve': NetworkAppException(message: _msgServerError),
   };
 
   static final Map<Object, AppException Function(dynamic)> _typePatterns = {
@@ -91,7 +61,7 @@ class ExceptionMapper {
         ),
   };
 
-  Iterable<String> get keys => _stringPatterns.keys;
+  Iterable<String> get keys => _networkPatterns.keys;
 
   bool isKey(dynamic error) => _typePatterns.containsKey(error);
 
@@ -100,6 +70,6 @@ class ExceptionMapper {
   }
 
   AppException? mapByStringPattern() {
-    return _stringPatterns[error.toString().toLowerCase()];
+    return _networkPatterns[error.toString().toLowerCase()];
   }
 }

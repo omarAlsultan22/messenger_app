@@ -1,3 +1,5 @@
+import 'package:test_app/core/errors/exceptions/components_exception.dart';
+
 import '../di/service _locator.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -6,7 +8,7 @@ import 'package:test_app/core/config/firebase_options.dart';
 import 'package:test_app/core/services/session_service.dart';
 import 'package:test_app/core/services/notification_service.dart';
 import 'package:test_app/core/services/online_status_service.dart';
-import 'package:test_app/core/data/data_sources/local/shared_preferences.dart';
+import 'package:test_app/core/data/data_sources/local/cache_helper.dart';
 
 
 class InitializationController {
@@ -88,7 +90,12 @@ class InitializationController {
   Future<void> init() async {
     if (_isInitialized) return;
 
-    await _initializeServices();
+    try {
+      await _initializeServices();
+    }
+    catch (e) {
+      throw ComponentsException(error: e);
+    }
     _isInitialized = true;
   }
 

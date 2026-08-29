@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import '../../../../core/themes/app_theme.dart';
 import '../../../../core/constants/app_sizes.dart';
 import 'package:test_app/core/constants/app_colors.dart';
 import '../../../../core/data/models/last_message_model.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 
 class StoriesList extends StatelessWidget {
@@ -81,9 +83,26 @@ class StoryItem extends StatelessWidget {
                       width: _spacing2,
                     ),
                   ),
-                  child: CircleAvatar(
-                    radius: 28.0,
-                    backgroundImage: NetworkImage(friend.userImage!),
+                  child: CachedNetworkImage(
+                    imageUrl: friend.userImage ?? '',
+                    imageBuilder: (context, imageProvider) =>
+                        CircleAvatar(
+                          radius: 28.0,
+                          backgroundImage: imageProvider,
+                        ),
+                    placeholder: (context,
+                        url) => const CircularProgressIndicator(),
+                    errorWidget: (context, url, error) =>
+                        CircleAvatar(
+                          radius: 28.0,
+                          backgroundColor: AppTheme.getAdaptiveColor(
+                              context, firstColor: AppColors.white,
+                              secondColor: AppColors.black),
+                          child: Icon(
+                              Icons.person,
+                              color: AppTheme.getAdaptiveColor(context)
+                          ),
+                        ),
                   ),
                 ),
                 if (friend.isOnline == true)

@@ -10,7 +10,7 @@ import 'package:test_app/core/data/network/connectivity_service.dart';
 import '../../../features/auth/domain/useCases/sign_in_useCase.dart';
 import '../../../features/auth/domain/useCases/sign_up_useCase.dart';
 import '../../data/data_sources/remote/firebase_auth_service.dart';
-import '../../data/data_sources/local/shared_preferences.dart';
+import '../../data/data_sources/local/cache_helper.dart';
 import '../service _locator.dart';
 
 
@@ -41,11 +41,13 @@ class AuthDependencies {
 
     // Cubits
     sl.registerFactory(() =>
-        SignInCubit(useCase: sl<SignInUseCase>(),
+        SignInCubit(
+            useCase: sl<SignInUseCase>(),
             connectivityService: sl<ConnectivityService>()));
 
     sl.registerFactory(() =>
-        SignUpCubit(useCase: sl<SignUpUseCase>(),
+        SignUpCubit(
+            useCase: sl<SignUpUseCase>(),
             connectivityService: sl<ConnectivityService>()));
 
     sl.registerFactory(() =>

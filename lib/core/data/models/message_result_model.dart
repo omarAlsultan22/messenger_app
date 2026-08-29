@@ -9,7 +9,7 @@ class MessageResult {
   final String? message;
   final AppException? error;
 
-  MessageResult({
+  const MessageResult({
     this.isLoading = false,
     this.message,
     this.error,
@@ -17,11 +17,11 @@ class MessageResult {
   });
 
   factory MessageResult.initial(){
-    return MessageResult();
+    return const MessageResult();
   }
 
   factory MessageResult.loading(){
-    return MessageResult(
+    return const MessageResult(
         isLoading: true
     );
   }
@@ -34,12 +34,12 @@ class MessageResult {
   }
 
   factory MessageResult.error({
-    AppException? error,
+    required AppException error
   }){
     return MessageResult(
-        error: error,
-        color: AppColors.errorRed,
-        message: 'Update failed: ${error!.error}'
+      error: error,
+      message: error.message!,
+      color: AppColors.errorRed,
     );
   }
 }

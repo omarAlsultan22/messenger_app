@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../core/themes/app_theme.dart';
 import 'package:test_app/core/constants/app_sizes.dart';
 import '../../../../../core/constants/app_borders.dart';
 import 'package:test_app/core/constants/app_colors.dart';
@@ -29,24 +30,20 @@ class DateHeaderWidget extends StatelessWidget {
             padding: AppPaddings.horizontalSymmetrical,
             child: Container(
               decoration: BoxDecoration(
-                color: Theme
-                    .of(context)
-                    .brightness == Brightness.light
-                    ? AppColors.grey_200
-                    : AppColors.successGreen,
+                color: AppTheme.getAdaptiveColor(
+                    context, firstColor: AppColors.grey_200,
+                    secondColor: AppColors.successGreen),
                 borderRadius: AppBorders.borderRadius_12,
               ),
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               child: Text(
                 date,
                 style: TextStyle(
-                  fontSize: AppSizes.xs,
-                  fontWeight: FontWeight.bold,
-                  color: Theme
-                      .of(context)
-                      .brightness == Brightness.light
-                      ? AppColors.grey_700
-                      : AppColors.grey_300,
+                    fontSize: AppSizes.xs,
+                    fontWeight: FontWeight.bold,
+                    color: AppTheme.getAdaptiveColor(
+                        context, firstColor: AppColors.grey_700,
+                        secondColor: AppColors.grey_300)
                 ),
               ),
             ),

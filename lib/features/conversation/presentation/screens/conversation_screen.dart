@@ -1,5 +1,5 @@
 import 'package:test_app/features/conversation/presentation/states/conversation_state.dart';
-import 'package:test_app/core/data/data_sources/local/shared_preferences.dart';
+import 'package:test_app/core/data/data_sources/local/cache_helper.dart';
 import '../../../../core/presentation/widgets/states/loading_state.dart';
 import '../../../../core/services/online_status_service.dart';
 import '../../../../core/data/models/last_message_model.dart';

@@ -10,7 +10,7 @@ import '../../../features/conversation/domain/useCases/get_background_use_case.d
 import '../../../features/conversation/domain/useCases/update_typing_use_case.dart';
 import '../../../features/conversation/presentation/cubits/conversation_cubit.dart';
 import '../../../features/conversation/domain/useCases/send_message_use_case.dart';
-import 'package:test_app/core/data/data_sources/local/shared_preferences.dart';
+import 'package:test_app/core/data/data_sources/local/cache_helper.dart';
 import '../../services/online_status_service.dart';
 import '../service _locator.dart';
 

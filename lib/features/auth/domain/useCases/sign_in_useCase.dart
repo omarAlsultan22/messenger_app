@@ -1,6 +1,6 @@
 import '../repositories/auth_repository.dart';
 import 'package:test_app/core/services/session_service.dart';
-import '../../../../core/data/data_sources/local/shared_preferences.dart';
+import '../../../../core/data/data_sources/local/cache_helper.dart';
 
 
 class SignInUseCase {

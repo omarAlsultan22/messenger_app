@@ -1,7 +1,8 @@
-import '../exceptions/cache_exceptions/shared_prefs_app_exceptions.dart';
+import '../exceptions/shared_prefs_app_exceptions.dart';
 import '../exceptions/unknown_app_exception.dart';
+import '../exceptions/components_exception.dart';
+import '../exceptions/validation_exception.dart';
 import '../exceptions/base/app_exception.dart';
-import 'package:flutter/services.dart';
 import 'exception_mapper.dart';
 
 
@@ -25,22 +26,13 @@ class ErrorHandler {
 
     return _mapByTypePattern() ??
         _mapByStringPattern() ??
-        _mapBySharedPrefError() ??
+        _componentsException() ??
+        _sharedPrefsException() ??
+        _validationException() ??
         UnknownAppException(message: error.toString());
   }
 
   // ==================== Helper Functions for Checking ====================
-
-  bool _isSharedPrefsError() {
-    final errorStr = error.toString().toLowerCase();
-    return error is PlatformException &&
-        (errorStr.contains('shared_preferences') ||
-            errorStr.contains('sharedpreferences')) ||
-        error is MissingPluginException &&
-            errorStr.contains('shared_preferences') ||
-        errorStr.contains('sharedpreferences') ||
-        errorStr.contains('preferences') && errorStr.contains('instance');
-  }
 
   AppException? _mapByTypePattern() {
     if (_exceptionMapper.isKey(error)) {
@@ -58,22 +50,23 @@ class ErrorHandler {
     return null;
   }
 
-  AppException? _mapBySharedPrefError() {
-    if (_isSharedPrefsError()) {
-      final prefsException = SharedPrefsAppException(
-        error: error,
-        code: (error as PlatformException).code,
-      );
-      return prefsException.handle();
-    }
-    return null;
+  AppException? _validationException() {
+    return error is ValidationException ? error : null;
+  }
+
+  AppException? _componentsException() {
+    return error is ComponentsException ? error : null;
+  }
+
+  AppException? _sharedPrefsException() {
+    return error is SharedPrefsAppException ? error : null;
   }
 
   void _logError(dynamic error, StackTrace? stackTrace) {
     // For tracking and analytics
     print('════════════════════════════════════════');
     print('❌ Error caught: ${error.runtimeType}');
-    print('Message: $error');
+    print('Message: ${error.toString()}');
     if (stackTrace != null) {
       print('StackTrace: $stackTrace');
     }

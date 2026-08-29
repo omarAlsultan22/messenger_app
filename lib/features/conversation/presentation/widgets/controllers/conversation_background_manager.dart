@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:test_app/core/data/data_sources/local/shared_preferences.dart';
+import 'package:test_app/core/data/data_sources/local/cache_helper.dart';
 
 
 class ConversationBackgroundManager {

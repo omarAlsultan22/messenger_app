@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 import '../../../data/models/message_group.dart';
+import '../../../../../core/themes/app_theme.dart';
 import '../../../data/models/conversation_model.dart';
 import '../../../../../core/constants/app_colors.dart';
 import 'package:test_app/core/constants/app_sizes.dart';
@@ -92,12 +93,10 @@ class ConversationMessagesList extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 10.0),
       child: Container(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(5.0),
-          color: Theme
-              .of(context)
-              .brightness == Brightness.light
-              ? Colors.black12
-              : AppColors.successGreen,
+            borderRadius: BorderRadius.circular(5.0),
+            color: AppTheme.getAdaptiveColor(
+                context, firstColor: Colors.black12,
+                secondColor: AppColors.successGreen)
         ),
         padding: const EdgeInsets.all(6.0),
         child: Text(
@@ -388,11 +387,7 @@ class ConversationMessagesList extends StatelessWidget {
             Text(
               FormatTime.getTime(message.dateTime ?? DateTime.now()),
               style: TextStyle(
-                color: Theme
-                    .of(context)
-                    .brightness == Brightness.light
-                    ? AppColors.black
-                    : AppColors.white,
+                color: AppTheme.getAdaptiveColor(context),
                 fontSize: AppSizes.xs,
               ),
             ),

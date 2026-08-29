@@ -1,6 +1,6 @@
 import 'dart:ui';
 import '../../domain/repositories/local_conversations_repository.dart';
-import 'package:test_app/core/data/data_sources/local/shared_preferences.dart';
+import 'package:test_app/core/data/data_sources/local/cache_helper.dart';
 
 
 class SharedPrefConversationRepository implements LocalConversationsRepository {

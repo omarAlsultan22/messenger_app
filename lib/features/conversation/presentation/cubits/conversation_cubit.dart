@@ -229,32 +229,44 @@ class ConversationCubit extends Cubit<ConversationState> with ErrorHandlerMixin<
   }
 
   Future<void> getOldMessages({required String docId}) async {
-    if(!state.hasMessages) return;
-    final dataModel = await _getOldMessagesUseCase.execute(
-      docId: docId,
-      lastDocument: state.lastDocument,
-    );
+    if (!state.hasMessages) return;
+    try {
+      final dataModel = await _getOldMessagesUseCase.execute(
+        docId: docId,
+        lastDocument: state.lastDocument,
+      );
 
-    if (dataModel.listISEmpty) {
-      final dataModel = state.updateSecondModel(hasMessages: false);
-      emit(state.copyWith(
-          subState: SuccessState(), secondModel: dataModel));
-      return;
-    }
-
-    for (var group in dataModel.conversationList) {
-      final existingIndex = state.existingIndex(group.date);
-      if (existingIndex != -1) {
-        state.insertAllMessages(
-            existingIndex: existingIndex, messages: group.messages);
-      } else {
-        state.insertMessages(
-            title: group.date,
-            sortDate: group.sortDate,
-            messages: group.messages
-        );
+      if (dataModel.listISEmpty) {
+        final dataModel = state.updateSecondModel(hasMessages: false);
+        emit(state.copyWith(
+            subState: SuccessState(), secondModel: dataModel));
+        return;
       }
-      emit(state.copyWith(subState: SuccessState()));
+
+      for (var group in dataModel.conversationList) {
+        final existingIndex = state.existingIndex(group.date);
+        if (existingIndex != -1) {
+          state.insertAllMessages(
+              existingIndex: existingIndex, messages: group.messages);
+        } else {
+          state.insertMessages(
+              title: group.date,
+              sortDate: group.sortDate,
+              messages: group.messages
+          );
+        }
+        emit(state.copyWith(subState: SuccessState()));
+      }
+    }
+    catch (e, stackTrace) {
+      handleError(e, stackTrace,
+          onError: (failure) =>
+              state.copyWith(
+                  thirdModel: MessageResult.error(
+                      error: failure
+                  )
+              )
+      );
     }
   }
 

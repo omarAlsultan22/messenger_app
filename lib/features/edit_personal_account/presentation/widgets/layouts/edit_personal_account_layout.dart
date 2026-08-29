@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
+import '../../../../../core/themes/app_theme.dart';
+import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/app_spaces.dart';
 import '../../../../../core/utils/validate_input.dart';
 import 'package:test_app/core/constants/app_sizes.dart';
-import 'package:test_app/core/constants/app_colors.dart';
 import 'package:test_app/core/constants/app_borders.dart';
 import 'package:test_app/core/constants/app_paddings.dart';
 import '../../../../../core/services/session_service.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:test_app/core/services/media_upload_service.dart';
 import '../../../../../core/data/models/message_result_model.dart';
-import 'package:test_app/core/presentation/widgets/text_form_field.dart';
+import 'package:test_app/core/presentation/widgets/build_input_field.dart';
 import 'package:test_app/features/auth/presentation/mixins/auth_mixin.dart';
 import 'package:test_app/core/presentation/widgets/navigation/navigator.dart';
 import '../../../../auth/presentation/screens/change_email_and_password_screen.dart';
@@ -176,10 +177,15 @@ class _EditPersonalAccountLayoutState extends State<EditPersonalAccountLayout> w
               ),
           placeholder: (context, url) => const CircularProgressIndicator(),
           errorWidget: (context, url, error) =>
-          const CircleAvatar(
-            radius: _avatarRadius,
-            child: Icon(Icons.person, size: 40),
-          ),
+              CircleAvatar(
+                radius: _avatarRadius,
+                backgroundColor: AppTheme.getAdaptiveColor(
+                    context, firstColor: AppColors.white,
+                    secondColor: AppColors.black),
+                child: Icon(
+                    Icons.person, color: AppTheme.getAdaptiveColor(context),
+                    size: 40.0),
+              ),
         ),
       ),
     );
@@ -244,11 +250,11 @@ class _EditPersonalAccountLayoutState extends State<EditPersonalAccountLayout> w
       child: OutlinedButton(
         style: _changePasswordButtonStyle(),
         onPressed: _navigateToChangePassword,
-        child: const Text(
+        child: Text(
           'Change email and password',
           style: TextStyle(
             fontSize: AppSizes.md,
-            color: AppColors.amber,
+            color: AppTheme.getAdaptiveColor(context),
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -308,9 +314,9 @@ class _EditPersonalAccountLayoutState extends State<EditPersonalAccountLayout> w
   ButtonStyle _changePasswordButtonStyle() {
     return OutlinedButton.styleFrom(
         padding: AppPaddings.verticalSymmetric,
-        side: const BorderSide(color: AppColors.amber),
+        side: BorderSide(color: AppTheme.getAdaptiveColor(context)),
         shape: const RoundedRectangleBorder(
-            borderRadius: AppBorders.borderRadius_12
+            borderRadius: AppBorders.borderRadius_50
         )
     );
   }

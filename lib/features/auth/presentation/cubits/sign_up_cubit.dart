@@ -1,22 +1,19 @@
-import '../states/auth_states.dart';
+import 'dart:io';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/useCases/sign_up_useCase.dart';
-import '../../../../core/constants/app_strings.dart';
-import '../../../../core/errors/mappers/error_handler.dart';
 import '../../../../core/data/models/message_result_model.dart';
 import '../../../../core/data/network/connectivity_service.dart';
 import '../../../../core/presentation/mixins/error_handler_mixin.dart';
-import '../../../../core/errors/exceptions/network_app_exception.dart';
+import 'package:test_app/features/auth/presentation/states/auth_states.dart';
 
 
-class SignUpCubit extends Cubit<AuthState> with ErrorHandlerMixin<AuthState>{
+class SignUpCubit extends Cubit<AuthState> with ErrorHandlerMixin<AuthState> {
   final SignUpUseCase _useCase;
   final ConnectivityService _connectivityService;
 
   SignUpCubit({
     required SignUpUseCase useCase,
-    required ConnectivityService connectivityService,
-
+    required ConnectivityService connectivityService
   })
       : _useCase = useCase,
         _connectivityService = connectivityService,
@@ -32,32 +29,35 @@ class SignUpCubit extends Cubit<AuthState> with ErrorHandlerMixin<AuthState>{
   }) async {
     final isConnected = await _connectivityService.checkInternetConnection();
     if (!isConnected) {
-      emit(
-        AuthState(
-          messageResult: MessageResult.error(
-              error: NetworkAppException(
-                  message: AppStrings.noInternetMessage)),
-        ),
+      handleError(SocketException, StackTrace.current,
+          onError: (failure) =>
+              AuthState(
+                messageResult: MessageResult.error(
+                    error: failure
+                ),
+              )
       );
       return;
     }
+
     emit(AuthState(messageResult: MessageResult.loading()));
+
     try {
       await _useCase.signUpExecute(
-          firstName: firstName,
-          lastName: lastName,
-          userEmail: userEmail,
-          userPassword: userPassword,
+        firstName: firstName,
+        lastName: lastName,
+        userEmail: userEmail,
+        userPassword: userPassword,
       );
       emit(AuthState(
-          messageResult: MessageResult.success()));
+          messageResult: MessageResult.success(
+              message: 'تم انشاء الحساب بنجاح')));
     } catch (e, stackTrace) {
-      final errorHandler = ErrorHandler(
-          error: e,
-          stackTrace: stackTrace
+      handleError(e, stackTrace,
+          onError: (failure) =>
+              AuthState(messageResult: MessageResult.error(error: failure)
+              )
       );
-      final exception = errorHandler.handleException();
-      emit(AuthState(messageResult: MessageResult.error(error: exception)));
     }
   }
 }

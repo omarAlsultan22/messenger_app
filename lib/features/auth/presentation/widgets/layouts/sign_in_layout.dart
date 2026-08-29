@@ -11,9 +11,9 @@ import 'package:test_app/core/services/session_service.dart';
 import '../../../../home/presentation/screens/home_screen.dart';
 import '../../../../../core/data/models/message_result_model.dart';
 import 'package:test_app/features/auth/constants/auth_strings.dart';
-import '../../../../../core/presentation/widgets/text_form_field.dart';
+import '../../../../../core/presentation/widgets/build_input_field.dart';
 import '../../../../../core/presentation/widgets/navigation/navigator.dart';
-import '../../../../../core/data/data_sources/local/shared_preferences.dart';
+import '../../../../../core/data/data_sources/local/cache_helper.dart';
 import 'package:test_app/features/auth/presentation/widgets/build_app_icon.dart';
 import 'package:test_app/features/auth/presentation/utils/validate/email_validation.dart';
 
@@ -62,7 +62,7 @@ class _SignInLayoutState extends State<SignInLayout> with AuthMixin<SignInLayout
   @override
   void didUpdateWidget(covariant SignInLayout oldWidget) {
     super.didUpdateWidget(oldWidget);
-    handleMessageResultAndNavigate(
+    handleMessageResult(
       messageResult: widget.messageResult,
       onNavigate: () =>
           navigateToScreen(const HomeScreen()

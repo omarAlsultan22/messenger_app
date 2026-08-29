@@ -1,24 +1,22 @@
-import '../states/auth_states.dart';
+import 'dart:io';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../core/constants/app_strings.dart';
 import '../../domain/repositories/auth_repository.dart';
-import '../../../../core/errors/mappers/error_handler.dart';
 import '../../../../core/data/models/message_result_model.dart';
 import '../../../../core/data/network/connectivity_service.dart';
+import '../../../../core/errors/exceptions/validation_exception.dart';
 import '../../../../core/presentation/mixins/error_handler_mixin.dart';
-import '../../../../core/errors/exceptions/network_app_exception.dart';
-import 'package:test_app/core/errors/exceptions/security_app_exception.dart';
+import 'package:test_app/features/auth/presentation/states/auth_states.dart';
 
 
-class ForgetPasswordCubit extends Cubit<AuthState> with ErrorHandlerMixin<AuthState>{
-  final AuthRepository _repository;
+class ForgetPasswordCubit extends Cubit<AuthState> with ErrorHandlerMixin<AuthState> {
+  final AuthRepository _authRepository;
   final ConnectivityService _connectivityService;
 
   ForgetPasswordCubit({
     required AuthRepository authRepository,
     required ConnectivityService connectivityService
   })
-      : _repository = authRepository,
+      : _authRepository = authRepository,
         _connectivityService = connectivityService,
         super(AuthState.initial());
 
@@ -29,39 +27,41 @@ class ForgetPasswordCubit extends Cubit<AuthState> with ErrorHandlerMixin<AuthSt
   }) async {
     final isConnected = await _connectivityService.checkInternetConnection();
     if (!isConnected) {
-      emit(
-        AuthState(
-          messageResult: MessageResult.error(
-              error: NetworkAppException(
-                  message: AppStrings.noInternetMessage)),
-        ),
+      handleError(SocketException, StackTrace.current,
+          onError: (failure) =>
+              AuthState(
+                messageResult: MessageResult.error(
+                  error: failure,
+                ),
+              )
       );
       return;
     }
+
     emit(AuthState(messageResult: MessageResult.loading()));
+
     try {
       if (userEmail.isEmpty) {
         emit(
             AuthState(
-              messageResult: MessageResult.error(
-                  error: SecurityAppException(
-                      message: 'Please enter your email')),
+                messageResult: MessageResult.error(
+                  error: ValidationException(),
+                )
             )
         );
       }
-      _repository.sendResetEmail(
+      await _authRepository.sendResetEmail(
         userEmail: userEmail,
       );
       emit(AuthState(
           messageResult: MessageResult.success(
-              message: 'The reset link has been sent to your email')));
+              message: 'تم إرسال رابط إعادة التعيين إلى بريدك الإلكتروني')));
     } catch (e, stackTrace) {
-      final errorHandler = ErrorHandler(
-          error: e,
-          stackTrace: stackTrace
+      handleError(e, stackTrace,
+          onError: (failure) =>
+              AuthState(messageResult: MessageResult.error(error: failure)
+              )
       );
-      final exception = errorHandler.handleException();
-      emit(AuthState(messageResult: MessageResult.error(error: exception)));
     }
   }
 }

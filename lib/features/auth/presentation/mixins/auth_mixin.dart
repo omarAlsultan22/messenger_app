@@ -30,20 +30,10 @@ mixin AuthMixin<T extends StatefulWidget> on State<T> {
     );
   }
 
-  void handleMessageResultAndNavigate({
-    required MessageResult messageResult,
-    required VoidCallback onNavigate,
-    VoidCallback? onClear,
-  }) {
-    handleMessageResult(messageResult: messageResult);
-    if (messageResult.error == null) {
-      onClear?.call();
-      onNavigate();
-    }
-  }
-
   void handleMessageResult({
     required MessageResult messageResult,
+    VoidCallback? onNavigate,
+    VoidCallback? onClear,
   }) {
     if (messageResult.message != null) {
       SchedulerBinding.instance.addPostFrameCallback((_) {
@@ -53,6 +43,10 @@ mixin AuthMixin<T extends StatefulWidget> on State<T> {
             message: messageResult.message!
         );
       });
+      if (messageResult.error == null && onNavigate != null) {
+        onClear?.call();
+        onNavigate.call();
+      }
       setState(() {});
     }
   }
@@ -113,7 +107,7 @@ mixin AuthMixin<T extends StatefulWidget> on State<T> {
 
   ButtonStyle buttonStyle({EdgeInsetsGeometry? padding}) {
     return ElevatedButton.styleFrom(
-      disabledBackgroundColor: AppColors.blue700,
+      backgroundColor: AppColors.blue700,
       padding: padding ?? AppPaddings.verticalSymmetric,
       shape: const RoundedRectangleBorder(
         borderRadius: AppBorders.borderRadius_16,

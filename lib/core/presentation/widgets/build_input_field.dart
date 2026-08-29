@@ -1,3 +1,4 @@
+import '../../themes/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:test_app/core/constants/app_colors.dart';
 import 'package:test_app/core/constants/app_borders.dart';
@@ -45,11 +46,7 @@ class BuildInputField extends StatelessWidget {
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
           borderSide: BorderSide(
-            color: Theme
-                .of(context)
-                .brightness == Brightness.light
-                ? AppColors.black
-                : AppColors.white,
+            color: AppTheme.getAdaptiveColor(context),
           ),
         ),
         focusedBorder: const OutlineInputBorder(

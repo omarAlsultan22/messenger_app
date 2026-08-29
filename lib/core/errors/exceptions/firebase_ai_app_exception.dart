@@ -1,5 +1,4 @@
 import 'base/app_exception.dart';
-import 'package:firebase_ai/firebase_ai.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:test_app/core/errors/exceptions/base/exception_handler.dart';
 
@@ -11,23 +10,30 @@ class FirebaseAIAppException extends AppException implements ExceptionHandler {
     super.message
   });
 
-  static final Map<Object, AppException> _errorFactories = {
-
-    InvalidApiKey: InvalidApiKeyAppException(
-        message: 'Invalid API key. Please check your Firebase configuration and ensure the API key is correct.'
-    ),
-    ServerException: ServerAppException(
-        message: 'Server error occurred. Please try again later. If the problem persists, contact support.'
-    ),
-    UnsupportedUserLocation: UnsupportedUserLocationAppException(
-        message: 'Your location is not supported for this service. Please use a supported region or contact support.'
+  static final Map<String, AppException> _errorFactories = {
+    'invalid-api-key': InvalidApiKeyAppException(
+      code: 'invalid-api-key',
+      message: 'Service temporarily unavailable. Please try again later.',
     ),
 
-    QuotaExceeded: QuotaExceededAppException(
-        message: 'You have exceeded your daily quota. Please wait until midnight (Pacific Time) for the quota to reset, or upgrade your plan.'
+    'service-not-enabled': ServiceApiNotEnabledAppException(
+      code: 'service-not-enabled',
+      message: 'Service temporarily unavailable. Please try again later.',
     ),
-    ServiceApiNotEnabled: ServiceApiNotEnabledAppException(
-        message: 'Gemini API is not enabled. Please enable the Gemini Developer API in your Firebase project settings.'
+
+    'server-error': ServerAppException(
+      code: 'server-error',
+      message: 'Something went wrong. Please try again in a few minutes.',
+    ),
+
+    'unsupported-location': UnsupportedUserLocationAppException(
+      code: 'unsupported-location',
+      message: 'This service is not available in your region yet.',
+    ),
+
+    'quota-exceeded': QuotaExceededAppException(
+      code: 'quota-exceeded',
+      message: 'Daily usage limit reached. Please try again tomorrow.',
     ),
   };
 
