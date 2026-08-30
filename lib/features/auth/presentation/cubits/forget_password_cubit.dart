@@ -27,15 +27,7 @@ class ForgetPasswordCubit extends Cubit<AuthState> with ErrorHandlerMixin<AuthSt
   }) async {
     final isConnected = await _connectivityService.checkInternetConnection();
     if (!isConnected) {
-      handleError(SocketException, StackTrace.current,
-          onError: (failure) =>
-              AuthState(
-                messageResult: MessageResult.error(
-                  error: failure,
-                ),
-              )
-      );
-      return;
+      throw SocketException;
     }
 
     emit(AuthState(messageResult: MessageResult.loading()));
