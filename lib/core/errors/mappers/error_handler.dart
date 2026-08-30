@@ -1,7 +1,4 @@
-import '../exceptions/shared_prefs_app_exceptions.dart';
 import '../exceptions/unknown_app_exception.dart';
-import '../exceptions/components_exception.dart';
-import '../exceptions/validation_exception.dart';
 import '../exceptions/base/app_exception.dart';
 import 'exception_mapper.dart';
 
@@ -26,9 +23,6 @@ class ErrorHandler {
 
     return _mapByTypePattern() ??
         _mapByStringPattern() ??
-        _componentsException() ??
-        _sharedPrefsException() ??
-        _validationException() ??
         UnknownAppException(message: error.toString());
   }
 
@@ -48,18 +42,6 @@ class ErrorHandler {
       }
     }
     return null;
-  }
-
-  AppException? _validationException() {
-    return error is ValidationException ? error : null;
-  }
-
-  AppException? _componentsException() {
-    return error is ComponentsException ? error : null;
-  }
-
-  AppException? _sharedPrefsException() {
-    return error is SharedPrefsAppException ? error : null;
   }
 
   void _logError(dynamic error, StackTrace? stackTrace) {

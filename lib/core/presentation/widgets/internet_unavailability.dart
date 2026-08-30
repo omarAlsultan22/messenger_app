@@ -15,6 +15,8 @@ class InternetUnavailability extends StatelessWidget {
     this.connectivityService
   });
 
+  static const String _noInternetMessage = 'No Internet Connection';
+
   @override
   Widget build(BuildContext context) {
     Future<void> isInternetAvailable() async {
@@ -34,7 +36,7 @@ class InternetUnavailability extends StatelessWidget {
             color: Color(0xFF757575),
           ),
           const SizedBox(height: 20.0),
-          Text(message!,
+          Text(message ?? _noInternetMessage,
               style: const TextStyle(
                   fontSize: 24.0,
                   fontWeight: FontWeight.bold,

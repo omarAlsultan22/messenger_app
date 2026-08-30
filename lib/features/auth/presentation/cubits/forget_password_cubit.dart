@@ -1,10 +1,10 @@
-import 'dart:io';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../../../../core/data/models/message_result_model.dart';
 import '../../../../core/data/network/connectivity_service.dart';
 import '../../../../core/errors/exceptions/validation_exception.dart';
 import '../../../../core/presentation/mixins/error_handler_mixin.dart';
+import '../../../../core/errors/exceptions/network_app_exception.dart';
 import 'package:test_app/features/auth/presentation/states/auth_states.dart';
 
 
@@ -27,20 +27,14 @@ class ForgetPasswordCubit extends Cubit<AuthState> with ErrorHandlerMixin<AuthSt
   }) async {
     final isConnected = await _connectivityService.checkInternetConnection();
     if (!isConnected) {
-      throw SocketException;
+      throw NetworkAppException();
     }
 
     emit(AuthState(messageResult: MessageResult.loading()));
 
     try {
       if (userEmail.isEmpty) {
-        emit(
-            AuthState(
-                messageResult: MessageResult.error(
-                  error: ValidationException(),
-                )
-            )
-        );
+        throw ValidationException();
       }
       await _authRepository.sendResetEmail(
         userEmail: userEmail,
