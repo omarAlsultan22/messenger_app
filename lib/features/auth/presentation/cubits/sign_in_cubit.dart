@@ -30,13 +30,13 @@ class SignInCubit extends Cubit<AuthState> with ErrorHandlerMixin<AuthState> {
     if (!isConnected) {
       throw NetworkAppException();
     }
+    if (userEmail.isEmpty || userPassword.isEmpty) {
+      throw ValidationException();
+    }
 
     emit(AuthState(messageResult: MessageResult.loading()));
 
     try {
-      if (userEmail.isEmpty || userPassword.isEmpty) {
-        throw ValidationException();
-      }
       await _useCase.signInExecute(
           userEmail: userEmail,
           userPassword: userPassword
