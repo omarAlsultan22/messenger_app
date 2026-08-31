@@ -3,7 +3,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:test_app/core/config/firebase_options.dart';
-import 'package:test_app/core/services/session_service.dart';
 import 'package:test_app/core/services/notification_service.dart';
 import 'package:test_app/core/services/online_status_service.dart';
 import 'package:test_app/core/data/data_sources/local/cache_helper.dart';
@@ -19,7 +18,6 @@ class InitializationController {
   InitializationController._internal();
 
   late final CacheHelper _cacheHelper;
-  late final SessionService _sessionService;
   late final NotificationService _notificationService;
   late final OnlineStatusService _onlineStatusService;
 
@@ -28,8 +26,6 @@ class InitializationController {
 
   // Getters للوصول للخدمات إذا لزم الأمر
   CacheHelper get cacheHelper => _cacheHelper;
-
-  SessionService get sessionService => _sessionService;
 
   NotificationService get notificationService => _notificationService;
 
@@ -53,30 +49,26 @@ class InitializationController {
     _cacheHelper = sl<CacheHelper>();
     await _cacheHelper.init();
 
-    // 4. تهيئة SessionService
-    _sessionService = sl<SessionService>();
-    await _sessionService.loadFromStorage();
-
-    // 5. تهيئة NotificationService (للخلفية)
+    // 4. تهيئة NotificationService (للخلفية
     await NotificationService.setupBackgroundIsolate();
 
-    // 6. تهيئة OnlineStatusService
+    // 5. تهيئة OnlineStatusService
     _onlineStatusService = sl<OnlineStatusService>();
     await _onlineStatusService.initialize();
 
-    // 7. تهيئة NotificationService (للأمامية)
+    // 6. تهيئة NotificationService (للأمامية)
     _notificationService = NotificationService();
     await _notificationService.initialize();
 
-    // 8. الحصول على الرسالة الأولية
+    // 7. الحصول على الرسالة الأولية
     _initialMessage = await FirebaseMessaging.instance.getInitialMessage();
 
-    // 9. التعامل مع الرسالة الأولية إذا وجدت
+    // 8. التعامل مع الرسالة الأولية إذا وجدت
     if (_initialMessage != null) {
       _notificationService.handleNotification(_initialMessage!.data);
     }
 
-    // 10. إعدادات Firebase Messaging
+    // 9. إعدادات Firebase Messaging
     await FirebaseMessaging.instance.setAutoInitEnabled(true);
     await FirebaseMessaging.instance
         .setForegroundNotificationPresentationOptions(
@@ -85,7 +77,7 @@ class InitializationController {
       sound: true,
     );
 
-    // 11. الاستماع لتحديث التوكن
+    // 10. الاستماع لتحديث التوكن
     FirebaseMessaging.instance.onTokenRefresh.listen((newToken) {
       print('Refreshed FCM token: $newToken');
     });

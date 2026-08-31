@@ -27,10 +27,4 @@ class SessionService {
 
     await _cacheHelper.setString(key: 'user_id', value: uid);
   }
-
-  Future<void> logout() async {
-    _currentUid = '';
-
-    await _cacheHelper.removeValue(key: 'user_id');
-  }
 }
