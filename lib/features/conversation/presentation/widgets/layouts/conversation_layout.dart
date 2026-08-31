@@ -27,8 +27,8 @@ import 'package:test_app/core/services/media_upload_service.dart';
 import 'package:test_app/core/data/models/message_result_model.dart';
 import 'package:test_app/features/conversation/utils/show_toast.dart';
 import '../../../../../core/presentation/widgets/build_snack_bar.dart';
-import 'package:test_app/core/presentation/widgets/navigation/navigator.dart';
 import 'package:test_app/core/data/data_sources/local/cache_helper.dart';
+import 'package:test_app/core/presentation/widgets/navigation/navigator.dart';
 import '../../../../edit_personal_account/presentation/screens/edit_personal_account_screen.dart';
 import '../../../../publishing_confirmation/presentation/screens/publishing_confirmation_screen.dart';
 
@@ -40,15 +40,17 @@ class ConversationLayout extends StatefulWidget {
   required ConversationModel conversation
   }) sendMessage;
   final Function(bool) updateTyping;
-  final Function(List<String>) deleteMessages;
   final Future <void> getOldMessages;
   final VoidCallback clearConversationsList;
+  final Function(List<String>) deleteMessages;
 
   final DataModel dataModel;
   final UserStatus userStatus;
   final CacheHelper cacheHelper;
   final MessageResult messageResult;
+  final SessionService sessionService;
   final LastMessageModel lastMessageModel;
+  final NotificationService notificationService;
   final OnlineStatusService onlineStatusService;
 
   const ConversationLayout({
@@ -59,10 +61,12 @@ class ConversationLayout extends StatefulWidget {
     required this.sendMessage,
     required this.updateTyping,
     required this.messageResult,
+    required this.sessionService,
     required this.getOldMessages,
     required this.deleteMessages,
     required this.lastMessageModel,
     required this.onlineStatusService,
+    required this.notificationService,
     required this.clearConversationsList
   });
 
@@ -83,24 +87,23 @@ class _ConversationLayoutState extends State<ConversationLayout> {
   Color? _bgColor;
   String? _bgImage;
 
+  late final String _currentUid;
+
   // Controllers
   final TextEditingController _textController = TextEditingController();
   VideoPlayerController? _fullScreenVideoController;
 
-  // Services and utilities
-  final _notificationService = NotificationService();
-  static final _currentUid = SessionService().currentUid;
-
   @override
   void initState() {
     super.initState();
+    _currentUid = widget.sessionService.currentUid;
     _initializeManagers();
   }
 
   @override
   void didUpdateWidget(covariant ConversationLayout oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.messageResult!.message != null) {
+    if (widget.messageResult.message != null) {
       _showMessageResult(widget.messageResult);
     }
     setState((){});
@@ -168,12 +171,12 @@ class _ConversationLayoutState extends State<ConversationLayout> {
         key: 'mute_${widget.lastMessageModel.docId}', value: mute);
 
     if (mute) {
-      await _notificationService.unsubscribeFromTopic(
+      await widget.notificationService.unsubscribeFromTopic(
           'chat_${widget.lastMessageModel.docId}');
       ShowToast.show(
           msg: 'Notifications for this conversation have been muted');
     } else {
-      await _notificationService.subscribeToTopic(
+      await widget.notificationService.subscribeToTopic(
           'chat_${widget.lastMessageModel.docId}');
       ShowToast.show(msg: 'Notifications for this conversation are turned on');
     }
@@ -772,6 +775,7 @@ class _ConversationLayoutState extends State<ConversationLayout> {
                 conversations: widget.dataModel.conversationList,
                 scrollController: _controller.scrollController,
                 beginFromEnd: _controller.beginFromEnd,
+                sessionService: widget.sessionService,
                 onToggleMessageSelection: (message, isLongPress) {
                   _controller.toggleMessageSelection(message, isLongPress);
                   setState(() {});

@@ -10,7 +10,7 @@ import 'package:test_app/core/data/network/connectivity_service.dart';
 import '../../../features/auth/domain/useCases/sign_in_useCase.dart';
 import '../../../features/auth/domain/useCases/sign_up_useCase.dart';
 import '../../data/data_sources/remote/firebase_auth_service.dart';
-import '../../data/data_sources/local/cache_helper.dart';
+import 'package:test_app/core/services/session_service.dart';
 import '../service _locator.dart';
 
 
@@ -26,12 +26,12 @@ class AuthDependencies {
     // UseCases
     sl.registerLazySingleton(() =>
         SignInUseCase(
-            cacheHelper: sl<CacheHelper>(),
+            sessionService: sl<SessionService>(),
             authRepository: sl<FirebaseAuthRepository>()));
 
     sl.registerLazySingleton(() =>
         SignUpUseCase(
-            cacheHelper: sl<CacheHelper>(),
+            sessionService: sl<SessionService>(),
             authRepository: sl<FirebaseAuthRepository>(),
             signUpRepository: sl<FirebaseSignUpRepository>()));
 

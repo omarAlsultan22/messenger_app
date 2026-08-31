@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/di/service _locator.dart';
 import '../cubits/edit_personal_account_cubit.dart';
+import 'package:test_app/core/services/session_service.dart';
 import '../widgets/layouts/edit_personal_account_layout.dart';
 import '../../../../core/presentation/widgets/states/initial_state.dart';
 import '../../../../core/presentation/widgets/states/loading_state.dart';
@@ -35,23 +36,24 @@ class EditPersonalAccountScreen extends StatelessWidget {
                 onLoading: () => const LoadingStateWidget(),
                 onLoaded: (data) {
                   return EditPersonalAccountLayout(
-                    onUpdate: ({
-                      required String userId,
-                      required String userImage,
-                      required String firstName,
-                      required String lastName,
-                      required String userState
-                    }) =>
-                        cubit.updateAccountData(
-                            userId: userId,
-                            firstName: firstName,
-                            lastName: lastName,
-                            userImage: userImage,
-                            userState: userState
-                        ),
-                    userId: docId,
-                    accountModel: data.firstModel,
-                    messageResult: data.secondModel,
+                      onUpdate: ({
+                        required String userId,
+                        required String userImage,
+                        required String firstName,
+                        required String lastName,
+                        required String userState
+                      }) =>
+                          cubit.updateAccountData(
+                              userId: userId,
+                              firstName: firstName,
+                              lastName: lastName,
+                              userImage: userImage,
+                              userState: userState
+                          ),
+                      userId: docId,
+                      accountModel: data.firstModel,
+                      messageResult: data.secondModel,
+                      sessionService: sl<SessionService>()
                   );
                 },
                 onError: (error) =>

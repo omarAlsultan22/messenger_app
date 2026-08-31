@@ -17,6 +17,7 @@ import 'package:test_app/features/conversation/constants/conversation_borders.da
 
 class ConversationMessagesList extends StatelessWidget {
   final bool beginFromEnd;
+  final SessionService sessionService;
   final List<MessageGroup> conversations;
   final LastMessageModel lastMessageModel;
   final ScrollController scrollController;
@@ -29,11 +30,12 @@ class ConversationMessagesList extends StatelessWidget {
 
   const ConversationMessagesList({
     super.key,
-    required this.conversations,
-    required this.beginFromEnd,
     required this.onPlayAudio,
     required this.onStopAudio,
     required this.onSeekAudio,
+    required this.beginFromEnd,
+    required this.conversations,
+    required this.sessionService,
     required this.onShowFullImage,
     required this.onShowFullVideo,
     required this.scrollController,
@@ -45,7 +47,7 @@ class ConversationMessagesList extends StatelessWidget {
   static const _textStyle = TextStyle(
       color: AppColors.white, fontSize: AppSizes.xs);
 
-  static final _currentUid = SessionService().currentUid;
+  String get _currentUid => sessionService.currentUid;
 
   @override
   Widget build(BuildContext context) {

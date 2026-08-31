@@ -1,5 +1,3 @@
-import 'package:test_app/core/errors/exceptions/components_exception.dart';
-
 import '../di/service _locator.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -9,6 +7,7 @@ import 'package:test_app/core/services/session_service.dart';
 import 'package:test_app/core/services/notification_service.dart';
 import 'package:test_app/core/services/online_status_service.dart';
 import 'package:test_app/core/data/data_sources/local/cache_helper.dart';
+import 'package:test_app/core/errors/exceptions/components_exception.dart';
 
 
 class InitializationController {
@@ -29,9 +28,13 @@ class InitializationController {
 
   // Getters للوصول للخدمات إذا لزم الأمر
   CacheHelper get cacheHelper => _cacheHelper;
+
   SessionService get sessionService => _sessionService;
+
   NotificationService get notificationService => _notificationService;
+
   OnlineStatusService get onlineStatusService => _onlineStatusService;
+
   RemoteMessage? get initialMessage => _initialMessage;
 
   Future<void> _initializeServices() async {
@@ -58,7 +61,7 @@ class InitializationController {
     await NotificationService.setupBackgroundIsolate();
 
     // 6. تهيئة OnlineStatusService
-    _onlineStatusService = OnlineStatusService();
+    _onlineStatusService = sl<OnlineStatusService>();
     await _onlineStatusService.initialize();
 
     // 7. تهيئة NotificationService (للأمامية)
@@ -75,7 +78,8 @@ class InitializationController {
 
     // 10. إعدادات Firebase Messaging
     await FirebaseMessaging.instance.setAutoInitEnabled(true);
-    await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
+    await FirebaseMessaging.instance
+        .setForegroundNotificationPresentationOptions(
       alert: true,
       badge: true,
       sound: true,

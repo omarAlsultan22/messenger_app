@@ -2,19 +2,20 @@ import '../repositories/auth_repository.dart';
 import '../repositories/sign_up_repository.dart';
 import '../../../../core/data/models/user_model.dart';
 import 'package:test_app/core/services/session_service.dart';
-import '../../../../core/data/data_sources/local/cache_helper.dart';
 
 
 class SignUpUseCase {
+  final SessionService _sessionService;
   final AuthRepository _authRepository;
   final SignUpRepository _signUpRepository;
 
   SignUpUseCase({
-    required CacheHelper cacheHelper,
+    required SessionService sessionService,
     required AuthRepository authRepository,
     required SignUpRepository signUpRepository
   })
       :
+        _sessionService = sessionService,
         _authRepository = authRepository,
         _signUpRepository = signUpRepository;
 
@@ -33,7 +34,7 @@ class SignUpUseCase {
       final user = userCredential.user;
       if (user != null && user.email != null && !user.isAnonymous) {
         UserModel userModel = UserModel(
-            userId: SessionService().currentUid,
+            userId: _sessionService.currentUid,
             firstName: firstName,
             lastName: lastName,
             fullName: '$firstName''$lastName'
@@ -42,9 +43,8 @@ class SignUpUseCase {
         await _signUpRepository.createUserInfo(
             userModel: userModel);
       }
-
     } catch (e) {
-    rethrow;
+      rethrow;
     }
   }
 }

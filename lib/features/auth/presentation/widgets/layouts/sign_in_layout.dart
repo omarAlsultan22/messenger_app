@@ -2,6 +2,7 @@ import '../../mixins/auth_mixin.dart';
 import 'package:flutter/material.dart';
 import '../../screens/sign_up_screen.dart';
 import '../../screens/forget_password_screen.dart';
+import '../../../../../core/di/service _locator.dart';
 import '../../utils/validate/password_validation.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/app_spaces.dart';
@@ -13,7 +14,6 @@ import '../../../../../core/data/models/message_result_model.dart';
 import 'package:test_app/features/auth/constants/auth_strings.dart';
 import '../../../../../core/presentation/widgets/build_input_field.dart';
 import '../../../../../core/presentation/widgets/navigation/navigator.dart';
-import '../../../../../core/data/data_sources/local/cache_helper.dart';
 import 'package:test_app/features/auth/presentation/widgets/build_app_icon.dart';
 import 'package:test_app/features/auth/presentation/utils/validate/email_validation.dart';
 
@@ -23,13 +23,13 @@ class SignInLayout extends StatefulWidget {
   required String userEmail,
   required String userPassword
   }) onUpdate;
-  final CacheHelper cacheHelper;
   final MessageResult messageResult;
+  final SessionService sessionService;
   const SignInLayout({
     super.key,
     required this.onUpdate,
-    required this.cacheHelper,
-    required this.messageResult
+    required this.messageResult,
+    required this.sessionService,
   });
 
   @override
@@ -65,7 +65,7 @@ class _SignInLayoutState extends State<SignInLayout> with AuthMixin<SignInLayout
     handleMessageResult(
       messageResult: widget.messageResult,
       onNavigate: () =>
-          navigateToScreen(const HomeScreen()
+          navigateToScreen(HomeScreen(sessionService: sl<SessionService>())
           ),
     );
   }
@@ -242,8 +242,9 @@ class _SignInLayoutState extends State<SignInLayout> with AuthMixin<SignInLayout
   }
 
   Future<void> _checkLoginStatus() async {
-    if (SessionService().isLoggedIn && widget.messageResult.error == null) {
-      navigateToScreen(const HomeScreen()
+    if (widget.sessionService.isLoggedIn &&
+        widget.messageResult.error == null) {
+      navigateToScreen(HomeScreen(sessionService: sl<SessionService>())
       );
     }
   }

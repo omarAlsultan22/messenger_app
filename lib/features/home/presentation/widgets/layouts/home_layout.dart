@@ -10,8 +10,8 @@ import '../../../../../core/services/notification_service.dart';
 import '../../../../../core/services/online_status_service.dart';
 import '../../../../../core/data/models/last_message_model.dart';
 import '../../../../../core/presentation/widgets/build_input_field.dart';
-import 'package:test_app/core/presentation/widgets/navigation/navigator.dart';
 import 'package:test_app/core/data/data_sources/local/cache_helper.dart';
+import 'package:test_app/core/presentation/widgets/navigation/navigator.dart';
 import '../../../../conversation/presentation/screens/conversation_screen.dart';
 import '../../../../edit_personal_account/presentation/screens/edit_personal_account_screen.dart';
 
@@ -19,9 +19,11 @@ import '../../../../edit_personal_account/presentation/screens/edit_personal_acc
 class HomeLayout extends StatefulWidget {
   final String profileImage;
   final CacheHelper cacheHelper;
+  final SessionService sessionService;
   final List<LastMessageModel> friendList;
   const HomeLayout({
     super.key,
+    required this.sessionService,
     required this.profileImage,
     required this.cacheHelper,
     required this.friendList
@@ -107,7 +109,7 @@ class _HomeLayoutState extends State<HomeLayout> {
   void _navigateToProfile() {
     BuildNavigator.build(
       context: context,
-      link: EditPersonalAccountScreen(docId: SessionService().currentUid),
+      link: EditPersonalAccountScreen(docId: widget.sessionService.currentUid),
     );
   }
 

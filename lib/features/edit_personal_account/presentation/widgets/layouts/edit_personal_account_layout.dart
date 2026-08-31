@@ -29,12 +29,14 @@ class EditPersonalAccountLayout extends StatefulWidget {
   final String userId;
   final AccountModel accountModel;
   final MessageResult messageResult;
+  final SessionService sessionService;
   const EditPersonalAccountLayout({
     super.key,
     required this.userId,
     required this.onUpdate,
     required this.accountModel,
-    required this.messageResult
+    required this.messageResult,
+    required this.sessionService
   });
 
   @override
@@ -51,11 +53,10 @@ class _EditPersonalAccountLayoutState extends State<EditPersonalAccountLayout> w
   late final TextEditingController _stateController;
 
   //values
+  late final String _currentUid;
   static const double _avatarRadius = 100.0;
   static const _sizedBox = SizedBox(height: 16.0);
   late final _imageUrl = widget.accountModel.userImage;
-  static final _currentUid = SessionService().currentUid;
-
 
   bool _isPressed = true;
   String _mediaUrl = '';
@@ -64,6 +65,7 @@ class _EditPersonalAccountLayoutState extends State<EditPersonalAccountLayout> w
   @override
   void initState() {
     super.initState();
+    _currentUid = widget.sessionService.currentUid;
     _firstNameController = TextEditingController();
     _lastNameController = TextEditingController();
     _stateController = TextEditingController();

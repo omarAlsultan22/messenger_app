@@ -11,21 +11,21 @@ import '../cubits/home_cubit.dart';
 
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+  final SessionService sessionService;
+  HomeScreen({super.key, required this.sessionService});
 
   static const _defaultInfoText = 'Friends';
   static const _defaultInfoIcon = Icons.menu;
 
+  late final _currentUid = sessionService.currentUid;
+
   @override
   Widget build(BuildContext context) {
-    final sessionService = sl<SessionService>();
-    final currentUid = sessionService.currentUid;
-
     return BlocProvider(
         create: (context) =>
         sl<HomeCubit>()
-          ..getProfileImage(docId: currentUid)
-          ..getFriends(docId: currentUid),
+          ..getProfileImage(docId: _currentUid)
+          ..getFriends(docId: _currentUid),
         child: BlocBuilder<HomeCubit, HomeState>(
             builder: (context, state) {
               final cubit = HomeCubit.get(context);
@@ -36,6 +36,7 @@ class HomeScreen extends StatelessWidget {
                 onLoading: () => const LoadingStateWidget(),
                 onLoaded: (data) {
                   return HomeLayout(
+                      sessionService: sessionService,
                       cacheHelper: sl<CacheHelper>(),
                       profileImage: data.firstModel,
                       friendList: data.secondModel
@@ -45,8 +46,8 @@ class HomeScreen extends StatelessWidget {
                     error.buildErrorWidget(
                         onRetry: () =>
                         cubit
-                          ..getProfileImage(docId: currentUid)
-                          ..getFriends(docId: currentUid)
+                          ..getProfileImage(docId: _currentUid)
+                          ..getFriends(docId: _currentUid)
                     ),
               );
             }

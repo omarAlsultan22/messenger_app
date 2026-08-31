@@ -1,8 +1,10 @@
 import 'package:test_app/features/conversation/presentation/states/conversation_state.dart';
 import 'package:test_app/core/data/data_sources/local/cache_helper.dart';
 import '../../../../core/presentation/widgets/states/loading_state.dart';
+import 'package:test_app/core/services/notification_service.dart';
 import '../../../../core/services/online_status_service.dart';
 import '../../../../core/data/models/last_message_model.dart';
+import 'package:test_app/core/services/session_service.dart';
 import '../widgets/layouts/conversation_layout.dart';
 import '../../data/models/conversation_model.dart';
 import '../../../../core/di/service _locator.dart';
@@ -43,8 +45,10 @@ class ConversationScreen extends StatelessWidget {
                     dataModel: data.secondModel,
                     messageResult: data.thirdModel,
                     lastMessageModel: lastMessageModel,
-                    onlineStatusService: sl<OnlineStatusService>(),
                     cacheHelper: sl<CacheHelper>(),
+                    sessionService: sl<SessionService>(),
+                    notificationService: NotificationService(),
+                    onlineStatusService: sl<OnlineStatusService>(),
                     sendMessage: ({
                       required String docId,
                       required String userId,
