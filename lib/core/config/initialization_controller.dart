@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:test_app/core/config/firebase_options.dart';
+import 'package:test_app/core/services/session_service.dart';
 import 'package:test_app/core/services/notification_service.dart';
 import 'package:test_app/core/services/online_status_service.dart';
 import 'package:test_app/core/data/data_sources/local/cache_helper.dart';
@@ -18,6 +19,7 @@ class InitializationController {
   InitializationController._internal();
 
   late final CacheHelper _cacheHelper;
+  late final SessionService _sessionService;
   late final NotificationService _notificationService;
   late final OnlineStatusService _onlineStatusService;
 
@@ -26,11 +28,9 @@ class InitializationController {
 
   // Getters للوصول للخدمات إذا لزم الأمر
   CacheHelper get cacheHelper => _cacheHelper;
-
+  SessionService get sessionService => _sessionService;
   NotificationService get notificationService => _notificationService;
-
   OnlineStatusService get onlineStatusService => _onlineStatusService;
-
   RemoteMessage? get initialMessage => _initialMessage;
 
   Future<void> _initializeServices() async {
@@ -49,35 +49,38 @@ class InitializationController {
     _cacheHelper = sl<CacheHelper>();
     await _cacheHelper.init();
 
-    // 4. تهيئة NotificationService (للخلفية
+    // 4. تهيئة SessionService
+    _sessionService = sl<SessionService>();
+    await _sessionService.loadFromStorage();
+
+    // 5. تهيئة NotificationService (للخلفية)
     await NotificationService.setupBackgroundIsolate();
 
-    // 5. تهيئة OnlineStatusService
+    // 6. تهيئة OnlineStatusService
     _onlineStatusService = sl<OnlineStatusService>();
     await _onlineStatusService.initialize();
 
-    // 6. تهيئة NotificationService (للأمامية)
+    // 7. تهيئة NotificationService (للأمامية)
     _notificationService = NotificationService();
     await _notificationService.initialize();
 
-    // 7. الحصول على الرسالة الأولية
+    // 8. الحصول على الرسالة الأولية
     _initialMessage = await FirebaseMessaging.instance.getInitialMessage();
 
-    // 8. التعامل مع الرسالة الأولية إذا وجدت
+    // 9. التعامل مع الرسالة الأولية إذا وجدت
     if (_initialMessage != null) {
       _notificationService.handleNotification(_initialMessage!.data);
     }
 
-    // 9. إعدادات Firebase Messaging
+    // 10. إعدادات Firebase Messaging
     await FirebaseMessaging.instance.setAutoInitEnabled(true);
-    await FirebaseMessaging.instance
-        .setForegroundNotificationPresentationOptions(
+    await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
       alert: true,
       badge: true,
       sound: true,
     );
 
-    // 10. الاستماع لتحديث التوكن
+    // 11. الاستماع لتحديث التوكن
     FirebaseMessaging.instance.onTokenRefresh.listen((newToken) {
       print('Refreshed FCM token: $newToken');
     });

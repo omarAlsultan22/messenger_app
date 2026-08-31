@@ -49,9 +49,7 @@ class _SignInLayoutState extends State<SignInLayout> with AuthMixin<SignInLayout
   @override
   void initState() {
     super.initState();
-    widget.sessionService.loadFromStorage().whenComplete(() =>
-        _checkLoginStatus()
-    );
+    _checkLoginStatus();
   }
 
   @override
@@ -250,7 +248,6 @@ class _SignInLayoutState extends State<SignInLayout> with AuthMixin<SignInLayout
       );
     }
   }
-
 
   void _togglePasswordVisibility() {
     setState(() {
