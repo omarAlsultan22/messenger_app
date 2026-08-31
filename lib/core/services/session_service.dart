@@ -1,5 +1,5 @@
 import '../di/service _locator.dart';
-import 'package:test_app/core/data/data_sources/local/cache_helper.dart';
+import '../data/data_sources/local/cache_helper.dart';
 
 
 class SessionService {
@@ -12,6 +12,8 @@ class SessionService {
 
   static final _cacheHelper = sl<CacheHelper>();
 
+  static const _uId = 'user_id';
+
   String _currentUid = '';
 
   String get currentUid => _currentUid;
@@ -19,12 +21,18 @@ class SessionService {
   bool get isLoggedIn => _currentUid.isNotEmpty;
 
   Future<void> loadFromStorage() async {
-    _currentUid = await _cacheHelper.getString(key: 'user_id');
+    _currentUid = await _cacheHelper.getString(key: _uId);
   }
 
   Future<void> login(String uid) async {
     _currentUid = uid;
 
-    await _cacheHelper.setString(key: 'user_id', value: uid);
+    await _cacheHelper.setString(key: _uId, value: uid);
+  }
+
+  Future<void> logout() async {
+    _currentUid = '';
+
+    await _cacheHelper.removeValue(key: _uId);
   }
 }

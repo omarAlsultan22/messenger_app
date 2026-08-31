@@ -6,10 +6,10 @@ import '../../utils/validate/password_validation.dart';
 import '../../../../../core/constants/app_spaces.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/app_paddings.dart';
+import 'package:test_app/core/services/session_service.dart';
 import '../../../../../core/data/models/message_result_model.dart';
 import '../../../../../core/presentation/widgets/build_input_field.dart';
 import '../../../../../core/presentation/widgets/icon_button_widget.dart';
-import '../../../../../core/data/data_sources/local/cache_helper.dart';
 import 'package:test_app/features/auth/presentation/screens/sign_in_screen.dart';
 
 
@@ -19,14 +19,14 @@ class ChangeEmailAndPasswordLayout extends StatefulWidget {
   required String currentPassword,
   required String newPassword
   }) onUpdate;
-  final CacheHelper cacheHelper;
   final MessageResult messageResult;
+  final SessionService sessionService;
   const ChangeEmailAndPasswordLayout({
     super.key,
     required this.onUpdate,
-    required this.cacheHelper,
     required this.messageResult,
-    });
+    required this.sessionService,
+  });
 
   @override
   State<ChangeEmailAndPasswordLayout> createState() => _ChangeEmailAndPasswordLayoutState();
@@ -234,7 +234,7 @@ class _ChangeEmailAndPasswordLayoutState extends State<ChangeEmailAndPasswordLay
   }
 
   void _clearUserData() {
-    widget.cacheHelper.removeValue(key: 'uId');
+    widget.sessionService.logout();
   }
 
   String? _validatePasswordConfirmation(dynamic value) {
