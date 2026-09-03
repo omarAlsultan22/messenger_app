@@ -4,56 +4,60 @@ import '../../data/models/user_status.dart';
 import '../../data/models/message_group.dart';
 import '../../data/models/conversation_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../../../../core/presentation/states/loaded_states.dart';
 import 'package:test_app/core/data/models/message_result_model.dart';
-import 'package:test_app/core/presentation/states/app_sup_states.dart';
 import 'package:test_app/core/presentation/states/app_sub_states.dart';
 import 'package:test_app/core/errors/exceptions/base/app_exception.dart';
 import 'package:test_app/core/presentation/states/base/main_app_sub_state.dart';
+import 'package:test_app/core/presentation/states/base/main_app_sup_state.dart';
+import 'package:test_app/features/conversation/data/models/conversation_success_state.dart';
 
 
-class ConversationState extends TripleModelAppState<UserStatus, DataModel, MessageResult> {
-  ConversationState({
+class ConversationState extends MainAppSupState {
+  final DataModel dataModel;
+  final UserStatus userStatus;
+  final MessageResult messageResult;
+
+  const ConversationState({
     super.subState,
-    super.firstModel,
-    super.secondModel,
-    super.thirdModel
+    required this.dataModel,
+    required this.userStatus,
+    required this.messageResult
   });
 
   factory ConversationState.initial(){
     return ConversationState(
       subState: InitialState(),
-      firstModel: UserStatus(),
-      secondModel: DataModel(),
-      thirdModel: MessageResult.initial(),
+      dataModel: DataModel(),
+      userStatus: UserStatus(),
+      messageResult: MessageResult.initial(),
     );
   }
 
-  bool get listISEmpty => secondModel!.listISEmpty;
+  bool get listISEmpty => dataModel.listISEmpty;
 
-  bool get hasMessages => secondModel!.hasMessages;
+  bool get hasMessages => dataModel.hasMessages;
 
-  DocumentSnapshot? get firstDocument => secondModel!.firstDocument;
+  DocumentSnapshot? get firstDocument => dataModel.firstDocument;
 
-  DocumentSnapshot? get lastDocument => secondModel!.lastDocument;
+  DocumentSnapshot? get lastDocument => dataModel.lastDocument;
 
-  List<MessageGroup> get conversationList => secondModel!.conversationList;
+  List<MessageGroup> get conversationList => dataModel.conversationList;
 
   void addMessageGroup(MessageGroup group) =>
-      secondModel!.addMessageGroup(group);
+      dataModel.addMessageGroup(group);
 
   void addNewMessages({
     required int existingIndex,
     required List<ConversationModel> messages
   }) =>
-      secondModel!.addNewMessages(
+      dataModel.addNewMessages(
           existingIndex: existingIndex, messages: messages);
 
   void insertMessages({
     required String? title,
     required DateTime sortDate,
     required List<ConversationModel> messages}) =>
-      secondModel!.insertMessage(
+      dataModel.insertMessage(
           title: title,
           sortDate: sortDate,
           messages: messages
@@ -63,7 +67,7 @@ class ConversationState extends TripleModelAppState<UserStatus, DataModel, Messa
     required int existingIndex,
     required List<ConversationModel> messages
   }) =>
-      secondModel!.insertAllMessages(
+      dataModel.insertAllMessages(
           messages: messages,
           existingIndex: existingIndex
       );
@@ -73,7 +77,7 @@ class ConversationState extends TripleModelAppState<UserStatus, DataModel, Messa
               (g) => g.date == date
       );
 
-  void clearList() => secondModel!.clearList();
+  void clearList() => dataModel.clearList();
 
   UserStatus updateFirstModel({
     DateTime? lastSeen,
@@ -82,7 +86,7 @@ class ConversationState extends TripleModelAppState<UserStatus, DataModel, Messa
     bool? isTyping,
     Color? bgColor
   }) {
-    return firstModel!.copyWith(
+    return userStatus.copyWith(
       lastSeen: lastSeen,
       bgImage: bgImage,
       isOnline: isOnline,
@@ -97,7 +101,7 @@ class ConversationState extends TripleModelAppState<UserStatus, DataModel, Messa
     DocumentSnapshot? lastDocument,
     bool? hasMessages,
   }) {
-    return secondModel!.copyWith(
+    return dataModel.copyWith(
         conversationList: conversationList,
         firstDocument: firstDocument,
         lastDocument: lastDocument,
@@ -105,26 +109,33 @@ class ConversationState extends TripleModelAppState<UserStatus, DataModel, Messa
     );
   }
 
-  @override
   ConversationState copyWith({
-    UserStatus? firstModel,
-    DataModel? secondModel,
-    MessageResult? thirdModel,
+    UserStatus? userStatus,
+    DataModel? dataModel,
+    MessageResult? messageResult,
     MainAppSubState? subState
   }) {
     return ConversationState(
       subState: subState ?? this.subState,
-      firstModel: firstModel ?? this.firstModel,
-      secondModel: secondModel ?? this.secondModel,
-      thirdModel: thirdModel ?? MessageResult.initial(),
+      dataModel: dataModel ?? this.dataModel,
+      userStatus: userStatus ?? this.userStatus,
+      messageResult: messageResult ?? MessageResult.initial(),
     );
   }
+
+  @override
+  ConversationSuccessState get dataModels =>
+      ConversationSuccessState(
+          dataModel: dataModel,
+          userStatus: userStatus,
+          messageResult: messageResult
+      );
 
   @override
   R when<R>({
     required R Function() onInitial,
     required R Function() onLoading,
-    required R Function(TripleModelSuccessState) onLoaded,
+    required R Function(ConversationSuccessState) onLoaded,
     required R Function(AppException) onError
   }) {
     return subState!.when(

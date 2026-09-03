@@ -6,7 +6,7 @@ import '../../../errors/exceptions/base/app_exception.dart';
 abstract class MainAppSupState{
   final MainAppSubState? subState;
 
-  MainAppSupState({
+  const MainAppSupState({
     this.subState,
   });
 

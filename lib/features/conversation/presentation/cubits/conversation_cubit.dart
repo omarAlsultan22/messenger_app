@@ -67,12 +67,12 @@ class ConversationCubit extends Cubit<ConversationState> with ErrorHandlerMixin<
       final result = await _getBackgroundUseCase.execute(docId: docId);
       final userStatus = state.updateFirstModel(
           bgImage: result['bgImage'], bgColor: result['bgColor']);
-      emit(state.copyWith(firstModel: userStatus));
+      emit(state.copyWith(userStatus: userStatus));
     }
     catch (e, stackTrace) {
       handleError(e, stackTrace,
           onError: (failure) =>
-              state.copyWith(thirdModel: MessageResult.error(error: failure)
+              state.copyWith(messageResult: MessageResult.error(error: failure)
               )
       );
     }
@@ -83,11 +83,11 @@ class ConversationCubit extends Cubit<ConversationState> with ErrorHandlerMixin<
     try {
       await _updateUnreadMessagesUseCase.execute(docId: docId);
       emit(state.copyWith(
-          subState: SuccessState(), thirdModel: MessageResult.success()));
+          subState: SuccessState(), messageResult: MessageResult.success()));
     } catch (e, stackTrace) {
       handleError(e, stackTrace,
           onError: (failure) =>
-              state.copyWith(thirdModel: MessageResult.error(error: failure)
+              state.copyWith(messageResult: MessageResult.error(error: failure)
               )
       );
     }
@@ -127,7 +127,7 @@ class ConversationCubit extends Cubit<ConversationState> with ErrorHandlerMixin<
     _onlineSubscription =
         _onlineStatusService.getUserOnlineStatus(userId).listen((value) {
           final userStatus = state.updateFirstModel(isOnline: value);
-          emit(state.copyWith(firstModel: userStatus));
+          emit(state.copyWith(userStatus: userStatus));
         });
   }
 
@@ -135,7 +135,7 @@ class ConversationCubit extends Cubit<ConversationState> with ErrorHandlerMixin<
     _typingSubscription =
         _onlineStatusService.getUserTypingStatus(userId).listen((value) {
           final userStatus = state.updateFirstModel(isTyping: value);
-          emit(state.copyWith(firstModel: userStatus));
+          emit(state.copyWith(userStatus: userStatus));
         });
   }
 
@@ -143,7 +143,7 @@ class ConversationCubit extends Cubit<ConversationState> with ErrorHandlerMixin<
     _lastSeenSubscription =
         _onlineStatusService.getUserLastSeen(userId).listen((value) {
           final userStatus = state.updateFirstModel(lastSeen: value);
-          emit(state.copyWith(firstModel: userStatus));
+          emit(state.copyWith(userStatus: userStatus));
         });
   }
 
@@ -154,11 +154,11 @@ class ConversationCubit extends Cubit<ConversationState> with ErrorHandlerMixin<
       await _clearConversationsUseCase.execute(docId: docId);
       emit(state.copyWith(
           subState: SuccessState(),
-          thirdModel: MessageResult.success(message: 'Deleted successfully')));
+          messageResult: MessageResult.success(message: 'Deleted successfully')));
     } catch (e, stackTrace) {
       handleError(e, stackTrace,
           onError: (failure) =>
-              state.copyWith(thirdModel: MessageResult.error(error: failure)
+              state.copyWith(messageResult: MessageResult.error(error: failure)
               )
       );
     }
@@ -179,7 +179,7 @@ class ConversationCubit extends Cubit<ConversationState> with ErrorHandlerMixin<
     } catch (e, stackTrace) {
       handleError(e, stackTrace,
           onError: (failure) =>
-              state.copyWith(thirdModel: MessageResult.error(error: failure)
+              state.copyWith(messageResult: MessageResult.error(error: failure)
               )
       );
     }
@@ -200,7 +200,7 @@ class ConversationCubit extends Cubit<ConversationState> with ErrorHandlerMixin<
     } catch (e, stackTrace) {
       handleError(e, stackTrace,
           onError: (failure) =>
-              state.copyWith(thirdModel: MessageResult.error(error: failure)
+              state.copyWith(messageResult: MessageResult.error(error: failure)
               )
       );
     }
@@ -239,7 +239,7 @@ class ConversationCubit extends Cubit<ConversationState> with ErrorHandlerMixin<
       if (dataModel.listISEmpty) {
         final dataModel = state.updateSecondModel(hasMessages: false);
         emit(state.copyWith(
-            subState: SuccessState(), secondModel: dataModel));
+            subState: SuccessState(), dataModel: dataModel));
         return;
       }
 
@@ -262,7 +262,7 @@ class ConversationCubit extends Cubit<ConversationState> with ErrorHandlerMixin<
       handleError(e, stackTrace,
           onError: (failure) =>
               state.copyWith(
-                  thirdModel: MessageResult.error(
+                  messageResult: MessageResult.error(
                       error: failure
                   )
               )

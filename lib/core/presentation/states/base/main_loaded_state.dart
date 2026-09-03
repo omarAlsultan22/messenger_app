@@ -1,1 +1,3 @@
-abstract class LoadedState{}
+abstract class LoadedState{
+  const LoadedState();
+}

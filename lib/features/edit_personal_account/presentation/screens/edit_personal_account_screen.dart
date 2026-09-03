@@ -51,8 +51,8 @@ class EditPersonalAccountScreen extends StatelessWidget {
                               userState: userState
                           ),
                       userId: docId,
-                      accountModel: data.firstModel,
-                      messageResult: data.secondModel,
+                      accountModel: data.accountModel,
+                      messageResult: data.messageResult,
                       sessionService: sl<SessionService>()
                   );
                 },

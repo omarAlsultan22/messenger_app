@@ -39,7 +39,7 @@ class EditPersonalAccountCubit extends Cubit<EditPersonalAccountState> with Erro
       emit(
           state.copyWith(
               subState: SuccessState(),
-              firstModel: accountData
+              accountModel: accountData
           )
       );
     }
@@ -62,7 +62,7 @@ class EditPersonalAccountCubit extends Cubit<EditPersonalAccountState> with Erro
     required String lastName,
     required String userState,
   }) async {
-    emit(state.copyWith(secondModel: MessageResult.loading()));
+    emit(state.copyWith(messageResult: MessageResult.loading()));
     try {
       _repository.updateAccountData(
           userId: userId,
@@ -71,12 +71,12 @@ class EditPersonalAccountCubit extends Cubit<EditPersonalAccountState> with Erro
           lastName: lastName,
           userState: userState
       );
-      emit(state.copyWith(secondModel: MessageResult.success()));
+      emit(state.copyWith(messageResult: MessageResult.success()));
     }
     catch (e, stackTrace) {
       handleError(e, stackTrace,
           onError: (failure) =>
-              state.copyWith(secondModel: MessageResult.error(error: failure)
+              state.copyWith(messageResult: MessageResult.error(error: failure)
               )
       );
     }

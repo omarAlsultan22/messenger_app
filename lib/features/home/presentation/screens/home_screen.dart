@@ -38,8 +38,8 @@ class HomeScreen extends StatelessWidget {
                   return HomeLayout(
                       sessionService: sessionService,
                       cacheHelper: sl<CacheHelper>(),
-                      profileImage: data.firstModel,
-                      friendList: data.secondModel
+                      profileImage: data.profileImage,
+                      friendList: data.friendList
                   );
                 },
                 onError: (error) =>

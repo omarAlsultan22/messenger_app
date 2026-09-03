@@ -24,14 +24,14 @@ class HomeCubit extends Cubit<HomeState> with ErrorHandlerMixin<HomeState> {
 
   StreamSubscription? _friendsSubscription;
 
-  List<LastMessageModel>? get friendsList => state.secondModel;
+  List<LastMessageModel>? get friendsList => state.friendList;
 
   Future<void> getProfileImage({
     required String docId
   }) async {
     try {
       final profileImage = await _getProfileUseCase.execute(userId: docId);
-      emit(state.copyWith(firstModel: profileImage));
+      emit(state.copyWith(profileImage: profileImage));
     }
     catch (e, stackTrace) {
       handleError(e, stackTrace,
@@ -55,7 +55,7 @@ class HomeCubit extends Cubit<HomeState> with ErrorHandlerMixin<HomeState> {
             return;
           }
           emit(state.copyWith(
-              subState: SuccessState(), secondModel: updatedFriendsList));
+              subState: SuccessState(), friendList: updatedFriendsList));
         },
         onError: (e) {
           handleError(e, StackTrace.current,

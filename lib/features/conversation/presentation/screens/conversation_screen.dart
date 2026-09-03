@@ -41,9 +41,9 @@ class ConversationScreen extends StatelessWidget {
                 onLoading: () => const LoadingStateWidget(),
                 onLoaded: (data) {
                   return ConversationLayout(
-                    userStatus: data.firstModel,
-                    dataModel: data.secondModel,
-                    messageResult: data.thirdModel,
+                    userStatus: data.userStatus,
+                    dataModel: data.dataModel,
+                    messageResult: data.messageResult,
                     lastMessageModel: lastMessageModel,
                     cacheHelper: sl<CacheHelper>(),
                     sessionService: sl<SessionService>(),
