@@ -41,7 +41,8 @@ class SignUpUseCase {
         );
 
         await _signUpRepository.createUserInfo(
-            userModel: userModel);
+            userModel: userModel
+        );
       }
     } catch (e) {
       rethrow;
