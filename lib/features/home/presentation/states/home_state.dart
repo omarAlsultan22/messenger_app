@@ -38,7 +38,6 @@ class HomeState extends MainAppSupState {
   }
 
   @override
-  // TODO: implement dataModels
   HomeSuccessState get dataModels =>
       HomeSuccessState(
           friendList: friendList,
