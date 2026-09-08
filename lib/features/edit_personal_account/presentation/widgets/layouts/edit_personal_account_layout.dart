@@ -43,7 +43,7 @@ class EditPersonalAccountLayout extends StatefulWidget {
   State<EditPersonalAccountLayout> createState() => _EditPersonalAccountLayoutState();
 }
 
-class _EditPersonalAccountLayoutState extends State<EditPersonalAccountLayout> with AuthMixin {
+class _EditPersonalAccountLayoutState extends State<EditPersonalAccountLayout> with AuthMixin<EditPersonalAccountLayout> {
 
   final _formKey = GlobalKey<FormState>();
 
