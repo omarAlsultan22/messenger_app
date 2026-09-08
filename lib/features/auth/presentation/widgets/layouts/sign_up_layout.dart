@@ -165,7 +165,7 @@ class _SignUpLayoutState extends State<SignUpLayout> with AuthMixin<SignUpLayout
       prefixIcon: const Icon(Icons.person, color: AppColors.white),
       autofillHints: const [AutofillHints.name],
       validator: (value) =>
-          ValidateInput.validator(value: value!, item: 'first name'),
+          ValidateInput.validator(value: value!, text: 'first name'),
     );
   }
 
@@ -177,7 +177,7 @@ class _SignUpLayoutState extends State<SignUpLayout> with AuthMixin<SignUpLayout
       prefixIcon: const Icon(Icons.person, color: AppColors.white),
       autofillHints: const [AutofillHints.name],
       validator: (value) =>
-          ValidateInput.validator(value: value!, item: 'last name'),
+          ValidateInput.validator(value: value!, text: 'last name'),
     );
   }
 

@@ -218,7 +218,7 @@ class _EditPersonalAccountLayoutState extends State<EditPersonalAccountLayout> w
       hintText: 'Enter your first name',
       enabled: _isFieldEnabled(),
       validator: (value) =>
-          ValidateInput.validator(value: value!, item: 'first name'),
+          ValidateInput.validator(value: value!, text: 'first name'),
     );
   }
 
@@ -230,7 +230,7 @@ class _EditPersonalAccountLayoutState extends State<EditPersonalAccountLayout> w
       hintText: 'Enter your last name',
       enabled: _isFieldEnabled(),
       validator: (value) =>
-          ValidateInput.validator(value: value!, item: 'last name'),
+          ValidateInput.validator(value: value!, text: 'last name'),
     );
   }
 
@@ -242,7 +242,7 @@ class _EditPersonalAccountLayoutState extends State<EditPersonalAccountLayout> w
       hintText: 'State',
       enabled: _isFieldEnabled(),
       validator: (value) =>
-          ValidateInput.validator(value: value!, item: 'state'),
+          ValidateInput.validator(value: value!, text: 'state'),
     );
   }
 

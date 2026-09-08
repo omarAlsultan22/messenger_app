@@ -1,10 +1,10 @@
 class ValidateInput {
   static String? validator({
     required String? value,
-    required String item
+    required String text
   }) {
     if (value == null || value.isEmpty) {
-      return 'Please Enter Your name';
+      return 'Please Enter Your $text';
     }
     return null;
   }
