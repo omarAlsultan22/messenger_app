@@ -12,9 +12,9 @@ class SessionService {
 
   static final _cacheHelper = sl<CacheHelper>();
 
-  static const _uId = 'user_id';
-
   String _currentUid = '';
+
+  static const _uId = 'user_id';
 
   String get currentUid => _currentUid;
 

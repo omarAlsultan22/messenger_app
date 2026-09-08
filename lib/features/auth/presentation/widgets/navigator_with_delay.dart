@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:test_app/core/constants/app_durations.dart';
 
 
 class NavigatorWithDelay {
@@ -7,7 +6,7 @@ class NavigatorWithDelay {
     required Widget link,
     required BuildContext context,
   }) {
-    Future.delayed(const Duration(seconds: AppDurations.oneSecond), () =>
+    Future.delayed(const Duration(seconds: 1), () =>
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => link
