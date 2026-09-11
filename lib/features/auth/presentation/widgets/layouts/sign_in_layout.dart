@@ -22,12 +22,12 @@ class SignInLayout extends StatefulWidget {
   final void Function({
   required String userEmail,
   required String userPassword
-  }) onUpdate;
+  }) onLogin;
   final MessageResult messageResult;
   final SessionService sessionService;
   const SignInLayout({
     super.key,
-    required this.onUpdate,
+    required this.onLogin,
     required this.messageResult,
     required this.sessionService,
   });
@@ -267,7 +267,7 @@ class _SignInLayoutState extends State<SignInLayout> with AuthMixin<SignInLayout
     if (validateForm(_formKey)) {
       _updateLockButton(false);
       hideKeyboard(context);
-      widget.onUpdate(
+      widget.onLogin(
           userEmail: _emailController.text.trim(),
           userPassword: _passwordController.text
       );

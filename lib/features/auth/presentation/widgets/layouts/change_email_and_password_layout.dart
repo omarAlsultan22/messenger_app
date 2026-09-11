@@ -1,4 +1,3 @@
-import '../../mixins/auth_mixin.dart';
 import 'package:flutter/material.dart';
 import '../../utils/validate/email_validation.dart';
 import '../../../../../core/constants/app_sizes.dart';
@@ -6,10 +5,12 @@ import '../../utils/validate/password_validation.dart';
 import '../../../../../core/constants/app_spaces.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/app_paddings.dart';
+import 'package:test_app/core/utils/validate_input.dart';
 import 'package:test_app/core/services/session_service.dart';
 import '../../../../../core/data/models/message_result_model.dart';
 import '../../../../../core/presentation/widgets/build_input_field.dart';
 import '../../../../../core/presentation/widgets/icon_button_widget.dart';
+import 'package:test_app/features/auth/presentation/mixins/auth_mixin.dart';
 import 'package:test_app/features/auth/presentation/screens/sign_in_screen.dart';
 
 
@@ -32,7 +33,7 @@ class ChangeEmailAndPasswordLayout extends StatefulWidget {
   State<ChangeEmailAndPasswordLayout> createState() => _ChangeEmailAndPasswordLayoutState();
 }
 
-class _ChangeEmailAndPasswordLayoutState extends State<ChangeEmailAndPasswordLayout> with AuthMixin<ChangeEmailAndPasswordLayout> {
+class _ChangeEmailAndPasswordLayoutState extends State<ChangeEmailAndPasswordLayout> with AuthMixin<ChangeEmailAndPasswordLayout>{
   bool _isPressed = true;
   bool _isObscureNew = true;
   bool _isObscureCurrent = true;
@@ -238,12 +239,10 @@ class _ChangeEmailAndPasswordLayoutState extends State<ChangeEmailAndPasswordLay
   }
 
   String? _validatePasswordConfirmation(dynamic value) {
-    if (value == null || value.isEmpty) {
-      return 'Please confirm your password';
-    }
     if (value != _newPasswordController.text) {
       return 'Passwords do not match';
     }
-    return null;
+    return ValidateInput.validator(
+        value: value, text: 'Please confirm your password');;
   }
 }

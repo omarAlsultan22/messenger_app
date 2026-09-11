@@ -19,7 +19,7 @@ class SignUpScreen extends StatelessWidget {
 
               return SignUpLayout(
                   messageResult: state.messageResult!,
-                  onUpdate: ({
+                  onSignUp: ({
                     required String firstName,
                     required String lastName,
                     required String userEmail,

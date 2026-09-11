@@ -12,11 +12,11 @@ import '../../../../../core/presentation/widgets/build_input_field.dart';
 class ForgetPasswordLayout extends StatefulWidget {
   final void Function({
   required String userEmail,
-  }) onUpdate;
+  }) onSubmit;
   final MessageResult messageResult;
   const ForgetPasswordLayout({
     super.key,
-    required this.onUpdate,
+    required this.onSubmit,
     required this.messageResult
   });
 
@@ -113,7 +113,7 @@ class _ForgotPasswordScreenState extends State<ForgetPasswordLayout> with AuthMi
       _updateLockButton(false);
       hideKeyboard(context);
       final email = _emailController.text.trim();
-      widget.onUpdate(
+      widget.onSubmit(
         userEmail: email,
       );
       _updateLockButton(true);

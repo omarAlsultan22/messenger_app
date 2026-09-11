@@ -7,7 +7,7 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_paddings.dart';
 import 'package:test_app/core/constants/app_borders.dart';
 import '../../../../core/data/models/message_result_model.dart';
-import '../../../../core/presentation/widgets/loading_widget.dart';
+import '../widgets/loading_widget.dart';
 import '../../../../core/presentation/widgets/build_snack_bar.dart';
 
 

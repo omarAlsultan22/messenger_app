@@ -19,12 +19,12 @@ class SignUpLayout extends StatefulWidget {
   required String lastName,
   required String userEmail,
   required String userPassword,
-  }) onUpdate;
+  }) onSignUp;
   final MessageResult messageResult;
 
   const SignUpLayout({
     super.key,
-    required this.onUpdate,
+    required this.onSignUp,
     required this.messageResult
   });
 
@@ -240,7 +240,7 @@ class _SignUpLayoutState extends State<SignUpLayout> with AuthMixin<SignUpLayout
   }
 
   Future<void> _performRegistration() async {
-    widget.onUpdate(
+    widget.onSignUp(
       firstName: _firstNameController.text.trim(),
       lastName: _lastNameController.text.trim(),
       userEmail: _emailController.text.trim(),

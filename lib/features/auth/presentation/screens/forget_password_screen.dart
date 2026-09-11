@@ -18,7 +18,7 @@ class ForgetPasswordScreen extends StatelessWidget {
               final cubit = ForgetPasswordCubit.get(context);
               return ForgetPasswordLayout(
                   messageResult: state.messageResult!,
-                  onUpdate: ({
+                  onSubmit: ({
                     required String userEmail,
                   }) =>
                       cubit.sendResetEmail(

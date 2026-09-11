@@ -20,7 +20,7 @@ class SignInScreen extends StatelessWidget {
               return SignInLayout(
                   sessionService: sl<SessionService>(),
                   messageResult: state.messageResult!,
-                  onUpdate: ({
+                  onLogin: ({
                     required String userEmail,
                     required String userPassword
                   }) =>
