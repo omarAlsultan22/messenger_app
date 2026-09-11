@@ -31,7 +31,6 @@ class AuthDependencies {
 
     sl.registerLazySingleton(() =>
         SignUpUseCase(
-            sessionService: sl<SessionService>(),
             authRepository: sl<FirebaseAuthRepository>(),
             signUpRepository: sl<FirebaseSignUpRepository>()));
 
