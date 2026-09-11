@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:test_app/core/constants/app_colors.dart';
 
 
 class LoadingWidget {
@@ -8,7 +7,6 @@ class LoadingWidget {
     height: _spacing,
     width: _spacing,
     child: CircularProgressIndicator(
-      color: AppColors.white,
       strokeWidth: 3,
     ),
   );
