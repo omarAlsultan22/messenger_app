@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import '../widgets/loading_widget.dart';
 import '../../constants/auth_strings.dart';
 import '../../constants/auth_text_style.dart';
 import '../widgets/navigator_with_delay.dart';
@@ -7,7 +8,6 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_paddings.dart';
 import 'package:test_app/core/constants/app_borders.dart';
 import '../../../../core/data/models/message_result_model.dart';
-import '../widgets/loading_widget.dart';
 import '../../../../core/presentation/widgets/build_snack_bar.dart';
 
 
