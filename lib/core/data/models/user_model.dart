@@ -26,10 +26,10 @@ class UserModel implements JsonModel {
   factory UserModel.fromJson(Map<String, dynamic> json){
     return UserModel(
         userId: json['userId'] ?? '',
-        firstName: json['firstName'] ?? '',
-        lastName: json['lastName'] ?? '',
-        fullName: json['fullName'] ?? '',
         userImage: json['userImage'] ?? '',
+        firstName: json['firstName'] ?? 'UnKnown',
+        lastName: json['lastName'] ?? 'UnKnown',
+        fullName: json['fullName'] ?? 'UnKnown',
         isOnline: json['isOnline'] ?? false,
         isTyping: json['isTyping'] ?? false,
         lastSeen: (json['lastSeen'] as Timestamp).toDate()
