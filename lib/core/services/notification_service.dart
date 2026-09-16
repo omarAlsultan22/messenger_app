@@ -303,19 +303,17 @@ class NotificationService {
   }
 
 
-  static Future<void> _firebaseMessagingBackgroundHandler(
+  Future<void> _firebaseMessagingBackgroundHandler(
       RemoteMessage message) async {
     debugPrint("Handling a background message: ${message.messageId}");
     await _handleBackgroundNotification(message);
   }
 
 
-  static Future<void> _handleBackgroundNotification(
+  Future<void> _handleBackgroundNotification(
       RemoteMessage message) async {
     await setupBackgroundIsolate();
-    final notificationService = NotificationService();
-    await notificationService.initialize();
-    notificationService.handleNotification(message.data);
+    handleNotification(message.data);
   }
 
 
