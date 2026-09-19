@@ -104,22 +104,29 @@ class NotificationService {
 
   void handleNotification(Map<String, dynamic> data) {
     try {
-      final docId = data[_dataKey][_docIdKey];
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (NavigationService.currentState == null) {
+          debugPrint('Navigator not ready yet');
+          return;
+        }
 
-      NavigationService.currentState?.pushReplacement(
-        MaterialPageRoute(
-            builder: (context) {
-              final friendsList = HomeCubit
-                  .get(context)
-                  .friendsList;
-              final matchingItem = friendsList!.where((item) =>
-              item.docId == docId);
-              return ConversationScreen(
-                lastMessageModel: matchingItem.first,
-              );
-            }
-        ),
-      );
+        final docId = data[_dataKey][_docIdKey];
+
+        NavigationService.currentState?.pushReplacement(
+          MaterialPageRoute(
+              builder: (context) {
+                final friendsList = HomeCubit
+                    .get(context)
+                    .friendsList;
+                final matchingItem = friendsList!.where((item) =>
+                item.docId == docId);
+                return ConversationScreen(
+                  lastMessageModel: matchingItem.first,
+                );
+              }
+          ),
+        );
+      });
     }
     catch (e) {
       NavigationService.currentState?.push(
