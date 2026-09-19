@@ -112,7 +112,7 @@ class NotificationService {
 
         final docId = data[_dataKey][_docIdKey];
 
-        NavigationService.currentState?.pushReplacement(
+        NavigationService.currentState?.push(
           MaterialPageRoute(
               builder: (context) {
                 final friendsList = HomeCubit
