@@ -1,8 +1,8 @@
 import 'dart:async';
 import '../states/home_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../domain/useCases/get_friends_use_case.dart';
-import '../../domain/useCases/get_profile_use_case.dart';
+import '../../domain/use_cases/get_friends_use_case.dart';
+import '../../domain/use_cases/get_profile_use_case.dart';
 import '../../../../core/presentation/states/app_sub_states.dart';
 import 'package:test_app/core/data/models/last_message_model.dart';
 import '../../../../core/presentation/mixins/error_handler_mixin.dart';

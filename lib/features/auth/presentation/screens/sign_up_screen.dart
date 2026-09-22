@@ -16,7 +16,6 @@ class SignUpScreen extends StatelessWidget {
         child: BlocBuilder<SignUpCubit, AuthState>(
             builder: (context, state) {
               final cubit = SignUpCubit.get(context);
-
               return SignUpLayout(
                   messageResult: state.messageResult!,
                   onSignUp: ({

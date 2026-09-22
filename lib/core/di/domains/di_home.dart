@@ -1,7 +1,7 @@
 import '../../../features/home/data/repositories_impl/firestore_home_repository.dart';
 import '../../../features/home/data/data_source/firestore_home_service.dart';
-import '../../../features/home/domain/useCases/get_friends_use_case.dart';
-import '../../../features/home/domain/useCases/get_profile_use_case.dart';
+import '../../../features/home/domain/use_cases/get_friends_use_case.dart';
+import '../../../features/home/domain/use_cases/get_profile_use_case.dart';
 import '../../../features/home/presentation/cubits/home_cubit.dart';
 import '../service _locator.dart';
 

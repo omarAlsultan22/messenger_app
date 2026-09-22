@@ -3,7 +3,7 @@ import '../states/edit_personal_account_state.dart';
 import '../../../../core/data/models/message_result_model.dart';
 import '../../../../core/presentation/mixins/error_handler_mixin.dart';
 import 'package:test_app/core/presentation/states/app_sub_states.dart';
-import 'package:test_app/features/edit_personal_account/domain/useCases/edit_personal_account_useCase.dart';
+import 'package:test_app/features/edit_personal_account/domain/use_cases/edit_personal_account_use_case.dart';
 import 'package:test_app/features/edit_personal_account/data/repositories_impl/firestore_edit_personal_account_repository.dart';
 
 

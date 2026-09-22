@@ -34,8 +34,8 @@ class EditPersonalAccountScreen extends StatelessWidget {
                 const InitialStateWidget(
                     text: _defaultInfoText, icon: _defaultInfoIcon),
                 onLoading: () => const LoadingStateWidget(),
-                onLoaded: (data) {
-                  return EditPersonalAccountLayout(
+                onLoaded: (data) =>
+                  EditPersonalAccountLayout(
                       onUpdate: ({
                         required String userId,
                         required String userImage,
@@ -54,8 +54,7 @@ class EditPersonalAccountScreen extends StatelessWidget {
                       accountModel: data.accountModel,
                       messageResult: data.messageResult,
                       sessionService: sl<SessionService>()
-                  );
-                },
+                  ),
                 onError: (error) =>
                     error.buildErrorWidget(
                         onRetry: () => cubit.getAccountData(docId: docId)

@@ -1,6 +1,6 @@
 import '../../../features/edit_personal_account/data/repositories_impl/firestore_edit_personal_account_repository.dart';
 import '../../../features/edit_personal_account/presentation/cubits/edit_personal_account_cubit.dart';
-import '../../../features/edit_personal_account/domain/useCases/edit_personal_account_useCase.dart';
+import '../../../features/edit_personal_account/domain/use_cases/edit_personal_account_use_case.dart';
 import '../../data/data_sources/remote/firestore/firestore_service.dart';
 import '../service _locator.dart';
 

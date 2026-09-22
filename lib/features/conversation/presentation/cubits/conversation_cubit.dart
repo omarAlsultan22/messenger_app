@@ -2,17 +2,16 @@ import 'dart:async';
 import '../../utils/date_converter.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../data/models/conversation_model.dart';
-import '../../domain/useCases/send_message_use_case.dart';
-import '../../domain/useCases/update_typing_use_case.dart';
-import '../../domain/useCases/get_background_use_case.dart';
-import '../../domain/useCases/delete_messages_use_case.dart';
+import '../../domain/use_cases/send_message_use_case.dart';
+import '../../domain/use_cases/update_typing_use_case.dart';
+import '../../domain/use_cases/get_background_use_case.dart';
+import '../../domain/use_cases/delete_messages_use_case.dart';
 import '../../../../core/services/online_status_service.dart';
-import '../../domain/useCases/get_old_messages_use_case.dart';
-import '../../domain/useCases/get_conversations_use_case.dart';
-import '../../domain/useCases/clear_conversations_use_case.dart';
+import '../../domain/use_cases/get_old_messages_use_case.dart';
+import '../../domain/use_cases/get_conversations_use_case.dart';
+import '../../domain/use_cases/clear_conversations_use_case.dart';
 import '../../../../core/presentation/states/app_sub_states.dart';
-import '../../domain/useCases/update_unread_messages_use_case.dart';
-import 'package:test_app/core/data/models/message_result_model.dart';
+import '../../domain/use_cases/update_unread_messages_use_case.dart';
 import '../../../../core/presentation/mixins/error_handler_mixin.dart';
 import 'package:test_app/features/conversation/presentation/states/conversation_state.dart';
 
@@ -72,8 +71,7 @@ class ConversationCubit extends Cubit<ConversationState> with ErrorHandlerMixin<
     catch (e, stackTrace) {
       handleError(e, stackTrace,
           onError: (failure) =>
-              state.copyWith(messageResult: MessageResult.error(error: failure)
-              )
+              state.setErrorState(failure)
       );
     }
   }
@@ -82,13 +80,11 @@ class ConversationCubit extends Cubit<ConversationState> with ErrorHandlerMixin<
     emit(state.copyWith(subState: LoadingState()));
     try {
       await _updateUnreadMessagesUseCase.execute(docId: docId);
-      emit(state.copyWith(
-          subState: SuccessState(), messageResult: MessageResult.success()));
+      emit(state.setSuccessStateWithSuccessMessage());
     } catch (e, stackTrace) {
       handleError(e, stackTrace,
           onError: (failure) =>
-              state.copyWith(messageResult: MessageResult.error(error: failure)
-              )
+              state.setErrorState(failure)
       );
     }
   }
@@ -119,7 +115,7 @@ class ConversationCubit extends Cubit<ConversationState> with ErrorHandlerMixin<
           state.addMessageGroup(group);
         }
       }
-      emit(state.copyWith(subState: SuccessState()));
+      emit(state.setSuccessState());
     });
   }
 
@@ -152,14 +148,11 @@ class ConversationCubit extends Cubit<ConversationState> with ErrorHandlerMixin<
     try {
       state.clearList();
       await _clearConversationsUseCase.execute(docId: docId);
-      emit(state.copyWith(
-          subState: SuccessState(),
-          messageResult: MessageResult.success(message: 'Deleted successfully')));
+      emit(state.setSuccessStateWithSuccessMessage(message: 'Deleted successfully'));
     } catch (e, stackTrace) {
       handleError(e, stackTrace,
           onError: (failure) =>
-              state.copyWith(messageResult: MessageResult.error(error: failure)
-              )
+              state.setErrorState(failure)
       );
     }
   }
@@ -175,12 +168,11 @@ class ConversationCubit extends Cubit<ConversationState> with ErrorHandlerMixin<
         messagesIds: messagesIds,
         conversationList: state.conversationList,
       );
-      emit(state.copyWith(subState: SuccessState()));
+      emit(state.setSuccessState());
     } catch (e, stackTrace) {
       handleError(e, stackTrace,
           onError: (failure) =>
-              state.copyWith(messageResult: MessageResult.error(error: failure)
-              )
+              state.setErrorState(failure)
       );
     }
   }
@@ -196,12 +188,11 @@ class ConversationCubit extends Cubit<ConversationState> with ErrorHandlerMixin<
         conversation: conversation,
         organizeMessages: (messages) => _organizeMessagesByDate(messages),
       );
-      emit(state.copyWith(subState: SuccessState()));
+      emit(state.setSuccessState());
     } catch (e, stackTrace) {
       handleError(e, stackTrace,
           onError: (failure) =>
-              state.copyWith(messageResult: MessageResult.error(error: failure)
-              )
+              state.setErrorState(failure)
       );
     }
   }
@@ -255,17 +246,13 @@ class ConversationCubit extends Cubit<ConversationState> with ErrorHandlerMixin<
               messages: group.messages
           );
         }
-        emit(state.copyWith(subState: SuccessState()));
+        emit(state.setSuccessState());
       }
     }
     catch (e, stackTrace) {
       handleError(e, stackTrace,
           onError: (failure) =>
-              state.copyWith(
-                  messageResult: MessageResult.error(
-                      error: failure
-                  )
-              )
+              state.setErrorState(failure)
       );
     }
   }
@@ -275,8 +262,8 @@ class ConversationCubit extends Cubit<ConversationState> with ErrorHandlerMixin<
     await _onlineSubscription?.cancel();
     await _typingSubscription?.cancel();
     await _lastSeenSubscription?.cancel();
-    await _conversationsSubscription?.cancel();
     await _interactionsSubscription?.cancel();
+    await _conversationsSubscription?.cancel();
     return super.close();
   }
 }

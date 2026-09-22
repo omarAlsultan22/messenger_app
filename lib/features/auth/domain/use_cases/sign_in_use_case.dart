@@ -23,7 +23,6 @@ class SignInUseCase {
           userPassword: userPassword
       );
       final user = userCredential.user;
-      // التحقق من وجود بريد إلكتروني وليس مستخدم مجهول
       if (user != null && user.email != null && !user.isAnonymous) {
         _sessionService.login('NCSa42aEicXZF3JSq1JHzphgQZs2');
       }

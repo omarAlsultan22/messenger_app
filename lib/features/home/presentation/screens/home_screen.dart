@@ -34,14 +34,13 @@ class HomeScreen extends StatelessWidget {
                 const InitialStateWidget(
                     text: _defaultInfoText, icon: _defaultInfoIcon),
                 onLoading: () => const LoadingStateWidget(),
-                onLoaded: (data) {
-                  return HomeLayout(
+                onLoaded: (data) =>
+                  HomeLayout(
                       sessionService: sessionService,
                       cacheHelper: sl<CacheHelper>(),
                       profileImage: data.profileImage,
                       friendList: data.friendList
-                  );
-                },
+                  ),
                 onError: (error) =>
                     error.buildErrorWidget(
                         onRetry: () =>

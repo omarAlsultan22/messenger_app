@@ -1,14 +1,14 @@
 import '../../../features/auth/presentation/cubits/change_email_and_password_cubit.dart';
 import '../../../features/auth/data/repositories_impl/firebase_sign_up_repository.dart';
-import '../../../features/auth/domain/useCases/change_email_and_password_useCase.dart';
+import '../../../features/auth/domain/use_cases/change_email_and_password_use_case.dart';
 import '../../../features/auth/data/repositories_impl/firebase_auth_repository.dart';
 import '../../../features/auth/presentation/cubits/forget_password_cubit.dart';
 import '../../data/data_sources/remote/firestore/firestore_service.dart';
 import '../../../features/auth/presentation/cubits/sign_in_cubit.dart';
 import '../../../features/auth/presentation/cubits/sign_up_cubit.dart';
 import 'package:test_app/core/data/network/connectivity_service.dart';
-import '../../../features/auth/domain/useCases/sign_in_useCase.dart';
-import '../../../features/auth/domain/useCases/sign_up_useCase.dart';
+import '../../../features/auth/domain/use_cases/sign_in_use_case.dart';
+import '../../../features/auth/domain/use_cases/sign_up_use_case.dart';
 import '../../data/data_sources/remote/firebase_auth_service.dart';
 import 'package:test_app/core/services/session_service.dart';
 import '../service _locator.dart';

@@ -109,6 +109,27 @@ class ConversationState extends MainAppSupState {
     );
   }
 
+  // States
+  ConversationState setLoadingState(){
+    return copyWith(subState: LoadingState());
+  }
+
+  ConversationState setSuccessState(){
+    return copyWith(subState: SuccessState());
+  }
+
+  ConversationState setSuccessStateWithSuccessMessage({String? message}){
+    return copyWith(subState: SuccessState(), messageResult: MessageResult.success(message: message));
+  }
+
+  ConversationState setErrorState(AppException failure) {
+    return copyWith(
+        messageResult: MessageResult.error(
+            error: failure
+        )
+    );
+  }
+
   ConversationState copyWith({
     UserStatus? userStatus,
     DataModel? dataModel,

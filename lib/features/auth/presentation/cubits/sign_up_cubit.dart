@@ -1,5 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../domain/useCases/sign_up_useCase.dart';
+import '../../domain/use_cases/sign_up_use_case.dart';
 import '../../../../core/data/models/message_result_model.dart';
 import '../../../../core/data/network/connectivity_service.dart';
 import '../../../../core/presentation/mixins/error_handler_mixin.dart';

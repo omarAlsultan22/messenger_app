@@ -39,38 +39,37 @@ class ConversationScreen extends StatelessWidget {
               return state.when(
                 onInitial: () => const SizedBox(),
                 onLoading: () => const LoadingStateWidget(),
-                onLoaded: (data) {
-                  return ConversationLayout(
-                    userStatus: data.userStatus,
-                    dataModel: data.dataModel,
-                    messageResult: data.messageResult,
-                    lastMessageModel: lastMessageModel,
-                    cacheHelper: sl<CacheHelper>(),
-                    sessionService: sl<SessionService>(),
-                    notificationService: NotificationService(),
-                    onlineStatusService: sl<OnlineStatusService>(),
-                    sendMessage: ({
-                      required String docId,
-                      required String userId,
-                      required ConversationModel conversation
-                    }) =>
-                        cubit.sendMessage(
-                            docId: docId,
-                            userId: userId,
-                            conversation: conversation
-                        ),
-                    updateTyping: (isTyping) => cubit.updateTyping(isTyping),
-                    getOldMessages: cubit.getOldMessages(
-                        docId: lastMessageModel.docId),
-                    deleteMessages: (messagesIds) =>
-                        cubit.deleteMessages(messagesIds: messagesIds,
-                            docId: lastMessageModel.docId),
-                    clearConversationsList: () =>
-                        cubit.clearConversationsList(
-                            docId: lastMessageModel.docId),
+                onLoaded: (data) =>
+                    ConversationLayout(
+                      userStatus: data.userStatus,
+                      dataModel: data.dataModel,
+                      messageResult: data.messageResult,
+                      lastMessageModel: lastMessageModel,
+                      cacheHelper: sl<CacheHelper>(),
+                      sessionService: sl<SessionService>(),
+                      notificationService: NotificationService(),
+                      onlineStatusService: sl<OnlineStatusService>(),
+                      sendMessage: ({
+                        required String docId,
+                        required String userId,
+                        required ConversationModel conversation
+                      }) =>
+                          cubit.sendMessage(
+                              docId: docId,
+                              userId: userId,
+                              conversation: conversation
+                          ),
+                      updateTyping: (isTyping) => cubit.updateTyping(isTyping),
+                      getOldMessages: cubit.getOldMessages(
+                          docId: lastMessageModel.docId),
+                      deleteMessages: (messagesIds) =>
+                          cubit.deleteMessages(messagesIds: messagesIds,
+                              docId: lastMessageModel.docId),
+                      clearConversationsList: () =>
+                          cubit.clearConversationsList(
+                              docId: lastMessageModel.docId),
 
-                  );
-                },
+                    ),
                 onError: (error) =>
                     error.buildErrorWidget(
                         onRetry: () =>
