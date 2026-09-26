@@ -102,15 +102,15 @@ class NotificationService {
   }
 
 
-  void handleNotification(Map<String, dynamic> data) {
+  void handleNotification(Map<String, dynamic> dataMap) {
     try {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (NavigationService.currentState == null) {
           debugPrint('Navigator not ready yet');
           return;
         }
-
-        final docId = data[_dataKey][_docIdKey];
+        final data = dataMap[_dataKey];
+        final docId = data[_docIdKey];
 
         NavigationService.currentState?.push(
           MaterialPageRoute(
