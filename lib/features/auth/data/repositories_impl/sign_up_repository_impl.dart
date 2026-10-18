@@ -7,8 +7,8 @@ class SignUpRepositoryImpl implements SignUpRepository {
   final FirestoreService _service;
 
   SignUpRepositoryImpl({
-    required FirestoreService repository
-  }) : _service = repository;
+    required FirestoreService service
+  }) : _service = service;
 
   @override
   Future<void> createUserInfo({
