@@ -6,7 +6,7 @@ import 'package:test_app/core/config/firebase_options.dart';
 import 'package:test_app/core/services/session_service.dart';
 import 'package:test_app/core/services/notification_service.dart';
 import 'package:test_app/core/services/online_status_service.dart';
-import 'package:test_app/core/data/data_sources/local/cache_helper.dart';
+import 'package:test_app/core/data/data_sources/local/cache_helper_impl.dart';
 import 'package:test_app/core/errors/exceptions/components_exception.dart';
 
 
@@ -18,7 +18,7 @@ class InitializationController {
 
   InitializationController._internal();
 
-  late final CacheHelper _cacheHelper;
+  late final CacheHelperImpl _cacheHelper;
   late final SessionService _sessionService;
   late final NotificationService _notificationService;
   late final OnlineStatusService _onlineStatusService;
@@ -27,7 +27,7 @@ class InitializationController {
   RemoteMessage? _initialMessage;
 
   // Getters للوصول للخدمات إذا لزم الأمر
-  CacheHelper get cacheHelper => _cacheHelper;
+  CacheHelperImpl get cacheHelper => _cacheHelper;
   SessionService get sessionService => _sessionService;
   NotificationService get notificationService => _notificationService;
   OnlineStatusService get onlineStatusService => _onlineStatusService;
@@ -46,7 +46,7 @@ class InitializationController {
     );
 
     // 3. تهيئة CacheHelper
-    _cacheHelper = sl<CacheHelper>();
+    _cacheHelper = sl<CacheHelperImpl>();
     await _cacheHelper.init();
 
     // 4. تهيئة SessionService

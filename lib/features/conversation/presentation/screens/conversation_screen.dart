@@ -1,5 +1,5 @@
 import 'package:test_app/features/conversation/presentation/states/conversation_state.dart';
-import 'package:test_app/core/data/data_sources/local/cache_helper.dart';
+import 'package:test_app/core/data/data_sources/local/cache_helper_impl.dart';
 import '../../../../core/presentation/widgets/states/loading_state.dart';
 import 'package:test_app/core/services/notification_service.dart';
 import '../../../../core/services/online_status_service.dart';
@@ -45,7 +45,7 @@ class ConversationScreen extends StatelessWidget {
                       dataModel: data.dataModel,
                       messageResult: data.messageResult,
                       lastMessageModel: lastMessageModel,
-                      cacheHelper: sl<CacheHelper>(),
+                      cacheHelper: sl<CacheHelperImpl>(),
                       sessionService: sl<SessionService>(),
                       notificationService: NotificationService(),
                       onlineStatusService: sl<OnlineStatusService>(),

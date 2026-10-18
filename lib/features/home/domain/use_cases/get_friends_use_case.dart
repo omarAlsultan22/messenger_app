@@ -32,28 +32,20 @@ class GetFriendsUseCase {
   Future<Map<String, dynamic>> _getAccountMap({
     required DocumentSnapshot userDoc,
   }) async {
-    try {
-      final userAccount = userDoc.data() as Map<String, dynamic>? ?? {};
-      return await UserAccountMapper.enrichUserAccount(
-          userAccount: userAccount);
-    } catch (e) {
-      return {};
-    }
+    final userAccount = userDoc.data() as Map<String, dynamic>? ?? {};
+    return await UserAccountMapper.enrichUserAccount(
+        userAccount: userAccount);
   }
 
   Future<UserModel> _getUserModelData({
     required String docId,
   }) async {
     UserModel userModel;
-    try {
-      final userDoc = await FirebaseFirestore.instance
-          .collection('accounts').doc(docId).get();
-      final data = await _getAccountMap(userDoc: userDoc);
-      UserModel accountData = UserModel.fromJson(data);
-      userModel = accountData;
-    } catch (e) {
-      rethrow;
-    }
+    final userDoc = await FirebaseFirestore.instance
+        .collection('accounts').doc(docId).get();
+    final data = await _getAccountMap(userDoc: userDoc);
+    UserModel accountData = UserModel.fromJson(data);
+    userModel = accountData;
     return
       userModel;
   }

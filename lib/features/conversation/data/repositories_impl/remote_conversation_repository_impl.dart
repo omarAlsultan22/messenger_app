@@ -1,14 +1,14 @@
 import '../models/conversation_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../data_sources/remote/firestore_conversation.dart';
+import '../../domain/data_sources/conversation_data_source.dart';
 import 'package:test_app/features/conversation/domain/repositories/remote_conversations_repository.dart';
 
 
-class FirestoreConversationRepository implements RemoteConversationsRepository {
-  final FirestoreConversationService _service;
+class RemoteConversationRepositoryImpl implements RemoteConversationsRepository {
+  final ConversationDataSource _service;
 
-  FirestoreConversationRepository({
-    required FirestoreConversationService service,
+  RemoteConversationRepositoryImpl({
+    required ConversationDataSource service,
   }) : _service = service;
 
   @override

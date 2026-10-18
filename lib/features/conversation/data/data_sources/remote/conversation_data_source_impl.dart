@@ -1,10 +1,12 @@
 import '../../models/conversation_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../../../domain/data_sources/conversation_data_source.dart';
 
 
-class FirestoreConversationService {
+class ConversationDataSourceImpl implements ConversationDataSource {
   static final _firestore = FirebaseFirestore.instance;
 
+  @override
   Future<void> updateUnreadMessages({required String docId}) async {
     final unreadMessages = await _firestore
         .collection('messages')
@@ -31,6 +33,7 @@ class FirestoreConversationService {
         .orderBy('dateTime', descending: true);
   }
 
+  @override
   Stream<QuerySnapshot> getConversationsStream({
     required String docId,
     DocumentSnapshot? startAfterDocument,
@@ -54,6 +57,7 @@ class FirestoreConversationService {
     return query.snapshots();
   }
 
+  @override
   Future<QuerySnapshot> getOldMessagesQuery({
     required String docId,
     DocumentSnapshot? lastDocument,
@@ -68,6 +72,7 @@ class FirestoreConversationService {
     return await query.limit(limit).get();
   }
 
+  @override
   Future<void> updateTypingStatus({
     required String userId,
     required bool isTyping
@@ -77,10 +82,12 @@ class FirestoreConversationService {
     });
   }
 
+  @override
   Future<void> clearConversations({required String docId}) async {
     await _firestore.collection('messages').doc(docId).delete();
   }
 
+  @override
   Future<void> deleteMessages({
     required String docId,
     required List<String> messagesIds,
@@ -99,6 +106,7 @@ class FirestoreConversationService {
     await writeBatch.commit();
   }
 
+  @override
   Future<void> sendMessage({
     required String docId,
     required ConversationModel conversation,
@@ -112,6 +120,7 @@ class FirestoreConversationService {
     await doc.set(conversation.toJson());
   }
 
+  @override
   DocumentReference getMessageDocumentReference({
     required String docId,
     required String messageId

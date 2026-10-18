@@ -1,12 +1,14 @@
+import 'firestore_operations_impl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:test_app/core/constants/app_durations.dart';
-import 'package:test_app/core/data/data_sources/remote/firestore/firestore_operations.dart';
+import 'package:test_app/core/domain/services/firestore/firestore_service.dart';
 
 
-class FirestoreService extends FirestoreOperations{
+class FirestoreServiceImpl extends FirestoreOperationsImpl implements FirestoreService{
   static final _firestore = FirebaseFirestore.instance;
   static const _duration = AppDurations.seconds;
 
+  @override
   DocumentReference<Map<String, dynamic>> createDoc({
     required String collectionPath
 }) {
@@ -15,6 +17,7 @@ class FirestoreService extends FirestoreOperations{
   }
 
   // إضافة بيانات مع إنشاء معرف تلقائي
+  @override
   Future<String> addData({
     required String collectionPath,
     required Map<String, dynamic> data,
@@ -24,6 +27,7 @@ class FirestoreService extends FirestoreOperations{
   }
 
   // إضافة بيانات بمعرف محدد
+  @override
   Future<void> setData({
     required String collectionPath,
     required String docId,
@@ -32,6 +36,7 @@ class FirestoreService extends FirestoreOperations{
     await _firestore.collection(collectionPath).doc(docId).set(data).timeout(_duration);
   }
 
+  @override
   Query<Map<String, dynamic>> getSubCollection({
     required String collectionPath,
     required String docId,
@@ -43,6 +48,7 @@ class FirestoreService extends FirestoreOperations{
         .collection(subCollectionPath);
   }
 
+  @override
   Future<void> updateDocument({
     required String? docId,
     required String collectionPath,
@@ -51,6 +57,7 @@ class FirestoreService extends FirestoreOperations{
     await _firestore.collection(collectionPath).doc(docId).update(data).timeout(_duration);
   }
 
+  @override
   Future<void> deleteDocument({
     required String collectionPath,
     required String docId,

@@ -10,7 +10,7 @@ import '../../../../../core/services/notification_service.dart';
 import '../../../../../core/services/online_status_service.dart';
 import '../../../../../core/data/models/last_message_model.dart';
 import '../../../../../core/presentation/widgets/build_input_field.dart';
-import 'package:test_app/core/data/data_sources/local/cache_helper.dart';
+import 'package:test_app/core/data/data_sources/local/cache_helper_impl.dart';
 import 'package:test_app/core/presentation/widgets/navigation/navigator.dart';
 import '../../../../conversation/presentation/screens/conversation_screen.dart';
 import '../../../../edit_personal_account/presentation/screens/edit_personal_account_screen.dart';
@@ -18,7 +18,7 @@ import '../../../../edit_personal_account/presentation/screens/edit_personal_acc
 
 class HomeLayout extends StatefulWidget {
   final String profileImage;
-  final CacheHelper cacheHelper;
+  final CacheHelperImpl cacheHelper;
   final SessionService sessionService;
   final List<LastMessageModel> friendList;
   const HomeLayout({

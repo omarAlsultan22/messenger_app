@@ -1,14 +1,14 @@
 import '../models/post_model.dart';
 import '../../../../core/data/models/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:test_app/core/data/data_sources/remote/firestore/firestore_service.dart';
+import '../../../../core/domain/services/firestore/firestore_service.dart';
 import 'package:test_app/features/edit_personal_account/domain/repositories/edit_personal_account_repository.dart';
 
 
-class FirestoreEditPersonalAccountRepository implements EditPersonalAccountRepository {
+class EditPersonalAccountRepositoryImpl implements EditPersonalAccountRepository {
   final FirestoreService _service;
 
-  FirestoreEditPersonalAccountRepository({
+  EditPersonalAccountRepositoryImpl({
     required FirestoreService service}) : _service = service;
 
   @override
@@ -29,7 +29,7 @@ class FirestoreEditPersonalAccountRepository implements EditPersonalAccountRepos
     required String firstName,
     required String lastName,
     required String userState
-}) async {
+  }) async {
     final docRef = _service.createDoc(collectionPath: 'posts');
 
     PostModel postModel = PostModel(
@@ -49,22 +49,17 @@ class FirestoreEditPersonalAccountRepository implements EditPersonalAccountRepos
       userImage: docRef.path,
     );
 
-    try {
-      await Future.wait([
-        _service.addData(collectionPath: 'posts', data: postModel.toJson()),
-        _service.updateDocument(
-            docId: userId,
-            collectionPath: 'accounts',
-            data: userModel.toJson()),
-        _service.updateDocument(
-            docId: userId,
-            collectionPath: 'info',
-            data: {'userState': userState})
-      ]);
-      getAccountData(userId: userId);
-    }
-    catch (e) {
-      rethrow;
-    }
+    await Future.wait([
+      _service.addData(collectionPath: 'posts', data: postModel.toJson()),
+      _service.updateDocument(
+          docId: userId,
+          collectionPath: 'accounts',
+          data: userModel.toJson()),
+      _service.updateDocument(
+          docId: userId,
+          collectionPath: 'info',
+          data: {'userState': userState})
+    ]);
+    getAccountData(userId: userId);
   }
 }

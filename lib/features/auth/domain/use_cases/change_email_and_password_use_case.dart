@@ -26,14 +26,10 @@ class ChangeEmailAndPasswordUseCase {
         email: user.email!,
         password: currentPassword,
       );
-      try {
         await user.reauthenticateWithCredential(credential);
         await user.verifyBeforeUpdateEmail(newEmail).then((_) {
           user.updatePassword(newPassword).then((_) {});
         });
-      } catch (e) {
-        rethrow;
-      }
     }
   }
 }

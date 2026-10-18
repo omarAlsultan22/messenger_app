@@ -1,13 +1,13 @@
 import 'dart:async';
-import '../data_source/firestore_home_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../../domain/data_source/home_data_source.dart';
 import 'package:test_app/features/home/domain/repositories/home_repository.dart';
 
 
-class FirestoreHomeRepository implements HomeRepository{
-  final FirestoreHomeService _service;
+class HomeRepositoryImpl implements HomeRepository{
+  final HomeDataSource _service;
 
-  FirestoreHomeRepository({required FirestoreHomeService service})
+  HomeRepositoryImpl({required HomeDataSource service})
       : _service = service;
 
   @override

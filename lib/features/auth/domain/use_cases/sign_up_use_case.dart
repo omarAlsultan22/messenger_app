@@ -21,27 +21,23 @@ class SignUpUseCase {
     required String userEmail,
     required String userPassword,
   }) async {
-    try {
-      final userCredential = await _authRepository.signUp(
-        userEmail: userEmail,
-        userPassword: userPassword,
+    final userCredential = await _authRepository.signUp(
+      userEmail: userEmail,
+      userPassword: userPassword,
+    );
+
+    final user = userCredential.user;
+    if (user != null && user.email != null && !user.isAnonymous) {
+      UserModel userModel = UserModel(
+          userId: user.uid,
+          firstName: firstName,
+          lastName: lastName,
+          fullName: '$firstName''$lastName'.trim()
       );
 
-      final user = userCredential.user;
-      if (user != null && user.email != null && !user.isAnonymous) {
-        UserModel userModel = UserModel(
-            userId: user.uid,
-            firstName: firstName,
-            lastName: lastName,
-            fullName: '$firstName''$lastName'.trim()
-        );
-
-        await _signUpRepository.createUserInfo(
-            userModel: userModel
-        );
-      }
-    } catch (e) {
-      rethrow;
+      await _signUpRepository.createUserInfo(
+          userModel: userModel
+      );
     }
   }
 }

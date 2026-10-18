@@ -17,17 +17,13 @@ class SignInUseCase {
     required String userEmail,
     required String userPassword,
   }) async {
-    try {
-      final userCredential = await _authRepository.signIn(
-          userEmail: userEmail,
-          userPassword: userPassword
-      );
-      final user = userCredential.user;
-      if (user != null && user.email != null && !user.isAnonymous) {
-        _sessionService.login('NCSa42aEicXZF3JSq1JHzphgQZs2');
-      }
-    } catch (e) {
-      rethrow;
+    final userCredential = await _authRepository.signIn(
+        userEmail: userEmail,
+        userPassword: userPassword
+    );
+    final user = userCredential.user;
+    if (user != null && user.email != null && !user.isAnonymous) {
+      _sessionService.login('NCSa42aEicXZF3JSq1JHzphgQZs2');
     }
   }
 }

@@ -1,5 +1,5 @@
 import '../di/service _locator.dart';
-import '../data/data_sources/local/cache_helper.dart';
+import '../data/data_sources/local/cache_helper_impl.dart';
 
 
 class SessionService {
@@ -10,7 +10,7 @@ class SessionService {
 
   SessionService._internal();
 
-  static final _cacheHelper = sl<CacheHelper>();
+  static final _cacheHelper = sl<CacheHelperImpl>();
 
   String _currentUid = '';
 

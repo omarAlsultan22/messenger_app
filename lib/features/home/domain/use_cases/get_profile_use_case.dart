@@ -1,5 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import '../repositories/home_repository.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 
 class GetProfileUseCase {

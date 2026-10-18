@@ -37,6 +37,7 @@ void main() async {
                           await initializationController.retryInit();
                           runApp(const MyApp());
                         } catch (e) {
+                          if (!context.mounted) return;
                           BuildSnackBar.show(
                               context: context,
                               message: 'Initialization failed',

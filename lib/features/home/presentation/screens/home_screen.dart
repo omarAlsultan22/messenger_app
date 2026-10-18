@@ -1,5 +1,5 @@
 import 'package:test_app/features/home/presentation/widgets/layouts/home_layout.dart';
-import 'package:test_app/core/data/data_sources/local/cache_helper.dart';
+import 'package:test_app/core/data/data_sources/local/cache_helper_impl.dart';
 import '../../../../core/presentation/widgets/states/initial_state.dart';
 import '../../../../core/presentation/widgets/states/loading_state.dart';
 import 'package:test_app/core/services/session_service.dart';
@@ -37,7 +37,7 @@ class HomeScreen extends StatelessWidget {
                 onLoaded: (data) =>
                   HomeLayout(
                       sessionService: sessionService,
-                      cacheHelper: sl<CacheHelper>(),
+                      cacheHelper: sl<CacheHelperImpl>(),
                       profileImage: data.profileImage,
                       friendList: data.friendList
                   ),

@@ -1,12 +1,12 @@
 import 'dart:ui';
+import '../../../../core/domain/services/cache_helper.dart';
 import '../../domain/repositories/local_conversations_repository.dart';
-import 'package:test_app/core/data/data_sources/local/cache_helper.dart';
 
 
-class SharedPrefConversationRepository implements LocalConversationsRepository {
+class LocalConversationRepositoryImpl implements LocalConversationsRepository {
   final CacheHelper _cacheHelper;
 
-  SharedPrefConversationRepository({
+  LocalConversationRepositoryImpl({
     required CacheHelper cacheHelper
   })
       : _cacheHelper = cacheHelper;
@@ -16,7 +16,7 @@ class SharedPrefConversationRepository implements LocalConversationsRepository {
       {required String docId}) async {
     final colorValue = await _cacheHelper.getString(key: 'bg_color_$docId');
     final bgImage = await _cacheHelper.getString(key: 'bg_image_$docId');
-    final bgColor = colorValue != null ? Color(int.parse(colorValue)) : null;
+    final bgColor = Color(int.parse(colorValue));
     return {
       'bgImage': bgImage,
       'bgColor': bgColor,

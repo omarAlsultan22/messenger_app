@@ -27,7 +27,7 @@ import 'package:test_app/core/services/media_upload_service.dart';
 import 'package:test_app/core/data/models/message_result_model.dart';
 import 'package:test_app/features/conversation/utils/show_toast.dart';
 import '../../../../../core/presentation/widgets/build_snack_bar.dart';
-import 'package:test_app/core/data/data_sources/local/cache_helper.dart';
+import 'package:test_app/core/data/data_sources/local/cache_helper_impl.dart';
 import 'package:test_app/core/presentation/widgets/navigation/navigator.dart';
 import '../../../../edit_personal_account/presentation/screens/edit_personal_account_screen.dart';
 import '../../../../publishing_confirmation/presentation/screens/publishing_confirmation_screen.dart';
@@ -46,7 +46,7 @@ class ConversationLayout extends StatefulWidget {
 
   final DataModel dataModel;
   final UserStatus userStatus;
-  final CacheHelper cacheHelper;
+  final CacheHelperImpl cacheHelper;
   final MessageResult messageResult;
   final SessionService sessionService;
   final LastMessageModel lastMessageModel;
