@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../../../../core/data/models/message_result_model.dart';
-import '../../../../core/network/data/connectivity_service.dart';
+import '../../../../core/network/domain/i_connectivity_service.dart';
 import '../../../../core/errors/exceptions/validation_exception.dart';
 import '../../../../core/presentation/mixins/error_handler_mixin.dart';
 import '../../../../core/errors/exceptions/network_app_exception.dart';
@@ -10,11 +10,11 @@ import 'package:test_app/features/auth/presentation/states/auth_states.dart';
 
 class ForgetPasswordCubit extends Cubit<AuthState> with ErrorHandlerMixin<AuthState> {
   final AuthRepository _authRepository;
-  final ConnectivityService _connectivityService;
+  final IConnectivityService _connectivityService;
 
   ForgetPasswordCubit({
     required AuthRepository authRepository,
-    required ConnectivityService connectivityService
+    required IConnectivityService connectivityService
   })
       : _authRepository = authRepository,
         _connectivityService = connectivityService,

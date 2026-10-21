@@ -1,17 +1,17 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:test_app/core/data/data_sources/local/cache_helper_impl.dart';
+import '../../../../../core/domain/data_sources/cache_helper.dart';
 
 
 class ConversationBackgroundManager {
   Color? bgColor;
   String? bgImage;
-  CacheHelperImpl? _cacheHelper;
+  CacheHelper? _cacheHelper;
 
   static const _bgColor = 'bg_color_';
   static const _bgImage = 'bg_image_';
 
-  void initialize(String userId, CacheHelperImpl cacheHelper) {
+  void initialize(String userId, CacheHelper cacheHelper) {
     _cacheHelper = cacheHelper;
     _loadBackgroundSettings(userId);
   }

@@ -21,13 +21,13 @@ import '../controllers/conversation_background_manager.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import '../../../../../core/data/models/last_message_model.dart';
 import 'package:test_app/core/services/data/session_service.dart';
+import '../../../../../core/domain/data_sources/cache_helper.dart';
 import 'package:test_app/core/data/models/message_result_model.dart';
 import 'package:test_app/features/conversation/utils/show_toast.dart';
 import '../../../../../core/presentation/widgets/build_snack_bar.dart';
 import '../../../../../core/services/domain/i_media_upload_service.dart';
 import '../../../../../core/services/domain/i_notification_service.dart';
 import '../../../../../core/services/domain/i_online_status_service.dart';
-import 'package:test_app/core/data/data_sources/local/cache_helper_impl.dart';
 import 'package:test_app/core/presentation/widgets/navigation/navigator.dart';
 import '../../../../edit_personal_account/presentation/screens/edit_personal_account_screen.dart';
 import '../../../../publishing_confirmation/presentation/screens/publishing_confirmation_screen.dart';
@@ -46,7 +46,7 @@ class ConversationLayout extends StatefulWidget {
 
   final DataModel dataModel;
   final UserStatus userStatus;
-  final CacheHelperImpl cacheHelper;
+  final CacheHelper cacheHelper;
   final MessageResult messageResult;
   final SessionService sessionService;
   final LastMessageModel lastMessageModel;

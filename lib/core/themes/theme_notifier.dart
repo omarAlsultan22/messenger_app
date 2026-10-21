@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import '../data/data_sources/local/cache_helper_impl.dart';
+import '../domain/data_sources/cache_helper.dart';
 
 
 class ThemeNotifier extends ChangeNotifier {
-  final CacheHelperImpl _cacheHelper;
+  final CacheHelper _cacheHelper;
   ThemeMode _themeMode = ThemeMode.light;
 
   ThemeMode get themeMode => _themeMode;
 
-  ThemeNotifier({required CacheHelperImpl cacheHelper}) :
+  ThemeNotifier({required CacheHelper cacheHelper}) :
         _cacheHelper = cacheHelper {
     _loadTheme();
   }
