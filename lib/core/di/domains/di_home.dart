@@ -1,3 +1,5 @@
+import 'package:test_app/core/services/data/notification_service.dart';
+
 import '../../../features/home/data/repositories_impl/home_repository_impl.dart';
 import '../../../features/home/data/data_source/home_data_source_impl.dart';
 import '../../../features/home/domain/use_cases/get_friends_use_case.dart';
@@ -10,7 +12,7 @@ class HomeDependencies {
   static void register() {
     // Repository
     sl.registerLazySingleton(() =>
-        HomeRepositoryImpl(service: sl<HomeDataSourceImpl>()));
+        HomeRepositoryImpl(dataSource: sl<HomeDataSourceImpl>()));
 
     // UseCases
     sl.registerLazySingleton(() =>
@@ -19,7 +21,10 @@ class HomeDependencies {
 
     sl.registerLazySingleton(() =>
         GetFriendsUseCase(
-            repository: sl<HomeRepositoryImpl>()));
+            repository: sl<HomeRepositoryImpl>(),
+            notificationService: sl<NotificationService>()
+        )
+    );
 
     // Cubit
     sl.registerFactory(() =>

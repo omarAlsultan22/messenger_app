@@ -1,7 +1,7 @@
 import 'firestore_operations_impl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:test_app/core/constants/app_durations.dart';
-import 'package:test_app/core/domain/services/firestore/firestore_service.dart';
+import '../../../../domain/data_sources/firestore/firestore_service.dart';
 
 
 class FirestoreServiceImpl extends FirestoreOperationsImpl implements FirestoreService{

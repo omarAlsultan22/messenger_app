@@ -18,15 +18,15 @@ import 'package:test_app/core/utils/format_duration.dart';
 import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:test_app/core/constants/app_paddings.dart';
 import '../controllers/conversation_background_manager.dart';
-import 'package:test_app/core/services/session_service.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
-import '../../../../../core/services/notification_service.dart';
-import '../../../../../core/services/online_status_service.dart';
 import '../../../../../core/data/models/last_message_model.dart';
-import 'package:test_app/core/services/media_upload_service.dart';
+import 'package:test_app/core/services/data/session_service.dart';
 import 'package:test_app/core/data/models/message_result_model.dart';
 import 'package:test_app/features/conversation/utils/show_toast.dart';
 import '../../../../../core/presentation/widgets/build_snack_bar.dart';
+import '../../../../../core/services/domain/i_media_upload_service.dart';
+import '../../../../../core/services/domain/i_notification_service.dart';
+import '../../../../../core/services/domain/i_online_status_service.dart';
 import 'package:test_app/core/data/data_sources/local/cache_helper_impl.dart';
 import 'package:test_app/core/presentation/widgets/navigation/navigator.dart';
 import '../../../../edit_personal_account/presentation/screens/edit_personal_account_screen.dart';
@@ -50,8 +50,9 @@ class ConversationLayout extends StatefulWidget {
   final MessageResult messageResult;
   final SessionService sessionService;
   final LastMessageModel lastMessageModel;
-  final NotificationService notificationService;
-  final OnlineStatusService onlineStatusService;
+  final IMediaUploadService mediaUploadService;
+  final INotificationService notificationService;
+  final IOnlineStatusService onlineStatusService;
 
   const ConversationLayout({
     super.key,
@@ -65,6 +66,7 @@ class ConversationLayout extends StatefulWidget {
     required this.getOldMessages,
     required this.deleteMessages,
     required this.lastMessageModel,
+    required this.mediaUploadService,
     required this.onlineStatusService,
     required this.notificationService,
     required this.clearConversationsList
@@ -106,7 +108,7 @@ class _ConversationLayoutState extends State<ConversationLayout> {
     if (widget.messageResult.message != null) {
       _showMessageResult(widget.messageResult);
     }
-    setState((){});
+    setState(() {});
   }
 
   void _showMessageResult(MessageResult? messageResult) {
@@ -293,9 +295,10 @@ class _ConversationLayoutState extends State<ConversationLayout> {
     );
 
     try {
-      final imageFile = await MediaUploadService.pickImage();
+      final imageFile = await widget.mediaUploadService.pickImage();
       if (imageFile != null) {
-        final url = await MediaUploadService.checkAndUploadFile(imageFile);
+        final url = await widget.mediaUploadService.checkAndUploadFile(
+            imageFile);
 
         Navigator.pop(context);
 
@@ -331,9 +334,10 @@ class _ConversationLayoutState extends State<ConversationLayout> {
     );
 
     try {
-      final videoFile = await MediaUploadService.pickImage();
+      final videoFile = await widget.mediaUploadService.pickImage();
       if (videoFile != null) {
-        final url = await MediaUploadService.checkAndUploadFile(videoFile);
+        final url = await widget.mediaUploadService.checkAndUploadFile(
+            videoFile);
         final controller = VideoPlayerController.file(videoFile);
         await controller.initialize();
 
@@ -367,9 +371,10 @@ class _ConversationLayoutState extends State<ConversationLayout> {
 
   Future<void> _takePhoto() async {
     try {
-      final imageFile = await MediaUploadService.pickImage();
+      final imageFile = await widget.mediaUploadService.pickImage();
       if (imageFile == null) return;
-      final url = await MediaUploadService.checkAndUploadFile(imageFile);
+      final url = await widget.mediaUploadService.checkAndUploadFile(
+          imageFile);
 
       await _sendMediaMessage(
           type: MediaType.image,
@@ -534,13 +539,12 @@ class _ConversationLayoutState extends State<ConversationLayout> {
                   await widget.cacheHelper.removeValue(
                       key: '${ConversationTexts.bgColor}${widget
                           .lastMessageModel.userId}');
-                  if (mounted) {
-                    Navigator.pop(context);
-                    setState(() {
-                      _bgColor = color;
-                      _bgImage = null;
-                    });
-                  }
+                  if (!context.mounted) return;
+                  Navigator.pop(context);
+                  setState(() {
+                    _bgColor = color;
+                    _bgImage = null;
+                  });
                 },
               ),
             ),
@@ -606,6 +610,7 @@ class _ConversationLayoutState extends State<ConversationLayout> {
     await _fullScreenVideoController!.initialize();
     _fullScreenVideoController!.play();
 
+    if (!context.mounted) return;
     showDialog(
       context: context,
       builder: (context) {

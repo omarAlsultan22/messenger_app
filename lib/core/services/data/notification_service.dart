@@ -5,18 +5,19 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:test_app/core/services/domain/i_notification_service.dart';
 import 'package:test_app/features/home/presentation/cubits/home_cubit.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import '../../features/conversation/presentation/screens/conversation_screen.dart';
+import 'package:test_app/features/conversation/presentation/screens/conversation_screen.dart';
 
 
-class NotificationService {
+class NotificationService implements INotificationService {
+  // Singleton (نُبقيه للتوافق مع الكود الأصلي).
   static final NotificationService _instance = NotificationService._internal();
-
   factory NotificationService() => _instance;
-
   NotificationService._internal();
 
+  // ---- الحقول الأصلية ----
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
   final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
   FlutterLocalNotificationsPlugin();
@@ -26,6 +27,9 @@ class NotificationService {
   static const _dataKey = 'data';
   static const _docIdKey = 'docId';
 
+  // ==================== العقد العام ====================
+
+  @override
   Future<void> initialize() async {
     await _setupFirebase();
     await _setupLocalNotifications();
@@ -33,6 +37,72 @@ class NotificationService {
     await _setupBackgroundMessageHandler();
   }
 
+  @override
+  Future<void> sendMessage(Map<String, dynamic> data) async {
+    try {
+      final senderName = data['userName'];
+      final title = senderName;
+      final body = data['text'] ?? 'You have a new message';
+
+      await _showLocalNotification(
+        title: title,
+        body: body,
+        payload: {_dataKey: data},
+      );
+    } catch (e) {
+      debugPrint('Error sending interaction notification: $e');
+    }
+  }
+
+  @override
+  Future<void> subscribeToTopic(String topic) async {
+    await _firebaseMessaging.subscribeToTopic(topic);
+  }
+
+  @override
+  Future<void> unsubscribeFromTopic(String topic) async {
+    await _firebaseMessaging.unsubscribeFromTopic(topic);
+  }
+
+  @override
+  void handleNotification(Map<String, dynamic> dataMap) {
+    try {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (NavigationService.currentState == null) {
+          debugPrint('Navigator not ready yet');
+          return;
+        }
+        final data = dataMap[_dataKey];
+        final docId = data[_docIdKey];
+
+        NavigationService.currentState?.push(
+          MaterialPageRoute(
+            builder: (context) {
+              final friendsList = HomeCubit.get(context).friendsList;
+              final matchingItem =
+              friendsList!.where((item) => item.docId == docId);
+              return ConversationScreen(
+                lastMessageModel: matchingItem.first,
+              );
+            },
+          ),
+        );
+      });
+    } catch (e) {
+      NavigationService.currentState?.push(
+        MaterialPageRoute(
+          builder: (context) => const Scaffold(
+            body: Center(
+              child: Text('An error occurred opening the conversation'),
+            ),
+          ),
+        ),
+      );
+      debugPrint('Error handling notification payload: $e');
+    }
+  }
+
+  // ==================== تفاصيل التنفيذ (خاصة) ====================
 
   Future<void> _setupFirebase() async {
     await _firebaseMessaging.requestPermission(
@@ -52,7 +122,6 @@ class NotificationService {
       debugPrint('New FCM Token: $newToken');
     });
   }
-
 
   Future<void> _setupLocalNotifications() async {
     try {
@@ -101,59 +170,18 @@ class NotificationService {
     }
   }
 
-
-  void handleNotification(Map<String, dynamic> dataMap) {
-    try {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (NavigationService.currentState == null) {
-          debugPrint('Navigator not ready yet');
-          return;
-        }
-        final data = dataMap[_dataKey];
-        final docId = data[_docIdKey];
-
-        NavigationService.currentState?.push(
-          MaterialPageRoute(
-              builder: (context) {
-                final friendsList = HomeCubit
-                    .get(context)
-                    .friendsList;
-                final matchingItem = friendsList!.where((item) =>
-                item.docId == docId);
-                return ConversationScreen(
-                  lastMessageModel: matchingItem.first,
-                );
-              }
-          ),
-        );
-      });
-    }
-    catch (e) {
-      NavigationService.currentState?.push(
-        MaterialPageRoute(
-          builder: (context) =>
-          const Scaffold(
-            body: Center(
-                child: Text('An error occurred opening the conversation')),
-          ),
-        ),
-      );
-      debugPrint('Error handling notification payload: $e');
-    }
-  }
-
-
   void _setupInteractedMessage() {
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      debugPrint('Got a message whilst in the foreground!');
-      debugPrint('Message data: ${message.data}');
+    _messagesSubscription =
+        FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+          debugPrint('Got a message whilst in the foreground!');
+          debugPrint('Message data: ${message.data}');
 
-      if (message.notification != null) {
-        debugPrint(
-            'Message also contained a notification: ${message.notification}');
-        _showNotification(message);
-      }
-    });
+          if (message.notification != null) {
+            debugPrint(
+                'Message also contained a notification: ${message.notification}');
+            _showNotification(message);
+          }
+        });
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       debugPrint('Message opened from background: ${message.data}');
@@ -162,11 +190,9 @@ class NotificationService {
     });
   }
 
-
   Future<void> _setupBackgroundMessageHandler() async {
-    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+    FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
   }
-
 
   Future<void> _showNotification(RemoteMessage message) async {
     try {
@@ -204,39 +230,6 @@ class NotificationService {
     }
   }
 
-
-  Future<void> sendMessage(Map<String, dynamic> data) async {
-    try {
-      final senderName = data['userName'];
-      final title = senderName;
-      final body = data['text'] ?? 'You have a new message';
-
-      await _showLocalNotification(
-        title: title,
-        body: body,
-        payload: {
-          _dataKey: data
-        },
-
-      );
-    } catch (e) {
-      debugPrint('Error sending interaction notification: $e');
-    }
-  }
-
-  Future<void> subscribeToTopic(String topic) async {
-    await _firebaseMessaging.subscribeToTopic(topic);
-  }
-
-
-  Future<void> unsubscribeFromTopic(String topic) async {
-    await _firebaseMessaging.unsubscribeFromTopic(topic);
-  }
-
-  Future<void> dispose() async {
-    await _messagesSubscription?.cancel();
-  }
-
   Future<void> _showLocalNotification({
     required String title,
     required String body,
@@ -268,9 +261,7 @@ class NotificationService {
       );
 
       await _flutterLocalNotificationsPlugin.show(
-        id: DateTime
-            .now()
-            .millisecondsSinceEpoch ~/ 1000,
+        id: DateTime.now().millisecondsSinceEpoch ~/ 1000,
         title: title,
         body: body,
         notificationDetails: notificationDetails,
@@ -309,22 +300,12 @@ class NotificationService {
     return processed;
   }
 
-
-  Future<void> _firebaseMessagingBackgroundHandler(
-      RemoteMessage message) async {
-    debugPrint("Handling a background message: ${message.messageId}");
-    await _handleBackgroundNotification(message);
-  }
-
-
-  Future<void> _handleBackgroundNotification(
-      RemoteMessage message) async {
-    await setupBackgroundIsolate();
+  Future<void> handleBackgroundNotification(RemoteMessage message) async {
+    await _setupBackgroundIsolate();
     handleNotification(message.data);
   }
 
-
-  static Future<void> setupBackgroundIsolate() async {
+  Future<void> _setupBackgroundIsolate() async {
     WidgetsFlutterBinding.ensureInitialized();
     await Firebase.initializeApp();
 
@@ -344,7 +325,13 @@ class NotificationService {
       iOS: initializationSettingsIOS,
     );
 
-    await FlutterLocalNotificationsPlugin().initialize(
-        settings: initializationSettings);
+    await FlutterLocalNotificationsPlugin()
+        .initialize(settings: initializationSettings);
   }
+}
+
+@pragma('vm:entry-point')
+Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  debugPrint("Handling a background message: ${message.messageId}");
+  await NotificationService().handleBackgroundNotification(message);
 }

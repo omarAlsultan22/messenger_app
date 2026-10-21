@@ -3,16 +3,21 @@ import 'package:rxdart/rxdart.dart';
 import '../repositories/home_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../../core/data/models/user_model.dart';
-import '../../../../core/services/notification_service.dart';
 import '../../../../core/data/models/last_message_model.dart';
 import 'package:test_app/core/utils/mappers/user_account_mapper.dart';
+import '../../../../core/services/domain/i_notification_service.dart';
 
 
 class GetFriendsUseCase {
   final HomeRepository _repository;
+  final INotificationService _notificationService;
 
-  GetFriendsUseCase({required HomeRepository repository})
-      : _repository = repository;
+  GetFriendsUseCase({
+    required HomeRepository repository,
+    required INotificationService notificationService
+  })
+      : _repository = repository,
+        _notificationService = notificationService;
 
   Stream<List<LastMessageModel>> execute({required String userId}) {
     return _repository.getFriendsListStream(docId: userId).switchMap((
@@ -83,7 +88,7 @@ class GetFriendsUseCase {
 
           if (unreadMessagesNumber != 0 && userId != senderId) {
             for (int num = 0; num < unreadMessagesNumber; num++) {
-              NotificationService().sendMessage(messageWithDetails);
+              await _notificationService.sendMessage(messageWithDetails);
             }
           }
         }

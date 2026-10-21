@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:async';
+import '../../di/service _locator.dart';
 import 'package:firebase_ai/firebase_ai.dart';
 import '../exceptions/base/app_exception.dart';
 import '../exceptions/client_app_exception.dart';
@@ -8,7 +9,7 @@ import '../exceptions/components_exception.dart';
 import '../exceptions/network_app_exception.dart';
 import '../exceptions/firebase_app_exception.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../../data/network/connectivity_service.dart';
+import '../../network/data/connectivity_service.dart';
 import '../exceptions/shared_prefs_app_exceptions.dart';
 import 'package:test_app/core/errors/exceptions/firebase_ai_app_exception.dart';
 
@@ -18,7 +19,7 @@ class ExceptionMapper {
 
   ExceptionMapper({required this.error});
 
-  static final _connectivityService = ConnectivityService();
+  static final _connectivityService = sl<ConnectivityService>();
   static const String _msgServerError = 'Cannot reach the server';
 
   static final Map<String, AppException> _networkPatterns = {

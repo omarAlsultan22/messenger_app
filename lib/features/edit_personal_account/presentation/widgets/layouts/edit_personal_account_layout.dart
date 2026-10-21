@@ -6,10 +6,10 @@ import '../../../../../core/utils/validate_input.dart';
 import 'package:test_app/core/constants/app_sizes.dart';
 import 'package:test_app/core/constants/app_borders.dart';
 import 'package:test_app/core/constants/app_paddings.dart';
-import '../../../../../core/services/session_service.dart';
+import '../../../../../core/services/data/session_service.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:test_app/core/services/media_upload_service.dart';
 import '../../../../../core/data/models/message_result_model.dart';
+import 'package:test_app/core/services/domain/i_media_upload_service.dart';
 import 'package:test_app/core/presentation/widgets/build_input_field.dart';
 import 'package:test_app/features/auth/presentation/mixins/auth_mixin.dart';
 import 'package:test_app/core/presentation/widgets/navigation/navigator.dart';
@@ -30,13 +30,15 @@ class EditPersonalAccountLayout extends StatefulWidget {
   final AccountModel accountModel;
   final MessageResult messageResult;
   final SessionService sessionService;
+  final IMediaUploadService mediaUploadService;
   const EditPersonalAccountLayout({
     super.key,
     required this.userId,
     required this.onUpdate,
     required this.accountModel,
     required this.messageResult,
-    required this.sessionService
+    required this.sessionService,
+    required this.mediaUploadService
   });
 
   @override
@@ -296,9 +298,9 @@ class _EditPersonalAccountLayoutState extends State<EditPersonalAccountLayout> w
   }
 
   Future<void> _pickImage() async {
-    final imageFile = await MediaUploadService.pickImage();
+    final imageFile = await widget.mediaUploadService.pickImage();
     if (imageFile != null) {
-      _mediaUrl = await MediaUploadService.checkAndUploadFile(imageFile) ?? '';
+      _mediaUrl = await widget.mediaUploadService.checkAndUploadFile(imageFile) ?? '';
     }
   }
 

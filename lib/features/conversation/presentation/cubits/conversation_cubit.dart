@@ -6,13 +6,13 @@ import '../../domain/use_cases/send_message_use_case.dart';
 import '../../domain/use_cases/update_typing_use_case.dart';
 import '../../domain/use_cases/get_background_use_case.dart';
 import '../../domain/use_cases/delete_messages_use_case.dart';
-import '../../../../core/services/online_status_service.dart';
 import '../../domain/use_cases/get_old_messages_use_case.dart';
 import '../../domain/use_cases/get_conversations_use_case.dart';
 import '../../domain/use_cases/clear_conversations_use_case.dart';
 import '../../../../core/presentation/states/app_sub_states.dart';
 import '../../domain/use_cases/update_unread_messages_use_case.dart';
 import '../../../../core/presentation/mixins/error_handler_mixin.dart';
+import '../../../../core/services/domain/i_online_status_service.dart';
 import 'package:test_app/features/conversation/presentation/states/conversation_state.dart';
 
 
@@ -25,7 +25,7 @@ class ConversationCubit extends Cubit<ConversationState> with ErrorHandlerMixin<
   final DeleteMessagesUseCase _deleteMessagesUseCase;
   final SendMessageUseCase _sendMessageUseCase;
   final UpdateTypingUseCase _updateTypingUseCase;
-  final OnlineStatusService _onlineStatusService;
+  final IOnlineStatusService _onlineStatusService;
 
   ConversationCubit({
     required GetBackgroundUseCase getBackgroundUseCase,
@@ -36,7 +36,7 @@ class ConversationCubit extends Cubit<ConversationState> with ErrorHandlerMixin<
     required DeleteMessagesUseCase deleteMessagesUseCase,
     required SendMessageUseCase sendMessageUseCase,
     required UpdateTypingUseCase updateTypingUseCase,
-    required OnlineStatusService onlineStatusService,
+    required IOnlineStatusService onlineStatusService,
   })
       : _getBackgroundUseCase = getBackgroundUseCase,
         _updateUnreadMessagesUseCase = updateUnreadMessagesUseCase,

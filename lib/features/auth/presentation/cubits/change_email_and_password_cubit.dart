@@ -1,7 +1,7 @@
 import '../states/auth_states.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/data/models/message_result_model.dart';
-import '../../../../core/data/network/connectivity_service.dart';
+import '../../../../core/network/data/connectivity_service.dart';
 import '../../domain/use_cases/change_email_and_password_use_case.dart';
 import '../../../../core/presentation/mixins/error_handler_mixin.dart';
 import 'package:test_app/core/errors/exceptions/network_app_exception.dart';

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../constants/app_spaces.dart';
-import '../../data/network/connectivity_service.dart';
+import '../../network/data/connectivity_service.dart';
 
 
 class InternetUnavailability extends StatelessWidget {

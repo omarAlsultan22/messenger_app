@@ -9,7 +9,7 @@ import 'package:test_app/core/constants/app_spaces.dart';
 import 'package:test_app/core/constants/app_borders.dart';
 import 'package:test_app/core/utils/format_duration.dart';
 import 'package:test_app/core/constants/app_paddings.dart';
-import 'package:test_app/core/services/session_service.dart';
+import 'package:test_app/core/services/data/session_service.dart';
 import '../../../../../core/data/models/last_message_model.dart';
 import 'package:test_app/features/conversation/utils/format_time.dart';
 import 'package:test_app/features/conversation/constants/conversation_borders.dart';

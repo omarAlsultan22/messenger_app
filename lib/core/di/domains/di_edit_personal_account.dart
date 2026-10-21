@@ -10,7 +10,7 @@ class EditPersonalAccountDependencies {
     // Repository
     sl.registerLazySingleton(() =>
         EditPersonalAccountRepositoryImpl(
-            service: sl<FirestoreServiceImpl>()));
+            dataSource: sl<FirestoreServiceImpl>()));
 
     // UseCase
     sl.registerLazySingleton(() =>

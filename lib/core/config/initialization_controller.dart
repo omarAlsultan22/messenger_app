@@ -1,13 +1,16 @@
 import '../di/service _locator.dart';
+import '../domain/data_sources/cache_helper.dart';
 import 'package:firebase_core/firebase_core.dart';
+import '../services/data/notification_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../services/domain/i_notification_service.dart';
+import '../services/domain/i_online_status_service.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:test_app/core/config/firebase_options.dart';
-import 'package:test_app/core/services/session_service.dart';
-import 'package:test_app/core/services/notification_service.dart';
-import 'package:test_app/core/services/online_status_service.dart';
-import 'package:test_app/core/data/data_sources/local/cache_helper_impl.dart';
+import 'package:test_app/core/services/data/session_service.dart';
+import 'package:test_app/core/services/data/online_status_service.dart';
 import 'package:test_app/core/errors/exceptions/components_exception.dart';
+import 'package:test_app/core/data/data_sources/local/cache_helper_impl.dart';
 
 
 class InitializationController {
@@ -18,20 +21,13 @@ class InitializationController {
 
   InitializationController._internal();
 
-  late final CacheHelperImpl _cacheHelper;
+  late final CacheHelper _cacheHelper;
   late final SessionService _sessionService;
-  late final NotificationService _notificationService;
-  late final OnlineStatusService _onlineStatusService;
+  late final INotificationService _notificationService;
+  late final IOnlineStatusService _onlineStatusService;
 
   bool _isInitialized = false;
   RemoteMessage? _initialMessage;
-
-  // Getters للوصول للخدمات إذا لزم الأمر
-  CacheHelperImpl get cacheHelper => _cacheHelper;
-  SessionService get sessionService => _sessionService;
-  NotificationService get notificationService => _notificationService;
-  OnlineStatusService get onlineStatusService => _onlineStatusService;
-  RemoteMessage? get initialMessage => _initialMessage;
 
   Future<void> _initializeServices() async {
     // 1. تهيئة Firebase
@@ -53,26 +49,23 @@ class InitializationController {
     _sessionService = sl<SessionService>();
     await _sessionService.loadFromStorage();
 
-    // 5. تهيئة NotificationService (للخلفية)
-    await NotificationService.setupBackgroundIsolate();
+    // 5. تهيئة NotificationService (للأمامية)
+    _notificationService = sl<NotificationService>();
+    await _notificationService.initialize();
 
     // 6. تهيئة OnlineStatusService
     _onlineStatusService = sl<OnlineStatusService>();
     await _onlineStatusService.initialize();
 
-    // 7. تهيئة NotificationService (للأمامية)
-    _notificationService = NotificationService();
-    await _notificationService.initialize();
-
-    // 8. الحصول على الرسالة الأولية
+    // 7. الحصول على الرسالة الأولية
     _initialMessage = await FirebaseMessaging.instance.getInitialMessage();
 
-    // 9. التعامل مع الرسالة الأولية إذا وجدت
+    // 8. التعامل مع الرسالة الأولية إذا وجدت
     if (_initialMessage != null) {
       _notificationService.handleNotification(_initialMessage!.data);
     }
 
-    // 10. إعدادات Firebase Messaging
+    // 9. إعدادات Firebase Messaging
     await FirebaseMessaging.instance.setAutoInitEnabled(true);
     await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
       alert: true,
@@ -80,7 +73,7 @@ class InitializationController {
       sound: true,
     );
 
-    // 11. الاستماع لتحديث التوكن
+    // 10. الاستماع لتحديث التوكن
     FirebaseMessaging.instance.onTokenRefresh.listen((newToken) {
       print('Refreshed FCM token: $newToken');
     });

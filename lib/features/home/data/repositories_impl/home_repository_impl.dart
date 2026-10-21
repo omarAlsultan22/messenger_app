@@ -5,21 +5,21 @@ import 'package:test_app/features/home/domain/repositories/home_repository.dart'
 
 
 class HomeRepositoryImpl implements HomeRepository{
-  final HomeDataSource _service;
+  final HomeDataSource _dataSource;
 
-  HomeRepositoryImpl({required HomeDataSource service})
-      : _service = service;
+  HomeRepositoryImpl({required HomeDataSource dataSource})
+      : _dataSource = dataSource;
 
   @override
   Future<DocumentSnapshot> getAccountData({required String docId}) async {
-    final getData = await _service.getDocument(
+    final getData = await _dataSource.getDocument(
         collectionPath: 'accounts', docId: docId);
     return getData;
   }
 
   @override
   Stream<QuerySnapshot> getFriendsListStream({required String docId}) {
-    return _service.getFriendsListStream(
+    return _dataSource.getFriendsListStream(
       supCollection: 'users',
       subCollection: 'friends',
       docId: docId,
@@ -28,7 +28,7 @@ class HomeRepositoryImpl implements HomeRepository{
 
   @override
   Stream<QuerySnapshot> getLastMessageStream({required String friendId}) {
-    return _service.getLastMessageStream(
+    return _dataSource.getLastMessageStream(
         collectionPath: 'messages',
         whereField: 'participants',
         orderField: 'lastMessageDateTime',
@@ -38,7 +38,7 @@ class HomeRepositoryImpl implements HomeRepository{
 
   @override
   Stream<QuerySnapshot> getUnreadMessagesStream({required String docId}) {
-    return _service.getUnreadMessagesStream(
+    return _dataSource.getUnreadMessagesStream(
         supCollection: 'messages',
         subCollection: 'conversations',
         whereField: 'unreadMessage',

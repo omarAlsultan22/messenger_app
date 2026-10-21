@@ -1,6 +1,6 @@
 import '../../../constants/app_durations.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:test_app/core/domain/services/auth_service.dart';
+import '../../../domain/data_sources/auth_service.dart';
 
 
 class AuthServiceImpl implements AuthService{

@@ -5,11 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../../core/themes/theme_notifier.dart';
 import '../../../../../core/constants/app_paddings.dart';
-import 'package:test_app/core/services/session_service.dart';
-import '../../../../../core/services/notification_service.dart';
-import '../../../../../core/services/online_status_service.dart';
 import '../../../../../core/data/models/last_message_model.dart';
+import 'package:test_app/core/services/data/session_service.dart';
 import '../../../../../core/presentation/widgets/build_input_field.dart';
+import '../../../../../core/services/domain/i_notification_service.dart';
+import '../../../../../core/services/domain/i_online_status_service.dart';
 import 'package:test_app/core/data/data_sources/local/cache_helper_impl.dart';
 import 'package:test_app/core/presentation/widgets/navigation/navigator.dart';
 import '../../../../conversation/presentation/screens/conversation_screen.dart';
@@ -21,12 +21,16 @@ class HomeLayout extends StatefulWidget {
   final CacheHelperImpl cacheHelper;
   final SessionService sessionService;
   final List<LastMessageModel> friendList;
+  final IOnlineStatusService onlineStatusService;
+  final INotificationService notificationService;
   const HomeLayout({
-    super.key,
+    required this.notificationService,
+    required this.onlineStatusService,
     required this.sessionService,
     required this.profileImage,
     required this.cacheHelper,
-    required this.friendList
+    required this.friendList,
+    super.key
   });
 
   @override
@@ -35,8 +39,6 @@ class HomeLayout extends StatefulWidget {
 
 class _HomeLayoutState extends State<HomeLayout> {
 
-  final _onlineStatusService = OnlineStatusService();
-  final _notificationService = NotificationService();
   final TextEditingController _searchController = TextEditingController();
 
   List<LastMessageModel> _filteredData = [];
@@ -60,9 +62,9 @@ class _HomeLayoutState extends State<HomeLayout> {
   }
 
   Future<void> _initializeServices() async {
-    await _onlineStatusService.initialize();
-    await _notificationService.initialize();
-    await _notificationService.subscribeToTopic('all_users');
+    await widget.onlineStatusService.initialize();
+    await widget.notificationService.initialize();
+    await widget.notificationService.subscribeToTopic('all_users');
   }
 
   void _setupSearchListener() {

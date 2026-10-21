@@ -1,11 +1,12 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import '../domain/i_online_status_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 
-class OnlineStatusService {
+class OnlineStatusService implements IOnlineStatusService{
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   late StreamSubscription<User?> _authSubscription;
@@ -14,28 +15,30 @@ class OnlineStatusService {
   static const _lastSeen = 'lastSeen';
   static const _accounts = 'accounts';
 
+  @override
   Future<void> initialize() async {
     await Firebase.initializeApp();
 
     // تتبع حالة تسجيل الدخول/الخروج
     _authSubscription = _auth.authStateChanges().listen((user) async {
       if (user != null) {
-        await _setOnline();
+        await setOnline();
       } else {
-        await _setOffline();
+        await setOffline();
       }
     });
 
     // تحديث الحالة عند فتح/إغلاق التطبيق
     WidgetsBinding.instance.addObserver(
       LifecycleEventHandler(
-        resumeCallBack: () async => await _setOnline(),
-        detachCallBack: () async => await _setOffline(),
+        resumeCallBack: () async => await setOnline(),
+        detachCallBack: () async => await setOffline(),
       ),
     );
   }
 
-  Future<void> _setOnline() async {
+  @override
+  Future<void> setOnline() async {
     if (_auth.currentUser == null) return;
 
     await _firestore.collection(_accounts).doc(_auth.currentUser!.uid).update({
@@ -44,7 +47,8 @@ class OnlineStatusService {
     });
   }
 
-  Future<void> _setOffline() async {
+  @override
+  Future<void> setOffline() async {
     if (_auth.currentUser == null) return;
 
     await _firestore.collection(_accounts).doc(_auth.currentUser!.uid).update({
@@ -54,24 +58,28 @@ class OnlineStatusService {
   }
 
 
+  @override
   Stream<bool> getUserTypingStatus(String userId) {
     return _firestore.collection(_accounts).doc(userId)
         .snapshots()
         .map((snapshot) => snapshot.data()?['isTyping'] ?? false);
   }
 
+  @override
   Stream<bool> getUserOnlineStatus(String userId) {
     return _firestore.collection(_accounts).doc(userId)
         .snapshots()
         .map((snapshot) => snapshot.data()?[_isOnline] ?? false);
   }
 
+  @override
   Stream<DateTime> getUserLastSeen(String userId) {
     return _firestore.collection(_accounts).doc(userId)
         .snapshots()
         .map((snapshot) => (snapshot.data()?[_lastSeen] as Timestamp).toDate());
   }
 
+  @override
   void dispose() {
     _authSubscription.cancel();
   }

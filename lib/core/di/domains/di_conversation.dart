@@ -1,7 +1,7 @@
-import '../../../features/conversation/data/repositories_impl/local_conversation_repository_impl.dart';
 import '../../../features/conversation/data/repositories_impl/remote_conversation_repository_impl.dart';
-import '../../../features/conversation/domain/use_cases/update_unread_messages_use_case.dart';
+import '../../../features/conversation/data/repositories_impl/local_conversation_repository_impl.dart';
 import '../../../features/conversation/data/data_sources/remote/conversation_data_source_impl.dart';
+import '../../../features/conversation/domain/use_cases/update_unread_messages_use_case.dart';
 import '../../../features/conversation/domain/use_cases/clear_conversations_use_case.dart';
 import '../../../features/conversation/domain/use_cases/get_conversations_use_case.dart';
 import '../../../features/conversation/domain/use_cases/get_old_messages_use_case.dart';
@@ -11,7 +11,7 @@ import '../../../features/conversation/domain/use_cases/update_typing_use_case.d
 import '../../../features/conversation/presentation/cubits/conversation_cubit.dart';
 import '../../../features/conversation/domain/use_cases/send_message_use_case.dart';
 import 'package:test_app/core/data/data_sources/local/cache_helper_impl.dart';
-import '../../services/online_status_service.dart';
+import '../../services/data/online_status_service.dart';
 import '../service _locator.dart';
 
 
@@ -23,7 +23,7 @@ class ConversationDependencies {
             cacheHelper: sl<CacheHelperImpl>()));
     sl.registerLazySingleton(() =>
         RemoteConversationRepositoryImpl(
-            service: sl<ConversationDataSourceImpl>()));
+            dataSource: sl<ConversationDataSourceImpl>()));
 
     // UseCases
     sl.registerLazySingleton(() =>

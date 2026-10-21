@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../../../../core/domain/services/firestore/firestore_operations.dart';
+import '../../../../core/domain/data_sources/firestore/firestore_operations.dart';
 
 
 abstract class HomeDataSource implements FirestoreOperations{

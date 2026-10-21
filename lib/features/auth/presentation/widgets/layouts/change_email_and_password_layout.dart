@@ -6,7 +6,7 @@ import '../../../../../core/constants/app_spaces.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/app_paddings.dart';
 import 'package:test_app/core/utils/validate_input.dart';
-import 'package:test_app/core/services/session_service.dart';
+import 'package:test_app/core/services/data/session_service.dart';
 import '../../../../../core/data/models/message_result_model.dart';
 import '../../../../../core/presentation/widgets/build_input_field.dart';
 import '../../../../../core/presentation/widgets/icon_button_widget.dart';

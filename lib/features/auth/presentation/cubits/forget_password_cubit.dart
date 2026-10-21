@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../../../../core/data/models/message_result_model.dart';
-import '../../../../core/data/network/connectivity_service.dart';
+import '../../../../core/network/data/connectivity_service.dart';
 import '../../../../core/errors/exceptions/validation_exception.dart';
 import '../../../../core/presentation/mixins/error_handler_mixin.dart';
 import '../../../../core/errors/exceptions/network_app_exception.dart';

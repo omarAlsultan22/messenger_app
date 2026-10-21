@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/di/service _locator.dart';
 import '../cubits/edit_personal_account_cubit.dart';
-import 'package:test_app/core/services/session_service.dart';
 import '../widgets/layouts/edit_personal_account_layout.dart';
+import '../../../../core/services/data/media_upload_service.dart';
+import 'package:test_app/core/services/data/session_service.dart';
 import '../../../../core/presentation/widgets/states/initial_state.dart';
 import '../../../../core/presentation/widgets/states/loading_state.dart';
 import 'package:test_app/features/edit_personal_account/presentation/states/edit_personal_account_state.dart';
@@ -53,7 +54,8 @@ class EditPersonalAccountScreen extends StatelessWidget {
                       userId: docId,
                       accountModel: data.accountModel,
                       messageResult: data.messageResult,
-                      sessionService: sl<SessionService>()
+                      sessionService: sl<SessionService>(),
+                      mediaUploadService: sl<MediaUploadService>(),
                   ),
                 onError: (error) =>
                     error.buildErrorWidget(
