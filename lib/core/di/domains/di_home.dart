@@ -30,6 +30,8 @@ class HomeDependencies {
     sl.registerFactory(() =>
         HomeCubit(
             getProfileUseCase: sl<GetProfileUseCase>(),
-            getFriendsUseCase: sl<GetFriendsUseCase>()));
+            getFriendsUseCase: sl<GetFriendsUseCase>()
+        )
+    );
   }
 }
