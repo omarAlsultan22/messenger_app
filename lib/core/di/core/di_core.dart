@@ -1,8 +1,7 @@
-import 'package:test_app/core/services/data/media_upload_service.dart';
-
 import '../../../features/conversation/data/data_sources/remote/conversation_data_source_impl.dart';
 import '../../data/data_sources/remote/firestore/firestore_service_impl.dart';
 import '../../../features/home/data/data_source/home_data_source_impl.dart';
+import 'package:test_app/core/services/data/media_upload_service.dart';
 import 'package:test_app/core/services/data/notification_service.dart';
 import '../../data/data_sources/remote/auth_service_impl.dart';
 import '../../data/data_sources/local/cache_helper_impl.dart';
