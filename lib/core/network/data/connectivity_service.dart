@@ -1,9 +1,9 @@
 import 'dart:io';
-import '../domain/i_connectivity_service.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:test_app/core/network/domain/i_connectivity_service.dart';
 
 
-class ConnectivityService implements IConnectivityService{
+class ConnectivityService implements IConnectivityService {
 
   @override
   Future<bool> checkInternetConnection() async {
@@ -18,7 +18,7 @@ class ConnectivityService implements IConnectivityService{
         return true;
       }
       return false;
-    } on SocketException catch (_) {
+    } catch(_) {
       return false;
     }
   }
