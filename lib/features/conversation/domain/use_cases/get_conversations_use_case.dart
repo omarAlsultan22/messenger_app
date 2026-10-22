@@ -3,14 +3,14 @@ import '../../utils/date_converter.dart';
 import '../../data/models/message_group.dart';
 import '../../data/models/conversation_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../repositories/remote_conversations_repository.dart';
+import '../repositories/remote_conversation_repository.dart';
 import 'package:test_app/features/conversation/data/models/data_model.dart';
 
 
 class GetConversationsUseCase {
-  final RemoteConversationsRepository _repository;
+  final RemoteConversationRepository _repository;
 
-  GetConversationsUseCase({required RemoteConversationsRepository repository})
+  GetConversationsUseCase({required RemoteConversationRepository repository})
       : _repository = repository;
 
   Stream<DataModel> execute({

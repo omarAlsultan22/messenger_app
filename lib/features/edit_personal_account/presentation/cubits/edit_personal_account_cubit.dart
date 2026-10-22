@@ -3,17 +3,17 @@ import '../states/edit_personal_account_state.dart';
 import '../../../../core/data/models/message_result_model.dart';
 import '../../../../core/presentation/mixins/error_handler_mixin.dart';
 import 'package:test_app/core/presentation/states/app_sub_states.dart';
+import '../../domain/repositories/edit_personal_account_repository.dart';
 import 'package:test_app/features/edit_personal_account/domain/use_cases/edit_personal_account_use_case.dart';
-import 'package:test_app/features/edit_personal_account/data/repositories_impl/edit_personal_account_repository_impl.dart';
 
 
 class EditPersonalAccountCubit extends Cubit<EditPersonalAccountState> with ErrorHandlerMixin<EditPersonalAccountState> {
   final EditPersonalAccountUseCase _useCase;
-  final EditPersonalAccountRepositoryImpl _repository;
+  final EditPersonalAccountRepository _repository;
 
   EditPersonalAccountCubit({
     required EditPersonalAccountUseCase useCase,
-    required EditPersonalAccountRepositoryImpl repository
+    required EditPersonalAccountRepository repository
   })
       : _useCase = useCase,
         _repository = repository,

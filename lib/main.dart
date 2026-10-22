@@ -7,6 +7,7 @@ import 'core/errors/mappers/error_handler.dart';
 import 'core/config/initialization_controller.dart';
 import 'core/presentation/widgets/build_snack_bar.dart';
 import 'package:test_app/core/di/service%20_locator.dart';
+import 'core/services/domain/i_notification_service.dart';
 
 
 void main() async {
@@ -18,6 +19,9 @@ void main() async {
   try {
     await initializationController.init();
     runApp(const MyApp());
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await sl<INotificationService>().handleInitialMessage();
+    });
   }
   catch (e, stackTrace) {
     final errorHandler = ErrorHandler(

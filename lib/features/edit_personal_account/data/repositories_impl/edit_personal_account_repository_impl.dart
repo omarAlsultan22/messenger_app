@@ -51,11 +51,11 @@ class EditPersonalAccountRepositoryImpl implements EditPersonalAccountRepository
 
     await Future.wait([
       _dataSource.addData(collectionPath: 'posts', data: postModel.toJson()),
-      _dataSource.updateDocument(
+      _dataSource.updateDoc(
           docId: userId,
           collectionPath: 'accounts',
           data: userModel.toJson()),
-      _dataSource.updateDocument(
+      _dataSource.updateDoc(
           docId: userId,
           collectionPath: 'info',
           data: {'userState': userState})

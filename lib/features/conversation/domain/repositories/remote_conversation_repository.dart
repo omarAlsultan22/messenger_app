@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../data/models/conversation_model.dart';
 
 
-abstract class RemoteConversationsRepository {
+abstract class RemoteConversationRepository {
 
   Future<void> updateUnreadMessages({required String docId});
 

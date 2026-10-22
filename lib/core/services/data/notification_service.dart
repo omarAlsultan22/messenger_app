@@ -2,9 +2,12 @@ import 'dart:async';
 import 'dart:convert';
 import 'navigation_service.dart';
 import 'package:flutter/material.dart';
+import '../../di/service _locator.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:test_app/core/services/data/session_service.dart';
+import '../../domain/data_sources/firestore/firestore_service.dart';
 import 'package:test_app/core/services/domain/i_notification_service.dart';
 import 'package:test_app/features/home/presentation/cubits/home_cubit.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -24,17 +27,36 @@ class NotificationService implements INotificationService {
 
   StreamSubscription? _messagesSubscription;
 
+  bool _initialized = false;
   static const _dataKey = 'data';
   static const _docIdKey = 'docId';
+  late FirestoreService _dataSource;
+  late SessionService _sessionService;
 
   // ==================== العقد العام ====================
 
   @override
   Future<void> initialize() async {
-    await _setupFirebase();
-    await _setupLocalNotifications();
-    _setupInteractedMessage();
-    await _setupBackgroundMessageHandler();
+    if (_initialized) return;
+    try {
+      _initializeDependencies();
+      await _setupFirebase();
+      await _setupLocalNotifications();
+      _setupInteractedMessage();
+      await _setupBackgroundMessageHandler();
+      _initialized = true;
+    } catch (e) {
+      debugPrint('Error initializing NotificationService: $e');
+      rethrow;
+    }
+  }
+
+  @override
+  Future<void> handleInitialMessage() async {
+    final initialMessage = await FirebaseMessaging.instance.getInitialMessage();
+    if (initialMessage != null) {
+      handleNotification(initialMessage.data);
+    }
   }
 
   @override
@@ -104,6 +126,11 @@ class NotificationService implements INotificationService {
 
   // ==================== تفاصيل التنفيذ (خاصة) ====================
 
+  void _initializeDependencies() {
+    _dataSource = sl<FirestoreService>();
+    _sessionService = sl<SessionService>();
+  }
+
   Future<void> _setupFirebase() async {
     await _firebaseMessaging.requestPermission(
       alert: true,
@@ -118,9 +145,25 @@ class NotificationService implements INotificationService {
     final token = await _firebaseMessaging.getToken();
     debugPrint('FCM Token: $token');
 
-    _firebaseMessaging.onTokenRefresh.listen((newToken) {
-      debugPrint('New FCM Token: $newToken');
-    });
+    if (token != null) {
+      await _saveTokenToFirestore(token);
+    }
+
+    _firebaseMessaging.onTokenRefresh.listen(_saveTokenToFirestore);
+  }
+
+  Future<void> _saveTokenToFirestore(String token) async {
+    try {
+      await _dataSource.updateDoc(
+          collectionPath: 'users',
+          data: {'fcmToken': token},
+          docId: _sessionService.currentUid
+      );
+      debugPrint('FCM token saved successfully');
+    } catch (e) {
+      debugPrint('Error saving FCM token: $e');
+      rethrow;
+    }
   }
 
   Future<void> _setupLocalNotifications() async {
@@ -156,8 +199,7 @@ class NotificationService implements INotificationService {
         macOS: initializationSettingsIOS,
       );
 
-      await _flutterLocalNotificationsPlugin.initialize(
-        settings: initializationSettings,
+      await _flutterLocalNotificationsPlugin.initialize(settings: initializationSettings,
         onDidReceiveNotificationResponse: (NotificationResponse details) {
           if (details.payload != null) {
             handleNotification(jsonDecode(details.payload!));
@@ -178,14 +220,14 @@ class NotificationService implements INotificationService {
 
           if (message.notification != null) {
             debugPrint(
-                'Message also contained a notification: ${message.notification}');
+                'Message also contained a notification: ${message
+                    .notification}');
             _showNotification(message);
           }
         });
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       debugPrint('Message opened from background: ${message.data}');
-      print(message.data[_docIdKey]);
       handleNotification(message.data);
     });
   }
@@ -261,7 +303,9 @@ class NotificationService implements INotificationService {
       );
 
       await _flutterLocalNotificationsPlugin.show(
-        id: DateTime.now().millisecondsSinceEpoch ~/ 1000,
+        id: DateTime
+            .now()
+            .millisecondsSinceEpoch ~/ 1000,
         title: title,
         body: body,
         notificationDetails: notificationDetails,
@@ -300,12 +344,13 @@ class NotificationService implements INotificationService {
     return processed;
   }
 
+  @override
   Future<void> handleBackgroundNotification(RemoteMessage message) async {
     await _setupBackgroundIsolate();
     handleNotification(message.data);
   }
 
-  Future<void> _setupBackgroundIsolate() async {
+  static Future<void> _setupBackgroundIsolate() async {
     WidgetsFlutterBinding.ensureInitialized();
     await Firebase.initializeApp();
 
@@ -325,8 +370,7 @@ class NotificationService implements INotificationService {
       iOS: initializationSettingsIOS,
     );
 
-    await FlutterLocalNotificationsPlugin()
-        .initialize(settings: initializationSettings);
+    await FlutterLocalNotificationsPlugin().initialize(settings: initializationSettings);
   }
 }
 

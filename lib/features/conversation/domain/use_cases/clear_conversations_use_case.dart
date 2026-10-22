@@ -1,10 +1,10 @@
-import '../repositories/remote_conversations_repository.dart';
+import '../repositories/remote_conversation_repository.dart';
 
 
 class ClearConversationsUseCase {
-  final RemoteConversationsRepository _repository;
+  final RemoteConversationRepository _repository;
 
-  ClearConversationsUseCase({required RemoteConversationsRepository repository})
+  ClearConversationsUseCase({required RemoteConversationRepository repository})
       : _repository = repository;
 
   Future<void> execute({required String docId}) async {

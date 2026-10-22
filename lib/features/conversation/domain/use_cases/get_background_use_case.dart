@@ -1,10 +1,10 @@
-import '../repositories/local_conversations_repository.dart';
+import '../repositories/local_conversation_repository.dart';
 
 
 class GetBackgroundUseCase {
-  final LocalConversationsRepository _repository;
+  final LocalConversationRepository _repository;
 
-  GetBackgroundUseCase({required LocalConversationsRepository repository})
+  GetBackgroundUseCase({required LocalConversationRepository repository})
       : _repository = repository;
 
   Future<Map<String, dynamic>> execute({required String docId}) async {

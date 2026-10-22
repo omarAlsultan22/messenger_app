@@ -1,13 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import '../repositories/remote_conversations_repository.dart';
+import '../repositories/remote_conversation_repository.dart';
 
 
 class UpdateTypingUseCase {
-  final RemoteConversationsRepository _repository;
+  final RemoteConversationRepository _repository;
   final FirebaseAuth _auth;
 
   UpdateTypingUseCase({
-    required RemoteConversationsRepository repository,
+    required RemoteConversationRepository repository,
     FirebaseAuth? auth,
   })
       : _repository = repository,

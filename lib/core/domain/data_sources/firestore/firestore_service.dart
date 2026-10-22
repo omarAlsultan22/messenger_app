@@ -26,7 +26,7 @@ abstract class FirestoreService implements FirestoreOperations {
     required String subCollectionPath,
   });
 
-  Future<void> updateDocument({
+  Future<void> updateDoc({
     required String? docId,
     required String collectionPath,
     required Map<String, dynamic> data,

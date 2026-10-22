@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../core/di/service _locator.dart';
 import '../core/themes/theme_notifier.dart';
+import '../core/domain/data_sources/cache_helper.dart';
 import '../core/services/data/navigation_service.dart';
 import 'package:test_app/core/constants/app_colors.dart';
-import 'package:test_app/core/data/data_sources/local/cache_helper_impl.dart';
 import 'package:test_app/features/auth/presentation/screens/sign_in_screen.dart';
 
 
@@ -89,7 +89,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-        create: (_) => ThemeNotifier(cacheHelper: sl<CacheHelperImpl>()),
+        create: (_) => ThemeNotifier(cacheHelper: sl<CacheHelper>()),
         child: Consumer<ThemeNotifier>(
             builder: (context, themeNotifier, child) {
               return MaterialApp(

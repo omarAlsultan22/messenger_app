@@ -1,10 +1,10 @@
 import '../models/conversation_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../domain/data_sources/conversation_data_source.dart';
-import 'package:test_app/features/conversation/domain/repositories/remote_conversations_repository.dart';
+import 'package:test_app/features/conversation/domain/repositories/remote_conversation_repository.dart';
 
 
-class RemoteConversationRepositoryImpl implements RemoteConversationsRepository {
+class RemoteConversationRepositoryImpl implements RemoteConversationRepository {
   final ConversationDataSource _dataSource;
 
   RemoteConversationRepositoryImpl({

@@ -1,10 +1,10 @@
 import 'package:test_app/features/conversation/presentation/states/conversation_state.dart';
-import 'package:test_app/core/data/data_sources/local/cache_helper_impl.dart';
 import '../../../../core/presentation/widgets/states/loading_state.dart';
-import '../../../../core/services/data/online_status_service.dart';
-import '../../../../core/services/data/media_upload_service.dart';
-import '../../../../core/services/data/notification_service.dart';
+import '../../../../core/services/domain/i_online_status_service.dart';
+import '../../../../core/services/domain/i_notification_service.dart';
+import '../../../../core/services/domain/i_media_upload_service.dart';
 import 'package:test_app/core/services/data/session_service.dart';
+import '../../../../core/domain/data_sources/cache_helper.dart';
 import '../../../../core/data/models/last_message_model.dart';
 import '../widgets/layouts/conversation_layout.dart';
 import '../../data/models/conversation_model.dart';
@@ -46,11 +46,11 @@ class ConversationScreen extends StatelessWidget {
                       dataModel: data.dataModel,
                       messageResult: data.messageResult,
                       lastMessageModel: lastMessageModel,
-                      cacheHelper: sl<CacheHelperImpl>(),
+                      cacheHelper: sl<CacheHelper>(),
                       sessionService: sl<SessionService>(),
-                      mediaUploadService: sl<MediaUploadService>(),
-                      notificationService: sl<NotificationService>(),
-                      onlineStatusService: sl<OnlineStatusService>(),
+                      mediaUploadService: sl<IMediaUploadService>(),
+                      notificationService: sl<INotificationService>(),
+                      onlineStatusService: sl<IOnlineStatusService>(),
                       sendMessage: ({
                         required String docId,
                         required String userId,

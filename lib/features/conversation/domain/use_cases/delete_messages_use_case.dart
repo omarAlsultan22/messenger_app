@@ -1,11 +1,11 @@
 import '../../data/models/message_group.dart';
-import '../repositories/remote_conversations_repository.dart';
+import '../repositories/remote_conversation_repository.dart';
 
 
 class DeleteMessagesUseCase {
-  final RemoteConversationsRepository _repository;
+  final RemoteConversationRepository _repository;
 
-  DeleteMessagesUseCase({required RemoteConversationsRepository repository})
+  DeleteMessagesUseCase({required RemoteConversationRepository repository})
       : _repository = repository;
 
   Future<void> execute({

@@ -49,7 +49,7 @@ class FirestoreServiceImpl extends FirestoreOperationsImpl implements FirestoreS
   }
 
   @override
-  Future<void> updateDocument({
+  Future<void> updateDoc({
     required String? docId,
     required String collectionPath,
     required Map<String, dynamic> data,

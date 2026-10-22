@@ -1,10 +1,10 @@
 import 'package:test_app/features/home/presentation/widgets/layouts/home_layout.dart';
-import 'package:test_app/core/data/data_sources/local/cache_helper_impl.dart';
 import '../../../../core/presentation/widgets/states/initial_state.dart';
 import '../../../../core/presentation/widgets/states/loading_state.dart';
-import 'package:test_app/core/services/data/online_status_service.dart';
-import 'package:test_app/core/services/data/notification_service.dart';
+import '../../../../core/services/domain/i_online_status_service.dart';
+import '../../../../core/services/domain/i_notification_service.dart';
 import 'package:test_app/core/services/data/session_service.dart';
+import '../../../../core/domain/data_sources/cache_helper.dart';
 import '../../../../core/di/service _locator.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
@@ -41,9 +41,9 @@ class HomeScreen extends StatelessWidget {
                     friendList: data.friendList,
                     sessionService: sessionService,
                     profileImage: data.profileImage,
-                    cacheHelper: sl<CacheHelperImpl>(),
-                    onlineStatusService: sl<OnlineStatusService>(),
-                    notificationService: sl<NotificationService>(),
+                    cacheHelper: sl<CacheHelper>(),
+                    onlineStatusService: sl<IOnlineStatusService>(),
+                    notificationService: sl<INotificationService>(),
                   ),
                 onError: (error) =>
                     error.buildErrorWidget(

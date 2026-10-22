@@ -9,8 +9,8 @@ import '../exceptions/components_exception.dart';
 import '../exceptions/network_app_exception.dart';
 import '../exceptions/firebase_app_exception.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../../network/data/connectivity_service.dart';
 import '../exceptions/shared_prefs_app_exceptions.dart';
+import '../../network/domain/i_connectivity_service.dart';
 import 'package:test_app/core/errors/exceptions/firebase_ai_app_exception.dart';
 
 
@@ -19,7 +19,7 @@ class ExceptionMapper {
 
   ExceptionMapper({required this.error});
 
-  static final _connectivityService = sl<ConnectivityService>();
+  static final _connectivityService = sl<IConnectivityService>();
   static const String _msgServerError = 'Cannot reach the server';
 
   static final Map<String, AppException> _networkPatterns = {

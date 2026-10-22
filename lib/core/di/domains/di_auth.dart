@@ -3,61 +3,63 @@ import '../../../features/auth/domain/use_cases/change_email_and_password_use_ca
 import '../../../features/auth/data/repositories_impl/sign_up_repository_impl.dart';
 import '../../../features/auth/data/repositories_impl/auth_repository_impl.dart';
 import '../../../features/auth/presentation/cubits/forget_password_cubit.dart';
-import '../../data/data_sources/remote/firestore/firestore_service_impl.dart';
+import '../../../features/auth/domain/repositories/sign_up_repository.dart';
+import '../../../features/auth/domain/repositories/auth_repository.dart';
 import '../../../features/auth/presentation/cubits/sign_in_cubit.dart';
 import '../../../features/auth/presentation/cubits/sign_up_cubit.dart';
 import '../../../features/auth/domain/use_cases/sign_in_use_case.dart';
 import '../../../features/auth/domain/use_cases/sign_up_use_case.dart';
+import '../../domain/data_sources/firestore/firestore_service.dart';
 import 'package:test_app/core/services/data/session_service.dart';
-import '../../data/data_sources/remote/auth_service_impl.dart';
-import '../../network/data/connectivity_service.dart';
+import '../../network/domain/i_connectivity_service.dart';
+import '../../domain/data_sources/auth_service.dart';
 import '../service _locator.dart';
 
 
 class AuthDependencies {
   static void register() {
     // Repositories
-    sl.registerLazySingleton(() =>
-        AuthRepositoryImpl(auth: sl<AuthServiceImpl>()));
+    sl.registerLazySingleton<AuthRepository>(() =>
+        AuthRepositoryImpl(auth: sl<AuthService>()));
 
-    sl.registerLazySingleton(() =>
-        SignUpRepositoryImpl(dataSource: sl<FirestoreServiceImpl>()));
+    sl.registerLazySingleton<SignUpRepository>(() =>
+        SignUpRepositoryImpl(dataSource: sl<FirestoreService>()));
 
     // UseCases
-    sl.registerLazySingleton(() =>
+    sl.registerLazySingleton<SignInUseCase>(() =>
         SignInUseCase(
             sessionService: sl<SessionService>(),
-            authRepository: sl<AuthRepositoryImpl>()));
+            authRepository: sl<AuthRepository>()));
 
-    sl.registerLazySingleton(() =>
+    sl.registerLazySingleton<SignUpUseCase>(() =>
         SignUpUseCase(
-            authRepository: sl<AuthRepositoryImpl>(),
-            signUpRepository: sl<SignUpRepositoryImpl>()));
+            authRepository: sl<AuthRepository>(),
+            signUpRepository: sl<SignUpRepository>()));
 
-    sl.registerLazySingleton(() =>
+    sl.registerLazySingleton<ChangeEmailAndPasswordUseCase>(() =>
         ChangeEmailAndPasswordUseCase(
-            authRepository: sl<AuthRepositoryImpl>()));
+            authRepository: sl<AuthRepository>()));
 
     // Cubits
-    sl.registerFactory(() =>
+    sl.registerFactory<SignInCubit>(() =>
         SignInCubit(
             useCase: sl<SignInUseCase>(),
-            connectivityService: sl<ConnectivityService>()));
+            connectivityService: sl<IConnectivityService>()));
 
-    sl.registerFactory(() =>
+    sl.registerFactory<SignUpCubit>(() =>
         SignUpCubit(
             useCase: sl<SignUpUseCase>(),
-            connectivityService: sl<ConnectivityService>()));
+            connectivityService: sl<IConnectivityService>()));
 
-    sl.registerFactory(() =>
+    sl.registerFactory<ForgetPasswordCubit>(() =>
         ForgetPasswordCubit(
-          authRepository: sl<AuthRepositoryImpl>(),
-          connectivityService: sl<ConnectivityService>(),
+          authRepository: sl<AuthRepository>(),
+          connectivityService: sl<IConnectivityService>(),
         ));
 
-    sl.registerFactory(() =>
+    sl.registerFactory<ChangeEmailAndPasswordCubit>(() =>
         ChangeEmailAndPasswordCubit(
             useCase: sl<ChangeEmailAndPasswordUseCase>(),
-            connectivityService: sl<ConnectivityService>()));
+            connectivityService: sl<IConnectivityService>()));
   }
 }

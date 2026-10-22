@@ -1,8 +1,10 @@
 import '../../../features/conversation/data/repositories_impl/remote_conversation_repository_impl.dart';
 import '../../../features/conversation/data/repositories_impl/local_conversation_repository_impl.dart';
-import '../../../features/conversation/data/data_sources/remote/conversation_data_source_impl.dart';
+import '../../../features/conversation/domain/repositories/remote_conversation_repository.dart';
+import '../../../features/conversation/domain/repositories/local_conversation_repository.dart';
 import '../../../features/conversation/domain/use_cases/update_unread_messages_use_case.dart';
 import '../../../features/conversation/domain/use_cases/clear_conversations_use_case.dart';
+import '../../../features/conversation/domain/data_sources/conversation_data_source.dart';
 import '../../../features/conversation/domain/use_cases/get_conversations_use_case.dart';
 import '../../../features/conversation/domain/use_cases/get_old_messages_use_case.dart';
 import '../../../features/conversation/domain/use_cases/delete_messages_use_case.dart';
@@ -10,49 +12,49 @@ import '../../../features/conversation/domain/use_cases/get_background_use_case.
 import '../../../features/conversation/domain/use_cases/update_typing_use_case.dart';
 import '../../../features/conversation/presentation/cubits/conversation_cubit.dart';
 import '../../../features/conversation/domain/use_cases/send_message_use_case.dart';
-import 'package:test_app/core/data/data_sources/local/cache_helper_impl.dart';
-import '../../services/data/online_status_service.dart';
+import '../../services/domain/i_online_status_service.dart';
+import '../../domain/data_sources/cache_helper.dart';
 import '../service _locator.dart';
 
 
 class ConversationDependencies {
   static void register() {
     // Repositories
-    sl.registerLazySingleton(() =>
+    sl.registerLazySingleton<LocalConversationRepository>(() =>
         LocalConversationRepositoryImpl(
-            cacheHelper: sl<CacheHelperImpl>()));
-    sl.registerLazySingleton(() =>
+            cacheHelper: sl<CacheHelper>()));
+    sl.registerLazySingleton<RemoteConversationRepository>(() =>
         RemoteConversationRepositoryImpl(
-            dataSource: sl<ConversationDataSourceImpl>()));
+            dataSource: sl<ConversationDataSource>()));
 
     // UseCases
-    sl.registerLazySingleton(() =>
+    sl.registerLazySingleton<UpdateUnreadMessagesUseCase>(() =>
         UpdateUnreadMessagesUseCase(
-            repository: sl<RemoteConversationRepositoryImpl>()));
-    sl.registerLazySingleton(() =>
+            repository: sl<RemoteConversationRepository>()));
+    sl.registerLazySingleton<ClearConversationsUseCase>(() =>
         ClearConversationsUseCase(
-            repository: sl<RemoteConversationRepositoryImpl>()));
-    sl.registerLazySingleton(() =>
+            repository: sl<RemoteConversationRepository>()));
+    sl.registerLazySingleton<GetConversationsUseCase>(() =>
         GetConversationsUseCase(
-            repository: sl<RemoteConversationRepositoryImpl>()));
-    sl.registerLazySingleton(() =>
+            repository: sl<RemoteConversationRepository>()));
+    sl.registerLazySingleton<GetOldMessagesUseCase>(() =>
         GetOldMessagesUseCase(
-            repository: sl<RemoteConversationRepositoryImpl>()));
-    sl.registerLazySingleton(() =>
+            repository: sl<RemoteConversationRepository>()));
+    sl.registerLazySingleton<DeleteMessagesUseCase>(() =>
         DeleteMessagesUseCase(
-            repository: sl<RemoteConversationRepositoryImpl>()));
-    sl.registerLazySingleton(() =>
+            repository: sl<RemoteConversationRepository>()));
+    sl.registerLazySingleton<GetBackgroundUseCase>(() =>
         GetBackgroundUseCase(
-            repository: sl<LocalConversationRepositoryImpl>()));
-    sl.registerLazySingleton(() =>
+            repository: sl<LocalConversationRepository>()));
+    sl.registerLazySingleton<UpdateTypingUseCase>(() =>
         UpdateTypingUseCase(
-            repository: sl<RemoteConversationRepositoryImpl>()));
-    sl.registerLazySingleton(() =>
+            repository: sl<RemoteConversationRepository>()));
+    sl.registerLazySingleton<SendMessageUseCase>(() =>
         SendMessageUseCase(
-            repository: sl<RemoteConversationRepositoryImpl>()));
+            repository: sl<RemoteConversationRepository>()));
 
     // Cubit
-    sl.registerFactory(() =>
+    sl.registerFactory<ConversationCubit>(() =>
         ConversationCubit(
           updateUnreadMessagesUseCase: sl<UpdateUnreadMessagesUseCase>(),
           clearConversationsUseCase: sl<ClearConversationsUseCase>(),
@@ -60,7 +62,7 @@ class ConversationDependencies {
           getOldMessagesUseCase: sl<GetOldMessagesUseCase>(),
           deleteMessagesUseCase: sl<DeleteMessagesUseCase>(),
           getBackgroundUseCase: sl<GetBackgroundUseCase>(),
-          onlineStatusService: sl<OnlineStatusService>(),
+          onlineStatusService: sl<IOnlineStatusService>(),
           updateTypingUseCase: sl<UpdateTypingUseCase>(),
           sendMessageUseCase: sl<SendMessageUseCase>(),
 

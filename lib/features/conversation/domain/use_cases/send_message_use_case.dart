@@ -1,11 +1,11 @@
 import '../../data/models/conversation_model.dart';
-import '../repositories/remote_conversations_repository.dart';
+import '../repositories/remote_conversation_repository.dart';
 
 
 class SendMessageUseCase {
-  final RemoteConversationsRepository _repository;
+  final RemoteConversationRepository _repository;
 
-  SendMessageUseCase({required RemoteConversationsRepository repository})
+  SendMessageUseCase({required RemoteConversationRepository repository})
       : _repository = repository;
 
   Future<void> execute({

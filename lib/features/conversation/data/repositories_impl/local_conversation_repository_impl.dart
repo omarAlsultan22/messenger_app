@@ -1,9 +1,9 @@
 import 'dart:ui';
 import '../../../../core/domain/data_sources/cache_helper.dart';
-import '../../domain/repositories/local_conversations_repository.dart';
+import '../../domain/repositories/local_conversation_repository.dart';
 
 
-class LocalConversationRepositoryImpl implements LocalConversationsRepository {
+class LocalConversationRepositoryImpl implements LocalConversationRepository {
   final CacheHelper _cacheHelper;
 
   LocalConversationRepositoryImpl({

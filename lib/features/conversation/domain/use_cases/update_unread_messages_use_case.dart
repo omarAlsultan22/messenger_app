@@ -1,10 +1,10 @@
-import '../repositories/remote_conversations_repository.dart';
+import '../repositories/remote_conversation_repository.dart';
 
 
 class UpdateUnreadMessagesUseCase {
-  final RemoteConversationsRepository _repository;
+  final RemoteConversationRepository _repository;
 
-  UpdateUnreadMessagesUseCase({required RemoteConversationsRepository repository})
+  UpdateUnreadMessagesUseCase({required RemoteConversationRepository repository})
       : _repository = repository;
 
   Future<void> execute({required String docId}) async {
