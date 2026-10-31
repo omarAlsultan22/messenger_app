@@ -3,19 +3,19 @@ import 'package:flutter/material.dart';
 import '../../screens/sign_up_screen.dart';
 import '../../screens/forget_password_screen.dart';
 import '../../../../../core/di/service _locator.dart';
-import '../../utils/validate/password_validation.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/app_spaces.dart';
+import '../../../utils/validate/email_validation.dart';
 import 'package:test_app/core/constants/app_sizes.dart';
 import '../../../../../core/constants/app_paddings.dart';
-import 'package:test_app/core/services/data/session_service.dart';
+import '../../../utils/validate/password_validation.dart';
 import '../../../../home/presentation/screens/home_screen.dart';
+import 'package:test_app/core/services/data/session_service.dart';
 import '../../../../../core/data/models/message_result_model.dart';
 import 'package:test_app/features/auth/constants/auth_strings.dart';
 import '../../../../../core/presentation/widgets/build_input_field.dart';
 import '../../../../../core/presentation/widgets/navigation/navigator.dart';
 import 'package:test_app/features/auth/presentation/widgets/build_app_icon.dart';
-import 'package:test_app/features/auth/presentation/utils/validate/email_validation.dart';
 
 
 class SignInLayout extends StatefulWidget {

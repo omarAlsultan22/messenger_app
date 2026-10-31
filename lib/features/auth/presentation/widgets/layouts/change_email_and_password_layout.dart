@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import '../../utils/validate/email_validation.dart';
 import '../../../../../core/constants/app_sizes.dart';
-import '../../utils/validate/password_validation.dart';
 import '../../../../../core/constants/app_spaces.dart';
 import '../../../../../core/constants/app_colors.dart';
+import '../../../utils/validate/email_validation.dart';
 import '../../../../../core/constants/app_paddings.dart';
+import '../../../utils/validate/password_validation.dart';
 import 'package:test_app/shared/utils/validate_input.dart';
 import 'package:test_app/core/services/data/session_service.dart';
 import '../../../../../core/data/models/message_result_model.dart';
