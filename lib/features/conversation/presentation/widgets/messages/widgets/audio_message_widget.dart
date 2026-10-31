@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../../../data/models/conversation_model.dart';
-import 'package:test_app/core/utils/format_duration.dart';
 import 'package:test_app/core/constants/app_borders.dart';
 import 'package:test_app/core/constants/app_paddings.dart';
+import 'package:test_app/shared/utils/format_duration.dart';
 import 'package:test_app/features/conversation/utils/format_time.dart';
 import 'package:test_app/features/conversation/constants/conversation_colors.dart';
 import 'package:test_app/features/conversation/constants/conversation_spaces.dart';

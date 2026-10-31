@@ -6,7 +6,7 @@ import '../../../../../core/data/models/message_result_model.dart';
 import '../../../../../core/constants/app_paddings.dart';
 import 'package:test_app/core/constants/app_colors.dart';
 import 'package:test_app/core/constants/app_spaces.dart';
-import '../../../../../core/utils/validate_input.dart';
+import '../../../../../shared/utils/validate_input.dart';
 import '../../utils/validate/password_validation.dart';
 import 'package:flutter/material.dart';
 import '../../mixins/auth_mixin.dart';

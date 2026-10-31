@@ -4,8 +4,8 @@ import '../repositories/home_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../../core/data/models/user_model.dart';
 import '../../../../core/data/models/last_message_model.dart';
-import 'package:test_app/core/utils/mappers/user_account_mapper.dart';
 import '../../../../core/services/domain/i_notification_service.dart';
+import 'package:test_app/shared/utils/mappers/user_account_mapper.dart';
 
 
 class GetFriendsUseCase {

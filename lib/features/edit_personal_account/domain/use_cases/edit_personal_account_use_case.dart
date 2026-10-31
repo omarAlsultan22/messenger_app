@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../repositories/edit_personal_account_repository.dart';
-import 'package:test_app/core/utils/mappers/user_account_mapper.dart';
+import 'package:test_app/shared/utils/mappers/user_account_mapper.dart';
 import 'package:test_app/features/edit_personal_account/data/models/account_model.dart';
 
 

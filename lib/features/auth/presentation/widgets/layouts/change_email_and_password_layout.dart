@@ -5,7 +5,7 @@ import '../../utils/validate/password_validation.dart';
 import '../../../../../core/constants/app_spaces.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/app_paddings.dart';
-import 'package:test_app/core/utils/validate_input.dart';
+import 'package:test_app/shared/utils/validate_input.dart';
 import 'package:test_app/core/services/data/session_service.dart';
 import '../../../../../core/data/models/message_result_model.dart';
 import '../../../../../core/presentation/widgets/build_input_field.dart';
@@ -33,7 +33,7 @@ class ChangeEmailAndPasswordLayout extends StatefulWidget {
   State<ChangeEmailAndPasswordLayout> createState() => _ChangeEmailAndPasswordLayoutState();
 }
 
-class _ChangeEmailAndPasswordLayoutState extends State<ChangeEmailAndPasswordLayout> with AuthMixin<ChangeEmailAndPasswordLayout>{
+class _ChangeEmailAndPasswordLayoutState extends State<ChangeEmailAndPasswordLayout> with AuthMixin<ChangeEmailAndPasswordLayout> {
   bool _isPressed = true;
   bool _isObscureNew = true;
   bool _isObscureCurrent = true;
@@ -243,6 +243,6 @@ class _ChangeEmailAndPasswordLayoutState extends State<ChangeEmailAndPasswordLay
       return 'Passwords do not match';
     }
     return ValidateInput.validator(
-        value: value, text: 'Please confirm your password');;
+        value: value, text: 'Please confirm your password');
   }
 }

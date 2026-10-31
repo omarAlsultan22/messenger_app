@@ -3,7 +3,7 @@ import 'package:test_app/core/constants/app_sizes.dart';
 import 'package:test_app/core/constants/app_colors.dart';
 import 'package:test_app/core/constants/app_spaces.dart';
 import 'package:test_app/core/constants/app_borders.dart';
-import 'package:test_app/core/utils/format_duration.dart';
+import 'package:test_app/shared/utils/format_duration.dart';
 import 'package:test_app/core/constants/app_paddings.dart';
 
 
