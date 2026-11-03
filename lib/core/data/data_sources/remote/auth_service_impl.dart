@@ -4,8 +4,11 @@ import '../../../domain/data_sources/auth_service.dart';
 
 
 class AuthServiceImpl implements AuthService{
+  final FirebaseAuth _firebaseAuth;
   static const _duration = AppDurations.seconds;
-  static final _firebaseAuth = FirebaseAuth.instance;
+
+  AuthServiceImpl({FirebaseAuth? auth})
+      : _firebaseAuth = auth ?? FirebaseAuth.instance;
 
   @override
   Future<UserCredential> signIn({

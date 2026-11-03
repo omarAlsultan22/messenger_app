@@ -1,5 +1,5 @@
-import 'package:flutter/foundation.dart';
 import '../conversation_model.dart';
+import 'package:flutter/foundation.dart';
 
 
 class AudioPlayerState {

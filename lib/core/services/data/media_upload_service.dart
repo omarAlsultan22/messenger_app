@@ -8,12 +8,14 @@ import 'package:test_app/core/services/domain/i_media_upload_service.dart';
 
 
 class MediaUploadService implements IMediaUploadService {
-  // Singleton — متسق مع NotificationService.
-  static final MediaUploadService _instance = MediaUploadService._internal();
-  factory MediaUploadService() => _instance;
-  MediaUploadService._internal();
+  final FirebaseStorage _storage;
+  final ImagePicker _picker;
 
-  final ImagePicker _picker = ImagePicker();
+  MediaUploadService({
+    FirebaseStorage? storage,
+    ImagePicker? picker,
+  })  : _storage = storage ?? FirebaseStorage.instance,
+        _picker = picker ?? ImagePicker();
 
   // ==================== العقد العام ====================
 

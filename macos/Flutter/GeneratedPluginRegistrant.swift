@@ -9,7 +9,7 @@ import audio_session
 import cloud_firestore
 import connectivity_plus
 import emoji_picker_flutter
-import file_picker
+import file_picker_darwin
 import file_selector_macos
 import firebase_ai
 import firebase_app_check

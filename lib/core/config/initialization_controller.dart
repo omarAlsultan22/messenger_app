@@ -1,5 +1,4 @@
 import '../di/service _locator.dart';
-import '../domain/data_sources/cache_helper.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../services/domain/i_notification_service.dart';
@@ -18,7 +17,6 @@ class InitializationController {
 
   InitializationController._internal();
 
-  late final CacheHelper _cacheHelper;
   late final SessionService _sessionService;
   late final INotificationService _notificationService;
   late final IOnlineStatusService _onlineStatusService;
@@ -38,23 +36,19 @@ class InitializationController {
       cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED,
     );
 
-    // 3. تهيئة CacheHelper
-    _cacheHelper = sl<CacheHelper>();
-    await _cacheHelper.init();
-
-    // 4. تهيئة SessionService
+    // 3. تهيئة SessionService
     _sessionService = sl<SessionService>();
     await _sessionService.loadFromStorage();
 
-    // 5. تهيئة NotificationService (للأمامية)
+    // 4. تهيئة NotificationService (للأمامية)
     _notificationService = sl<INotificationService>();
     await _notificationService.initialize();
 
-    // 6. تهيئة OnlineStatusService
+    // 5. تهيئة OnlineStatusService
     _onlineStatusService = sl<IOnlineStatusService>();
     await _onlineStatusService.initialize();
 
-    // 7. إعدادات Firebase Messaging
+    // 6. إعدادات Firebase Messaging
     await FirebaseMessaging.instance.setAutoInitEnabled(true);
     await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
       alert: true,

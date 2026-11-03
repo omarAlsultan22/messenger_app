@@ -1,6 +1,4 @@
 abstract class CacheHelper {
-  Future<void> init();
-
   Future<bool> setString({
     required String key,
     required String value,

@@ -7,13 +7,19 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 
 class OnlineStatusService implements IOnlineStatusService{
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore;
+  final FirebaseAuth _auth;
   late StreamSubscription<User?> _authSubscription;
 
   static const _isOnline = 'isOnline';
   static const _lastSeen = 'lastSeen';
   static const _accounts = 'accounts';
+
+  OnlineStatusService({
+    FirebaseFirestore? firestore,
+    FirebaseAuth? auth,
+  })  : _firestore = firestore ?? FirebaseFirestore.instance,
+        _auth = auth ?? FirebaseAuth.instance;
 
   @override
   Future<void> initialize() async {

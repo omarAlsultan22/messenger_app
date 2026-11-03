@@ -2,7 +2,7 @@ import '../../../../core/data/models/last_message_model.dart';
 import '../../../../core/errors/exceptions/base/app_exception.dart';
 import 'package:test_app/core/presentation/states/app_sub_states.dart';
 import '../../../../core/presentation/states/base/main_app_sub_state.dart';
-import 'package:test_app/features/home/data/models/home_Success_state.dart';
+import 'package:test_app/features/home/data/models/home_success_state.dart';
 import 'package:test_app/core/presentation/states/base/main_app_sup_state.dart';
 
 

@@ -8,10 +8,13 @@ import 'core/config/initialization_controller.dart';
 import 'core/presentation/widgets/build_snack_bar.dart';
 import 'package:test_app/core/di/service%20_locator.dart';
 import 'core/services/domain/i_notification_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  final prefs = await SharedPreferences.getInstance();
+  sl.registerSingleton<SharedPreferences>(prefs);
   Bloc.observer = MyBlocObserver();
   setupServiceLocator();
   final initializationController = InitializationController();

@@ -5,8 +5,10 @@ import '../../../../domain/data_sources/firestore/firestore_service.dart';
 
 
 class FirestoreServiceImpl extends FirestoreOperationsImpl implements FirestoreService{
-  static final _firestore = FirebaseFirestore.instance;
+  final FirebaseFirestore _firestore;
   static const _duration = AppDurations.seconds;
+  FirestoreServiceImpl({super.firestore})
+      : _firestore = firestore ?? FirebaseFirestore.instance;
 
   @override
   DocumentReference<Map<String, dynamic>> createDoc({

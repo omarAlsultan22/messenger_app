@@ -278,7 +278,7 @@ class NotificationService implements INotificationService {
     required Map<String, dynamic> payload,
   }) async {
     try {
-      final processedPayload = _processPayload(payload);
+      final processedPayload = processPayload(payload);
 
       const androidPlatformChannelSpecifics = AndroidNotificationDetails(
         'social_app_channel',
@@ -317,7 +317,8 @@ class NotificationService implements INotificationService {
     }
   }
 
-  Map<String, dynamic> _processPayload(Map<String, dynamic> payload) {
+  @visibleForTesting
+  Map<String, dynamic> processPayload(Map<String, dynamic> payload) {
     final processed = <String, dynamic>{};
     payload.forEach((key, value) {
       if (value is DateTime) {
@@ -325,11 +326,11 @@ class NotificationService implements INotificationService {
       } else if (value is Timestamp) {
         processed[key] = value.toDate().toIso8601String();
       } else if (value is Map<String, dynamic>) {
-        processed[key] = _processPayload(value);
+        processed[key] = processPayload(value);
       } else if (value is List) {
         processed[key] = value.map((item) {
           if (item is Map<String, dynamic>) {
-            return _processPayload(item);
+            return processPayload(item);
           } else if (item is Timestamp) {
             return item.toDate().toIso8601String();
           } else if (item is DateTime) {

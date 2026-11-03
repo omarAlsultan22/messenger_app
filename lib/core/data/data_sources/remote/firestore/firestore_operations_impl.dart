@@ -4,13 +4,15 @@ import '../../../../domain/data_sources/firestore/firestore_operations.dart';
 
 
 class FirestoreOperationsImpl implements FirestoreOperations{
-  final firestore = FirebaseFirestore.instance;
+  final FirebaseFirestore _firestore;
+  FirestoreOperationsImpl({FirebaseFirestore? firestore})
+      : _firestore = firestore ?? FirebaseFirestore.instance;
 
   @override
   Future<DocumentSnapshot<Map<String, dynamic>>> getDocument({
     required String collectionPath,
     required String? docId,
   }) async {
-    return await firestore.collection(collectionPath).doc(docId).get().timeout(AppDurations.seconds);
+    return await _firestore.collection(collectionPath).doc(docId).get().timeout(AppDurations.seconds);
   }
 }

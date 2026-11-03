@@ -9,6 +9,7 @@ import '../../domain/data_sources/firestore/firestore_service.dart';
 import '../../data/data_sources/remote/auth_service_impl.dart';
 import '../../data/data_sources/local/cache_helper_impl.dart';
 import '../../services/domain/i_online_status_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../services/domain/i_media_upload_service.dart';
 import '../../services/domain/i_notification_service.dart';
 import '../../network/domain/i_connectivity_service.dart';
@@ -22,15 +23,18 @@ import '../service _locator.dart';
 
 class CoreDependencies {
   static void register() {
-    sl.registerLazySingleton<CacheHelper>(() => CacheHelperImpl());
+    sl.registerLazySingleton<ConversationDataSource>(() =>
+        ConversationDataSourceImpl());
+    sl.registerLazySingleton<CacheHelper>(
+            () => CacheHelperImpl(prefs: sl<SharedPreferences>()));
+    sl.registerLazySingleton<SessionService>(() =>
+        SessionService(cacheHelper: sl<CacheHelper>()));
     sl.registerLazySingleton<AuthService>(() => AuthServiceImpl());
-    sl.registerLazySingleton<SessionService>(() => SessionService());
     sl.registerLazySingleton<HomeDataSource>(() => HomeDataSourceImpl());
     sl.registerLazySingleton<FirestoreService>(() => FirestoreServiceImpl());
     sl.registerLazySingleton<IMediaUploadService>(() => MediaUploadService());
     sl.registerLazySingleton<IOnlineStatusService>(() => OnlineStatusService());
     sl.registerLazySingleton<INotificationService>(() => NotificationService());
     sl.registerLazySingleton<IConnectivityService>(() => ConnectivityService());
-    sl.registerLazySingleton<ConversationDataSource>(() => ConversationDataSourceImpl());
   }
 }

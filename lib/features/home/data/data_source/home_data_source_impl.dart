@@ -4,13 +4,16 @@ import 'package:test_app/core/data/data_sources/remote/firestore/firestore_opera
 
 
 class HomeDataSourceImpl extends FirestoreOperationsImpl implements HomeDataSource{
+  final FirebaseFirestore _firestore;
+  HomeDataSourceImpl({super.firestore})
+      : _firestore = firestore ?? FirebaseFirestore.instance;
   @override
   Stream<QuerySnapshot> getFriendsListStream({
     required String docId,
     required String supCollection,
     required String subCollection
   }) {
-    return firestore.collection(supCollection)
+    return _firestore.collection(supCollection)
         .doc(docId)
         .collection(subCollection)
         .snapshots();
@@ -23,7 +26,7 @@ class HomeDataSourceImpl extends FirestoreOperationsImpl implements HomeDataSour
     required String orderField,
     required String friendId
   }) {
-    return firestore
+    return _firestore
         .collection(collectionPath)
         .where(whereField, arrayContains: friendId)
         .orderBy(orderField, descending: true)
@@ -38,7 +41,7 @@ class HomeDataSourceImpl extends FirestoreOperationsImpl implements HomeDataSour
     required String whereField,
     required String docId,
   }) {
-    return firestore
+    return _firestore
         .collection(supCollection)
         .doc(docId)
         .collection(subCollection)

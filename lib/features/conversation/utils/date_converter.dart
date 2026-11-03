@@ -4,9 +4,12 @@ import 'package:intl/intl.dart';
 class DateConverter {
   DateConverter._();
 
-  static String getDateHeader(DateTime messageDate) {
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
+  static String getDateHeader(
+      DateTime messageDate, {
+        DateTime? now,
+      }) {
+    final currentNow = now ?? DateTime.now();
+    final today = DateTime(currentNow.year, currentNow.month, currentNow.day);
     final yesterday = today.subtract(const Duration(days: 1));
 
     final messageDateOnly = DateTime(
@@ -19,10 +22,10 @@ class DateConverter {
       return 'Today';
     } else if (messageDateOnly == yesterday) {
       return 'Yesterday';
-    } else if (now.difference(messageDateOnly).inDays < 7) {
-      return DateFormat('EEEE').format(messageDate); // Monday, Tuesday, etc.
+    } else if (currentNow.difference(messageDateOnly).inDays < 7) {
+      return DateFormat('EEEE').format(messageDate);
     } else {
-      return DateFormat('MMMM yyyy').format(messageDate); // March 2023
+      return DateFormat('MMMM yyyy').format(messageDate);
     }
   }
 }

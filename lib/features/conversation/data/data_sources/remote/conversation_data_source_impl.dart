@@ -4,7 +4,10 @@ import '../../../domain/data_sources/conversation_data_source.dart';
 
 
 class ConversationDataSourceImpl implements ConversationDataSource {
-  static final _firestore = FirebaseFirestore.instance;
+  final FirebaseFirestore _firestore;
+
+  ConversationDataSourceImpl({FirebaseFirestore? firestore})
+      : _firestore = firestore ?? FirebaseFirestore.instance;
 
   @override
   Future<void> updateUnreadMessages({required String docId}) async {
