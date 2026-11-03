@@ -1,4 +1,4 @@
-class ValidateInput {
+class InputValidation {
   static String? validator({
     required String? value,
     required String text

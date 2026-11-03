@@ -3,7 +3,7 @@ import '../../../../../core/themes/app_theme.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/app_spaces.dart';
 import 'package:test_app/core/constants/app_sizes.dart';
-import '../../../../../shared/utils/validate_input.dart';
+import '../../../../../shared/utils/input_validation.dart';
 import 'package:test_app/core/constants/app_borders.dart';
 import 'package:test_app/core/constants/app_paddings.dart';
 import '../../../../../core/services/data/session_service.dart';
@@ -220,7 +220,7 @@ class _EditPersonalAccountLayoutState extends State<EditPersonalAccountLayout> w
       hintText: 'Enter your first name',
       enabled: _isFieldEnabled(),
       validator: (value) =>
-          ValidateInput.validator(value: value!, text: 'first name'),
+          InputValidation.validator(value: value!, text: 'first name'),
     );
   }
 
@@ -232,7 +232,7 @@ class _EditPersonalAccountLayoutState extends State<EditPersonalAccountLayout> w
       hintText: 'Enter your last name',
       enabled: _isFieldEnabled(),
       validator: (value) =>
-          ValidateInput.validator(value: value!, text: 'last name'),
+          InputValidation.validator(value: value!, text: 'last name'),
     );
   }
 
@@ -244,7 +244,7 @@ class _EditPersonalAccountLayoutState extends State<EditPersonalAccountLayout> w
       hintText: 'State',
       enabled: _isFieldEnabled(),
       validator: (value) =>
-          ValidateInput.validator(value: value!, text: 'state'),
+          InputValidation.validator(value: value!, text: 'state'),
     );
   }
 

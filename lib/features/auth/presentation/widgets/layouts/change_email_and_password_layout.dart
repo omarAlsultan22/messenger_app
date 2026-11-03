@@ -5,7 +5,7 @@ import '../../../../../core/constants/app_colors.dart';
 import '../../../utils/validate/email_validation.dart';
 import '../../../../../core/constants/app_paddings.dart';
 import '../../../utils/validate/password_validation.dart';
-import 'package:test_app/shared/utils/validate_input.dart';
+import 'package:test_app/shared/utils/input_validation.dart';
 import 'package:test_app/core/services/data/session_service.dart';
 import '../../../../../core/data/models/message_result_model.dart';
 import '../../../../../core/presentation/widgets/build_input_field.dart';
@@ -242,7 +242,7 @@ class _ChangeEmailAndPasswordLayoutState extends State<ChangeEmailAndPasswordLay
     if (value != _newPasswordController.text) {
       return 'Passwords do not match';
     }
-    return ValidateInput.validator(
+    return InputValidation.validator(
         value: value, text: 'Please confirm your password');
   }
 }
